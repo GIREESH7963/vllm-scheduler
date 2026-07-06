@@ -44,6 +44,13 @@ slo:
   ttft_ms: 1000
   tpot_ms: 125
 
+# KV-regime validation (optional): the long-context sweep that empirically tests the derived
+# compute->KV crossover. If this CSV is absent (sweep not yet run) the model still fits everything
+# else and simply skips the overlay figure. Config names encode nominal context as `ctx<N>k`.
+kv_regime:
+  csv: model/kvsweep_runs.csv
+  kv_bound_occupancy: 0.85     # kv_occupancy above this (or num_waiting>0) => KV-bound regime
+
 output:
   summary_json: results/summaries/phase3_model_fit.json
   figures_dir: results/figures

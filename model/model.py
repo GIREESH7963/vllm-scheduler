@@ -302,6 +302,83 @@ def fig_lambda_overlay(rows, fits, families, out_path: Path):
     plt.close(fig)
 
 
+# ------------------------------------------------------------------------- kv-regime validation
+
+
+def _context_from_name(name: str) -> float:
+    """Parse nominal context tokens from a kvsweep config name, e.g. 'kvsweep_ctx16k' -> 16000."""
+    import re
+
+    m = re.search(r"ctx(\d+)k", name)
+    return float(m.group(1)) * 1000.0 if m else float("nan")
+
+
+def fig_kv_regime_validation(kv_rows, n_star, c_kv, ctx0, kv_bound_occ, out_path: Path) -> dict:
+    """Overlay MEASURED achieved concurrency vs context on the predicted min(N*, C_kv(context))
+    envelope. This is the empirical test of the derived crossover: as context grows, the binding
+    ceiling should hand off from compute (flat N*) to KV (the 1/context C_kv curve), and the KV cache
+    should saturate (kv_occupancy -> 1, num_waiting > 0) exactly where the two cross.
+    """
+    # group by config -> (context, mean/std of achieved concurrency, kv occupancy, waiting)
+    by_ctx = {}
+    for r in kv_rows:
+        ctx = _context_from_name(r.get("config", ""))
+        if not np.isfinite(ctx):
+            continue
+        by_ctx.setdefault(ctx, {"nrun": [], "kv": [], "nwait": []})
+        for k, col_name in (("nrun", "nrun"), ("kv", "kv"), ("nwait", "nwait")):
+            try:
+                by_ctx[ctx][k].append(float(r.get(col_name)))
+            except (TypeError, ValueError):
+                pass
+    if not by_ctx:
+        return {}
+    ctxs = np.array(sorted(by_ctx))
+    nrun_mean = np.array([np.nanmean(by_ctx[c]["nrun"]) for c in ctxs])
+    nrun_std = np.array([np.nanstd(by_ctx[c]["nrun"]) for c in ctxs])
+    kv_mean = np.array([np.nanmean(by_ctx[c]["kv"]) for c in ctxs])
+    nwait_mean = np.array([np.nanmean(by_ctx[c]["nwait"]) for c in ctxs])
+
+    fig, ax = plt.subplots(figsize=(8.5, 5))
+    xs = np.linspace(ctxs.min() * 0.8, ctxs.max() * 1.15, 300)
+    c_kv_curve = c_kv * (ctx0 / xs)  # KV cap shrinks as 1/context (fixed token budget)
+    ax.plot(xs, np.minimum(n_star, c_kv_curve), "k-", lw=2,
+            label="predicted ceiling  min(N*, C_kv(context))")
+    ax.axhline(n_star, color="tab:red", ls="--", lw=1.2, label=f"compute knee N*={n_star:.0f}")
+    ax.plot(xs, c_kv_curve, color="tab:purple", ls=":", lw=1.2, label="KV cap C_kv(context)")
+
+    # measured achieved concurrency; color points by regime (KV-bound if kv high or waiting > 0)
+    kv_bound = (kv_mean >= kv_bound_occ) | (nwait_mean > 0.5)
+    ax.errorbar(ctxs[~kv_bound], nrun_mean[~kv_bound], yerr=nrun_std[~kv_bound], fmt="o",
+                color="tab:blue", ms=8, capsize=4, label="measured (compute-bound)")
+    ax.errorbar(ctxs[kv_bound], nrun_mean[kv_bound], yerr=nrun_std[kv_bound], fmt="s",
+                color="tab:purple", ms=9, capsize=4, label="measured (KV-bound: kv~1 / queueing)")
+    for c, n, k in zip(ctxs, nrun_mean, kv_mean):
+        ax.annotate(f"kv={k:.2f}", (c, n), textcoords="offset points", xytext=(6, 6), fontsize=8)
+
+    cross = ctx0 * c_kv / n_star
+    ax.axvline(cross, color="gray", ls=":", lw=1)
+    ax.text(cross, n_star * 1.15, f"predicted\ncrossover\n~{cross / 1000:.0f}k", fontsize=8, ha="center")
+    ax.set_xscale("log")
+    ax.set_xlabel("prompt context (tokens)")
+    ax.set_ylabel("achieved concurrency  N  (mean running sequences)")
+    ax.set_title("KV-regime validation: does achieved concurrency follow min(N*, C_kv(context))?\n"
+                 "compute-bound (flat at N*) hands off to KV-bound (1/context) as prompts grow")
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3, which="both")
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=110)
+    plt.close(fig)
+    return {
+        "contexts": ctxs.tolist(),
+        "achieved_concurrency_mean": nrun_mean.tolist(),
+        "kv_occupancy_mean": kv_mean.tolist(),
+        "num_waiting_mean": nwait_mean.tolist(),
+        "kv_bound_regime": kv_bound.tolist(),
+        "predicted_crossover_tokens": float(cross),
+    }
+
+
 # ---------------------------------------------------------------------------------- divergence
 
 
@@ -378,6 +455,22 @@ def main() -> None:
     # ---- divergence ----
     flags = divergence_report(rows, fits, families, cfg["divergence"]["rel_error_flag"])
 
+    # ---- KV-regime validation (optional; only if the long-context sweep has been run) ----
+    kv_regime = {}
+    krc = cfg.get("kv_regime") or {}
+    kv_csv = root / krc.get("csv", "model/kvsweep_runs.csv") if krc else None
+    if kv_csv is not None and kv_csv.exists():
+        kv_rows = load_rows(kv_csv)
+        kv_regime = fig_kv_regime_validation(
+            kv_rows, fits[baseline_fam]["n_star"], kv["c_kv_seqs"],
+            cfg["kv"]["current_avg_context_tokens"], krc.get("kv_bound_occupancy", 0.85),
+            figdir / "phase3_kv_regime_validation.png",
+        )
+        print(f"  KV-regime overlay: {len(kv_regime.get('contexts', []))} context points "
+              f"-> phase3_kv_regime_validation.png")
+    else:
+        print("  KV-regime sweep not present yet (model/kvsweep_runs.csv) — skipping overlay")
+
     # ---- write summary ----
     summary = {
         "model": "M/G/1-PS with batched service rate + concurrency capacity cap",
@@ -386,6 +479,7 @@ def main() -> None:
         "baseline": {"family": baseline_fam, **fits[baseline_fam]},
         "divergence_points": flags,
         "n_divergence_points": len(flags),
+        "kv_regime_validation": kv_regime,
     }
     out_json = root / cfg["output"]["summary_json"]
     out_json.parent.mkdir(parents=True, exist_ok=True)

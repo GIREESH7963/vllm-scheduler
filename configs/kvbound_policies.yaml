@@ -1,0 +1,47 @@
+# KV-regime policy comparison: the positive-result experiment.
+# In the COMPUTE-bound regime (Phase 2, short contexts) admission control was a measured null result.
+# Here we move to the KV-BOUND regime — a long-context (16k) heavy class competing with a short/urgent
+# class — where the KV cache is the scarce resource. Hypothesis: KV-aware admission (adaptive, which
+# deprioritizes long jobs when KV is high; edf, which protects the urgent class) now yields a
+# MEASURABLE SLO gain for the urgent class over admit-all, because there is finally a real resource
+# to arbitrate. Run with: scheduler/run.py --policies nocap,fcfs,srpt,edf,adaptive
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 90
+  warmup_s: 25
+  repeats: 3
+  seed: 12345
+  arrival_rates: [1.5]        # overloads the 16k-heavy mix -> KV pressure
+  save_raw: false
+  mix:
+    longctx: 0.6              # heavy KV consumers
+    short: 0.4               # the urgent class we try to protect under KV pressure
+  profiles:
+    longctx:
+      prompt_len: {kind: fixed, lo: 12300}   # ~16k tokens
+      output_len: {kind: fixed, lo: 96}
+      corpus: prose
+    short:
+      prompt_len: {kind: uniform, lo: 16, hi: 64}
+      output_len: {kind: uniform, lo: 16, hi: 64}
+      corpus: prose
+
+scheduler:
+  max_in_flight: 12
+  min_in_flight: 2
+  max_cap: 24
+  max_queue_wait_s: 10        # load-shed requests queued longer than this (counts as SLO miss)
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 8000       # long-prompt prefill dominates; the urgent (short) class is judged on its own
+  tpot_ms: 125
