@@ -73,3 +73,42 @@ Phase-2 regime never produced.
 
 Heavy, thermally-gated runs (24k prefills are slow + hot on the passive T4). Full sweep ≈ 1–2 h.
 Gated behind the calibration probe so we don't burn the budget on a mis-tuned campaign.
+
+---
+
+## Result: calibration probe + reachability analysis (2026-07-06)
+
+The 8k calibration probe (λ=1) settled the question before the full sweep — with a clear, honest
+answer: **the KV-bound regime is not cleanly reachable on a T4 + 1.5B within a 32k context.**
+
+**Measured (8k context, λ=1, one rep before it was killed):**
+- 27 running / **62 waiting** sequences, `kv_occupancy` = **0.60**, **SM-active = 97 %**,
+  30 of ~58 requests failed (client timeout), TTFT p50 = 135 s.
+- The concurrency ceiling (~27 seqs) is hit at **KV only 60 % full while SM is pinned at 97 %** →
+  the binding constraint at 8k is **prefill compute**, not KV exhaustion. The confound is real.
+
+**Reachability arithmetic (from the probe):**
+- 27 seqs × ~8k tokens ÷ 0.60 ⇒ **KV budget ≈ 360k tokens**.
+- KV binds only when `C_kv = KV_budget / context` drops below the compute knee `N*≈10`, i.e. at
+  **context ≈ 360k / 10 ≈ 36k tokens** — *beyond* the model's `max_model_len` of 32768.
+- Both routes to that context fail on this platform:
+  - **Long prompts** → prefill saturates compute first (measured above).
+  - **Long outputs** → decode is sequential; a ~30k-token generation is *minutes* per request, so a
+    sweep is impractical within the harness's measurement windows.
+
+**Conclusion (the finding).** Across its entire *feasible* envelope (≤32k context), a T4 + 1.5B vLLM
+instance is **compute/memory-bandwidth-bound, never KV-capacity-bound**. This does not overturn
+Phase 3 — it **confirms and hardens** it: the KV-blocking regime that PagedAttention targets requires
+either a model with fatter KV/token (7B+, which does not fit in 16 GB) or a context window beyond
+32k. We can bound *where* that regime begins (~36k tokens here) but cannot enter it on this hardware.
+
+**Decision.** Do **not** spend the thermal/GPU budget chasing an unreachable regime. Fold this
+negative result into the report as a validated conclusion, and put the research effort into the
+extensions that this hardware *can* support cleanly:
+1. **Densify the queueing-model validation** — a fuller λ sweep on cheap short-context runs, giving a
+   model-vs-measurement curve with error bars across the knee.
+2. **Formalize the model + related work** — equations for M/G/1-PS + capacity cap, positioned against
+   PagedAttention / continuous-batching / classic PS-SRPT theory.
+
+The `kvsweep_*` and `kvbound_policies` configs are retained as the *documented attempt* that produced
+the reachability bound; they are not run further.
