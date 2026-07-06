@@ -1,7 +1,7 @@
 # Experiment: does long context push a single-T4 vLLM into a KV-bound regime?
 
 **Status:** design + protocol (branch `kv-regime-experiment`). Extends the Phase-3 finding that on a
-T4 + 1.5B the system is *compute-bound* (compute knee N\*≈10 ≪ derived KV cap C_kv≈830) and KV would
+T4 + 1.5B the system is *throughput-ceiling-bound* (bandwidth-set knee N\*≈10 ≪ derived KV cap C_kv≈830) and KV would
 only bind at ~25k-token sequences. This experiment tries to *reach* that regime on the same hardware.
 
 ## The question (framed honestly)

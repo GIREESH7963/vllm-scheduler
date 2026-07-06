@@ -140,19 +140,45 @@ in the short-dominated **chat** overload it **matches nocap on aggregate SLO (0.
 (n = 3) — the honest claim is parity, not a win; the point is that a feedback cap reclaims the idle
 capacity a fixed cap wastes, so it does not *pay* the throughput penalty the other capped policies do.
 
-### 4.4 Output-length prediction barely matters here (Phase 2 mini-experiment)
+### 4.4 Output-length prediction barely matters here — and a perfect oracle is *worst* (Phase 2 mini-experiment)
 
 SRPT needs to know job size. We compared three size signals (mixed, λ=4; predictor MAE = 19 tokens):
 
-| SRPT variant | SLO |
+| SRPT variant | aggregate SLO |
 |---|---|
 | prompt-length proxy | 0.462 |
 | learned length prediction | 0.441 |
 | true-length oracle | 0.376 |
 
-**Misprediction cost is negligible** — the learned predictor matches the free prompt-length proxy, and
-even a perfect oracle doesn't win. At this operating point SRPT ordering is inherently weak (all
-variants < 0.47), so investing in a length predictor buys nothing. A clean secondary null result.
+Two findings, one expected and one not.
+
+**Misprediction cost is negligible.** The learned predictor (0.441) matches the free prompt-length
+proxy (0.462) within run-to-run noise, so investing in a length model buys nothing at this operating
+point. A clean secondary null result.
+
+**A perfect oracle is the *worst* variant.** The *direction* is principled: SRPT is optimal for *mean*
+response time, but our metric is *per-request deadline attainment*, and better size information makes
+SRPT sharper at the objective we are **not** measuring (mean latency) with no obligation to help — or
+even to avoid hurting — the one we **are** (SLO). We deliberately stop short of a tidy per-class
+mechanism, because our data does not support one. The single-repeat per-class breakdown is:
+
+| class | oracle | proxy |
+|---|---|---|
+| short | 0.57 | 0.75 |
+| coding | 0.23 | 0.15 |
+| long | 0.24 | 0.19 |
+| reasoning | 0.13 | 0.27 |
+
+The tempting story — "the oracle enacts SRPT hardest and starves the *long* jobs" — is **not** what the
+data shows: the oracle is actually *better* on `long` (0.24 vs 0.19) and on `coding`. The aggregate
+drop is led by the numerous `short` class falling (0.57 vs 0.75) and `reasoning` falling, and with a
+single repeat and small per-class counts these figures are noisy. So we report the oracle's
+underperformance as a robust *aggregate* result with an honest hypothesis (SRPT-optimal ordering ≠
+SLO-optimal), not a validated per-class mechanism — it would take repeats to pin the cause.
+
+The practical takeaway is unchanged: at this operating point SRPT ordering is inherently weak for an
+SLO objective (all variants < 0.47); the lever is a deadline-aware (`edf`) or balanced (`adaptive`)
+policy — §4.2 — not a better length predictor.
 
 ---
 
@@ -166,22 +192,23 @@ sequences:
 throughput(N) = min(N · r0, μmax)      tpot(N) = max(1/r0, N/μmax)      knee  N* = μmax / r0
 ```
 
-- `r0` = single-stream output rate (tok/s/seq); `μmax` = aggregate compute ceiling (tok/s).
-- Below `N*` there is spare compute — adding a sequence is nearly free (TPOT flat, throughput rises
-  linearly). Above `N*` the GPU is the bottleneck and the `N` sequences share a fixed `μmax`, so
-  per-token latency rises linearly. **The knee is derivable from first principles**: it is exactly
-  where the fair share `μmax/N` drops below the standalone rate `r0`.
+- `r0` = single-stream output rate (tok/s/seq); `μmax` = aggregate service-rate ceiling (tok/s), set
+  by memory bandwidth (see §5.1).
+- Below `N*` there is spare bandwidth — adding a sequence is nearly free (TPOT flat, throughput rises
+  linearly). Above `N*` the GPU's memory bandwidth is the bottleneck and the `N` sequences share a
+  fixed `μmax`, so per-token latency rises linearly. **The knee is derivable from first principles**:
+  it is exactly where the fair share `μmax/N` drops below the standalone rate `r0`.
 
 **Formal statement.** Requests arrive Poisson(λ); each needs a random number of output tokens with
 mean `b`. The engine is a processor-sharing server whose aggregate token rate is load-dependent:
-`μ(N) = min(N·r0, μmax)`. Two ceilings can cap the running population `N`: the compute knee
+`μ(N) = min(N·r0, μmax)`. Two ceilings can cap the running population `N`: the bandwidth-set knee
 `N* = μmax/r0`, and a KV-cache limit `C_kv = B_kv / L̄` where `B_kv` is the KV budget in tokens and
 `L̄` the mean live sequence length. The effective concurrency cap is `C = min(N*, C_kv)`; excess
 arrivals wait in an admission queue. Token utilisation is `ρ = λb/μmax`. In the sub-cap PS regime,
 processor-sharing insensitivity gives a mean sojourn time `E[T] = E[S]/(1−ρ)` that depends only on the
 load, not the service-time distribution — which is why token-aware ordering (SRPT) rides the *same*
 `throughput(N)` law and can only reshape *who* waits, not the aggregate curve. The system is
-KV-bound rather than compute-bound iff `C_kv < N*`, i.e. `L̄ > B_kv/N* = B_kv·r0/μmax` — the crossover
+KV-bound rather than throughput-ceiling-bound iff `C_kv < N*`, i.e. `L̄ > B_kv/N* = B_kv·r0/μmax` — the crossover
 context this project measures (~36k tokens; see §5.1).
 
 **Fit** (from 78 measured runs; `phase3_throughput_vs_concurrency.png`, `phase3_tpot_vs_concurrency.png`):
@@ -203,30 +230,44 @@ knob. Two observations validate the framing:
    output tokens but have μmax of 250 vs 495. The heavy mix has longer *prompts*, so more compute goes
    to prefill and the output-token ceiling halves. μmax is mix-specific; the PS *structure* is universal.
 
-### 5.1 The ceiling is memory bandwidth, not FLOPs or KV
+### 5.1 The binding limit is the bandwidth-bound throughput ceiling, not KV
 
-**A precise word on "the ceiling."** `μmax` is a *throughput ceiling*, and it is set by **memory
-bandwidth**, not arithmetic. A roofline check on the T4 (≈320 GB/s HBM, ≈65 FP16 TFLOP/s) makes this
-unambiguous. Decode is memory-streaming: each step reads the full 1.5B weights (≈3.0 GB in fp16) plus
-the KV of the running batch. The weight-streaming ceiling alone is ≈320/3.0 ≈ **107 steps/s**; at the
-measured decode arithmetic intensity, the FLOP demand at our peak `μmax ≈ 495 tok/s` is ≈1.5 TFLOP/s —
-just **~2 % of the T4's 65 TFLOP/s**. So the device is nowhere near FLOP-bound; it is pinned against
-memory bandwidth. This also explains why DCGM `sm_active` reads 70–84 %: SM-active counts *memory-stall*
-cycles as active, so a high `sm_active` here signals a *bandwidth*-saturated pipeline, not FLOP
-saturation — reading it as "compute-bound" would be exactly the trap. Throughout this report,
-"compute-bound" should be read as **bandwidth/throughput-ceiling-bound**.
+The Phase-3 brief anticipated a KV-cache capacity limit as the thing that breaks the model. The data
+says otherwise, and pinning down *which* resource actually binds is the interesting result.
 
-**And it is *not* KV-capacity-bound.** The Phase-3 brief anticipated a **KV-cache** capacity limit as
-the thing that breaks the model. The data says otherwise. `kv_occupancy` never exceeds ~8 %, even at 60
-concurrent sequences. Deriving the KV cap directly from the measurements (`C_kv = N / kv_occupancy`)
-gives **C_kv ≈ 830 concurrent sequences** versus the bandwidth-set concurrency knee **N\* ≈ 10** —
-**the throughput ceiling binds ~83× before KV capacity does.** On a 1.5B model with 16 GB, KV is slack.
-The KV-blocking regime that PagedAttention/vLLM were built for is outside this hardware's envelope.
+**First, KV is slack.** `kv_occupancy` never exceeds ~8 %, even at 60 concurrent sequences.
+Extrapolating the KV cap from the measurements (`C_kv = N / kv_occupancy`, at fixed mean length) gives
+**C_kv ~ 10³ concurrent sequences** (≈ 830 at the observed average length) versus the throughput knee
+**N\* ≈ 10** — the throughput ceiling is reached roughly two orders of magnitude before KV memory
+fills. (This is a ~12× linear extrapolation from ≤8 % occupancy and assumes the server's
+`gpu_memory_utilization = 0.9` default, so treat the absolute figure as order-of-magnitude.)
 
-Because the KV budget is fixed in *tokens*, `C_kv(context) = C_kv · (ctx₀ / context)`, so KV overtakes
-compute when the average sequence length reaches **~25–36k tokens** on this exact setup
-(`phase3_capacity_regimes.png`). Below that, compute binds (what we measured); above it — long-document
-RAG, or a larger model with fatter KV/token — KV blocking dominates and admission-layer KV control
+**Second — the correction worth making precisely — the ceiling `μmax` is set by memory bandwidth, not
+compute FLOPs.** A roofline check on this exact setup:
+
+- At `μmax ≈ 495 tok/s` the arithmetic load is ≈ 2·P·μmax = 2·1.5e9·495 ≈ **1.5 TFLOP/s** — about 2 %
+  of the T4's ~65 TFLOP/s FP16 tensor peak. Compute is ~40× idle at the ceiling, so the ceiling is not FLOPs.
+- The T4's roofline ridge point is ~50–200 FLOP/byte (peak FLOP/s ÷ 320 GB/s). Decode at batch `N` has
+  arithmetic intensity ≈ `N` FLOP/byte (weights streamed once per step, amortized over `N` sequences).
+  At `N* ≈ 10` the workload sits far left of the ridge — **firmly memory-bandwidth-bound**, exactly
+  where single-model decode is expected to live.
+- Sanity check the other way: streaming the 1.5B fp16 weights each decode step is ≈ 3 GB, so 320 GB/s
+  allows ≈ 100 steps/s → ≈ 10³ tok/s at batch 10 — the same order as the measured `μmax = 495` (the ~2×
+  gap is ordinary bandwidth-efficiency loss plus KV reads). Bandwidth predicts the ceiling; compute does not.
+
+This also explains a common misread: DCGM `sm_active` sits at 70–84 % here, but SM-active counts
+*memory-stall* cycles as active, so a high reading signals a **bandwidth-saturated** pipeline, not FLOP
+saturation. So the accurate statement is: **the bandwidth-bound service-rate ceiling binds ~83× before
+KV-capacity does.** On a 1.5B model with 16 GB, KV is slack and the T4 is memory-bandwidth-bound — as
+the roofline predicts for decode. The KV-blocking regime PagedAttention/vLLM were built for is simply
+outside this hardware/model envelope. (Throughout this report, read "compute-bound" as
+*bandwidth/throughput-ceiling-bound*.)
+
+Because the KV budget is fixed in *tokens*, `C_kv(context) = C_kv · (ctx₀ / context)`, so KV capacity
+overtakes the throughput ceiling only when the mean sequence length grows ~two orders of magnitude —
+on the order of **~10⁴ tokens** (the empirical probe below pins it at ~36k;
+`phase3_capacity_regimes.png`). Below that, bandwidth binds (what we measured); above it — long-document
+RAG, or a larger model with fatter KV per token — KV blocking dominates and admission-layer KV control
 starts to matter.
 
 **We tried to reach that regime empirically** (see `report/kv_regime_experiment.md`). A long-context
@@ -237,7 +278,8 @@ just past the model's 32k `max_model_len`. The two ways to push there both fail 
 prompts saturate prefill compute first (measured), and long outputs make decode impractically slow
 (tens of thousands of sequential tokens per request). **So across its entire feasible envelope
 (≤32k context), a T4 + 1.5B vLLM instance is compute/bandwidth-bound and never KV-capacity-bound.**
-This is a rigorously bounded negative result: it *confirms and hardens* the compute-bound thesis, and
+This is a rigorously bounded negative result: it *confirms and hardens* the throughput-ceiling (never
+KV-capacity-bound) thesis, and
 tells you precisely what it would take to enter the KV regime (a bigger model or a longer context
 window than this hardware admits).
 
@@ -258,7 +300,7 @@ tuned complex one, per the project's modeling rule.
 - **The aggregate result is largely a null result.** On a T4 + 1.5B, vLLM's batcher is hard to beat on
   throughput/latency; the scheduler's demonstrated value is *differentiated service and convoy
   avoidance under overload*, not a strict aggregate win. We do not claim to beat production systems.
-- **Compute-bound regime only.** Because KV never binds within the 32k context ceiling, we could not
+- **Throughput-ceiling regime only.** Because KV never binds within the 32k context ceiling, we could not
   empirically exercise KV-admission control — we probed for it, bounded the crossover at ~36k-token
   contexts, and confirmed the platform is compute/bandwidth-bound throughout its feasible envelope
   (§5.1).
@@ -274,7 +316,7 @@ tuned complex one, per the project's modeling rule.
 
 - **Learned/RL admission policy.** The `adaptive` rule is hand-tuned; a learned controller over the
   same telemetry (SM-active, KV, TTFT p99) is the natural next step. Out of scope here by design.
-- **The KV-bound regime.** Re-run at long contexts (≥25k tokens) or on a larger model where `C_kv < N*`
+- **The KV-bound regime.** Re-run at long contexts (≥36k tokens) or on a larger model where `C_kv < N*`
   — that is where admission-layer KV control should finally pay off, and where this model predicts the
   crossover.
 - **One adaptive in-engine knob.** The only place engine-internal change is warranted: make the

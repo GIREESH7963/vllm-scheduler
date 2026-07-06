@@ -11,8 +11,8 @@ vLLM** (we never modify vLLM's internal batcher).
 
 <table>
 <tr>
-<td width="50%"><img src="results/figures/phase3_capacity_regimes.png" alt="Compute vs KV capacity"><br><sub><b>The binding constraint is compute, not KV.</b> Derived KV cap ≈830 concurrent seqs vs a compute knee N*≈10 — compute saturates ~83× sooner. KV would only bind at ~25k-token sequences.</sub></td>
-<td width="50%"><img src="results/figures/phase3_throughput_vs_concurrency.png" alt="Throughput vs concurrency"><br><sub><b>All five policies collapse onto one throughput(N) law.</b> Continuous batching ≈ M/G/1 processor sharing: a linear batching ramp to a compute ceiling, with the knee N*=μmax/r0 derived from first principles.</sub></td>
+<td width="50%"><img src="results/figures/phase3_capacity_regimes.png" alt="Throughput ceiling vs KV capacity"><br><sub><b>The binding constraint is the throughput ceiling, not KV.</b> Derived KV cap ≈830 seqs vs a bandwidth-bound throughput knee N*≈10 — the ceiling binds ~83× sooner. KV would only bind at ~36k-token sequences.</sub></td>
+<td width="50%"><img src="results/figures/phase3_throughput_vs_concurrency.png" alt="Throughput vs concurrency"><br><sub><b>All five policies collapse onto one throughput(N) law.</b> Continuous batching ≈ M/G/1 processor sharing: a linear batching ramp to a bandwidth-bound throughput ceiling, with the knee N*=μmax/r0 derived from first principles.</sub></td>
 </tr>
 <tr>
 <td width="50%"><img src="results/figures/phase2_mixed_byclass_slo.png" alt="Per-class SLO by policy"><br><sub><b>Where the scheduler earns its place: differentiated service.</b> Under overload EDF protects the urgent class, SRPT starves long jobs, adaptive keeps every class alive — control that admit-all cannot offer.</sub></td>
@@ -31,8 +31,11 @@ vLLM** (we never modify vLLM's internal batcher).
   looks great on aggregate but offers **zero control** over who suffers.
 - **Output-length prediction barely matters** for SRPT here: a free prompt-length proxy (SLO 0.462)
   matches a learned predictor (0.441) and beats even a true-length oracle (0.376).
-- **The system is compute-bound, not KV-bound:** derived KV cap ≈ 830 concurrent seqs vs a compute
-  knee N\* ≈ 10 — **compute saturates ~83× before KV.** KV would only bind at ~25k-token sequences.
+- **The ceiling is a bandwidth-bound throughput limit, not KV:** a roofline check puts decode at ~2 %
+  of the T4's FLOP peak (so it's memory-bandwidth-bound, not compute-bound); the throughput knee
+  N\* ≈ 10 vs a derived KV cap ≈ 830 seqs means **the ceiling binds ~83× before KV capacity.** KV would
+  only bind at ~36k-token sequences — beyond this model's 32k context, so unreachable on a T4 + 1.5B
+  (we probed it and confirmed).
 - **A queueing model explains it all:** continuous batching ≈ M/G/1 processor sharing with a
   load-dependent service rate; all five policies collapse onto one `throughput(N)` curve, confirming
   the scheduler is an admission layer, not a change to the service process.
