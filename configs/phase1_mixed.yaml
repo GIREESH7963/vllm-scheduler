@@ -1,0 +1,31 @@
+# Phase 1 — balanced multi-tenant mix (all four classes).
+# Server must already be running with n-gram spec decode (see phase0-setup/CLAUDE.md):
+#   vllm serve Qwen/Qwen2.5-1.5B-Instruct --dtype float16 --port 8000 \
+#     --speculative-config '{"method":"ngram","num_speculative_tokens":4,
+#                            "prompt_lookup_min":2,"prompt_lookup_max":5}'
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 90
+  warmup_s: 30            # root rule: discard first ~30s
+  repeats: 3             # >=3 repeats for variance reporting
+  seed: 12345
+  arrival_rates: [1, 2, 4]   # open-loop Poisson λ sweep (req/s)
+  save_raw: false
+  mix:                   # tenant class weights (profiles from common.workload.DEFAULT_PROFILES)
+    short: 0.4
+    long: 0.2
+    reasoning: 0.2
+    coding: 0.2          # spec-decode class
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 50

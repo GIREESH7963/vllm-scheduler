@@ -1,0 +1,14 @@
+# Phase 0 — serving + telemetry harness (Python 3.11, installed via uv into .venv)
+# vLLM pinned to the version already validated on this T4 (Turing, CUDA 12.4 / torch 2.6).
+vllm==0.8.5.post1
+# vLLM 0.8.5 only floors transformers (>=4.51.1); the resolver otherwise pulls a 5.x that breaks
+# the Qwen2 tokenizer (all_special_tokens_extended). Pin to the version validated on this box.
+transformers==4.51.3
+# Telemetry + client
+httpx>=0.27
+nvidia-ml-py>=12.535        # provides `import pynvml`; NVML is our ONLY power source
+pyyaml>=6.0
+# Aggregation + (later) plotting
+numpy>=1.26
+pandas>=2.2
+matplotlib>=3.8

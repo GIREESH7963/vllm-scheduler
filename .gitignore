@@ -1,0 +1,14 @@
+# Environments
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets — server credentials live here
+.env
+
+# Run outputs: never commit raw results (only committed summaries under results/summaries/)
+results/*.json
+!results/summaries/
+
+# Logs
+*.log

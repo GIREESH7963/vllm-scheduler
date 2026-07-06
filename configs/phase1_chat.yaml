@@ -1,0 +1,25 @@
+# Phase 1 — interactive chat mix: short prompts, short outputs, high request rate.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 90
+  warmup_s: 30
+  repeats: 3
+  seed: 12345
+  arrival_rates: [2, 4, 8]
+  save_raw: false
+  mix:
+    short: 0.85
+    reasoning: 0.15
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 50
