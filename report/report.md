@@ -135,9 +135,10 @@ classic convoy effect, and it is arrival-order/seed sensitive, hence the varianc
 policy mitigates it.
 
 `adaptive` is the one policy that stays throughput-competitive (it widens its cap when SM is idle) and
-in the short-dominated **chat** overload actually **edges nocap on aggregate SLO (0.90 vs 0.88)** while
-keeping per-class service balanced — the one regime where a feedback cap reclaims idle capacity that
-convoy would otherwise waste.
+in the short-dominated **chat** overload it **matches nocap on aggregate SLO (0.90 ± 0.04 vs
+0.88 ± 0.05)** while keeping per-class service balanced. That 0.02 gap is *within run-to-run noise*
+(n = 3) — the honest claim is parity, not a win; the point is that a feedback cap reclaims the idle
+capacity a fixed cap wastes, so it does not *pay* the throughput penalty the other capped policies do.
 
 ### 4.4 Output-length prediction barely matters here (Phase 2 mini-experiment)
 
@@ -202,14 +203,25 @@ knob. Two observations validate the framing:
    output tokens but have μmax of 250 vs 495. The heavy mix has longer *prompts*, so more compute goes
    to prefill and the output-token ceiling halves. μmax is mix-specific; the PS *structure* is universal.
 
-### 5.1 The capacity limit is compute, not KV — and we can say where that flips
+### 5.1 The ceiling is memory bandwidth, not FLOPs or KV
 
-The Phase-3 brief anticipated a **KV-cache** capacity limit as the thing that breaks the model. The
-data says otherwise, and that is the interesting result. `kv_occupancy` never exceeds ~8 %, even at 60
+**A precise word on "the ceiling."** `μmax` is a *throughput ceiling*, and it is set by **memory
+bandwidth**, not arithmetic. A roofline check on the T4 (≈320 GB/s HBM, ≈65 FP16 TFLOP/s) makes this
+unambiguous. Decode is memory-streaming: each step reads the full 1.5B weights (≈3.0 GB in fp16) plus
+the KV of the running batch. The weight-streaming ceiling alone is ≈320/3.0 ≈ **107 steps/s**; at the
+measured decode arithmetic intensity, the FLOP demand at our peak `μmax ≈ 495 tok/s` is ≈1.5 TFLOP/s —
+just **~2 % of the T4's 65 TFLOP/s**. So the device is nowhere near FLOP-bound; it is pinned against
+memory bandwidth. This also explains why DCGM `sm_active` reads 70–84 %: SM-active counts *memory-stall*
+cycles as active, so a high `sm_active` here signals a *bandwidth*-saturated pipeline, not FLOP
+saturation — reading it as "compute-bound" would be exactly the trap. Throughout this report,
+"compute-bound" should be read as **bandwidth/throughput-ceiling-bound**.
+
+**And it is *not* KV-capacity-bound.** The Phase-3 brief anticipated a **KV-cache** capacity limit as
+the thing that breaks the model. The data says otherwise. `kv_occupancy` never exceeds ~8 %, even at 60
 concurrent sequences. Deriving the KV cap directly from the measurements (`C_kv = N / kv_occupancy`)
-gives **C_kv ≈ 830 concurrent sequences** versus the compute knee **N\* ≈ 10** — **compute saturates
-~83× before KV does.** On a 1.5B model with 16 GB, KV is slack; the T4 is compute-bound. The
-KV-blocking regime that PagedAttention/vLLM were built for is simply outside this hardware's envelope.
+gives **C_kv ≈ 830 concurrent sequences** versus the bandwidth-set concurrency knee **N\* ≈ 10** —
+**the throughput ceiling binds ~83× before KV capacity does.** On a 1.5B model with 16 GB, KV is slack.
+The KV-blocking regime that PagedAttention/vLLM were built for is outside this hardware's envelope.
 
 Because the KV budget is fixed in *tokens*, `C_kv(context) = C_kv · (ctx₀ / context)`, so KV overtakes
 compute when the average sequence length reaches **~25–36k tokens** on this exact setup
