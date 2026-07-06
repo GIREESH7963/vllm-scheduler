@@ -7,6 +7,19 @@ vLLM** (we never modify vLLM's internal batcher).
 
 **Full write-up:** [`report/report.md`](report/report.md).
 
+## Results at a glance
+
+<table>
+<tr>
+<td width="50%"><img src="results/figures/phase3_capacity_regimes.png" alt="Compute vs KV capacity"><br><sub><b>The binding constraint is compute, not KV.</b> Derived KV cap ≈830 concurrent seqs vs a compute knee N*≈10 — compute saturates ~83× sooner. KV would only bind at ~25k-token sequences.</sub></td>
+<td width="50%"><img src="results/figures/phase3_throughput_vs_concurrency.png" alt="Throughput vs concurrency"><br><sub><b>All five policies collapse onto one throughput(N) law.</b> Continuous batching ≈ M/G/1 processor sharing: a linear batching ramp to a compute ceiling, with the knee N*=μmax/r0 derived from first principles.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="results/figures/phase2_mixed_byclass_slo.png" alt="Per-class SLO by policy"><br><sub><b>Where the scheduler earns its place: differentiated service.</b> Under overload EDF protects the urgent class, SRPT starves long jobs, adaptive keeps every class alive — control that admit-all cannot offer.</sub></td>
+<td width="50%"><img src="results/figures/phase2_mixed_slo_attainment.png" alt="SLO attainment by policy"><br><sub><b>The honest null result.</b> On aggregate SLO, no capped policy beats admit-all on a single T4 — capping concurrency costs the throughput that meets deadlines.</sub></td>
+</tr>
+</table>
+
 ## Headline results
 
 - **On a single T4, no admission policy beats admit-all on aggregate SLO** — capping concurrency costs
