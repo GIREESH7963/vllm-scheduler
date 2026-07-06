@@ -1,0 +1,186 @@
+{
+  "model": "M/G/1-PS with batched service rate + concurrency capacity cap",
+  "fits": {
+    "phase2_mixed": {
+      "r0": 49.5,
+      "mumax": 495.0,
+      "n_star": 10.0,
+      "rmse_tok_s": 35.683061685660746,
+      "n_points": 33,
+      "r0_from_low_load_tpot": 36.03118024390066,
+      "low_load_tpot_ms_p50": 27.75373976735829
+    },
+    "phase2_chat": {
+      "r0": 58.0,
+      "mumax": 355.0,
+      "n_star": 6.120689655172414,
+      "rmse_tok_s": 51.010068375503984,
+      "n_points": 30,
+      "r0_from_low_load_tpot": 39.149423647033096,
+      "low_load_tpot_ms_p50": 25.54316020117921
+    },
+    "phase1_mixed": {
+      "r0": 20.0,
+      "mumax": 250.0,
+      "n_star": 12.5,
+      "rmse_tok_s": 45.19122430458599,
+      "n_points": 9,
+      "r0_from_low_load_tpot": 13.065503756280608,
+      "low_load_tpot_ms_p50": 76.53742394121608
+    }
+  },
+  "kv_capacity": {
+    "c_kv_seqs": 829.5389228085476,
+    "c_kv_p10": 747.2272149873114,
+    "c_kv_p90": 1439.2248121754512,
+    "n_points": 57,
+    "kv_binds_context_tokens": 24886.167684256427,
+    "compute_vs_kv_headroom_x": 82.95389228085476
+  },
+  "baseline": {
+    "family": "phase2_mixed",
+    "r0": 49.5,
+    "mumax": 495.0,
+    "n_star": 10.0,
+    "rmse_tok_s": 35.683061685660746,
+    "n_points": 33,
+    "r0_from_low_load_tpot": 36.03118024390066,
+    "low_load_tpot_ms_p50": 27.75373976735829
+  },
+  "divergence_points": [
+    {
+      "family": "phase1_mixed",
+      "N": 1.3722627737226278,
+      "measured_tok_s": 45.127272727272725,
+      "model_tok_s": 27.44525547445256,
+      "rel_error": 0.6442649903288198
+    },
+    {
+      "family": "phase1_mixed",
+      "N": 9.816793893129772,
+      "measured_tok_s": 114.4,
+      "model_tok_s": 196.33587786259542,
+      "rel_error": -0.4173250388802488
+    },
+    {
+      "family": "phase1_mixed",
+      "N": 9.758064516129032,
+      "measured_tok_s": 118.16363636363636,
+      "model_tok_s": 195.16129032258064,
+      "rel_error": -0.3945334335086401
+    },
+    {
+      "family": "phase1_mixed",
+      "N": 10.139705882352942,
+      "measured_tok_s": 133.36363636363637,
+      "model_tok_s": 202.79411764705884,
+      "rel_error": -0.3423693058210825
+    },
+    {
+      "family": "phase2_mixed",
+      "N": 3.6271186440677967,
+      "measured_tok_s": 232.11764705882354,
+      "model_tok_s": 179.54237288135593,
+      "rel_error": 0.2928293379090521
+    },
+    {
+      "family": "phase2_chat",
+      "N": 7.102564102564102,
+      "measured_tok_s": 258.47058823529414,
+      "model_tok_s": 355.0,
+      "rel_error": -0.2719138359569179
+    },
+    {
+      "family": "phase2_chat",
+      "N": 7.119047619047619,
+      "measured_tok_s": 259.2352941176471,
+      "model_tok_s": 355.0,
+      "rel_error": -0.26975973487986743
+    },
+    {
+      "family": "phase2_chat",
+      "N": 7.72972972972973,
+      "measured_tok_s": 259.2352941176471,
+      "model_tok_s": 355.0,
+      "rel_error": -0.26975973487986743
+    },
+    {
+      "family": "phase2_chat",
+      "N": 7.733333333333333,
+      "measured_tok_s": 259.2352941176471,
+      "model_tok_s": 355.0,
+      "rel_error": -0.26975973487986743
+    },
+    {
+      "family": "phase2_mixed",
+      "N": 3.694915254237288,
+      "measured_tok_s": 232.23529411764707,
+      "model_tok_s": 182.89830508474577,
+      "rel_error": 0.26975093623771446
+    },
+    {
+      "family": "phase2_chat",
+      "N": 7.552631578947368,
+      "measured_tok_s": 259.3529411764706,
+      "model_tok_s": 355.0,
+      "rel_error": -0.26942833471416733
+    },
+    {
+      "family": "phase2_mixed",
+      "N": 3.689655172413793,
+      "measured_tok_s": 230.88235294117646,
+      "model_tok_s": 182.63793103448276,
+      "rel_error": 0.2641533532132762
+    },
+    {
+      "family": "phase1_mixed",
+      "N": 3.560344827586207,
+      "measured_tok_s": 52.81818181818182,
+      "model_tok_s": 71.20689655172414,
+      "rel_error": -0.25824345146379046
+    },
+    {
+      "family": "phase1_mixed",
+      "N": 2.4867256637168142,
+      "measured_tok_s": 37.0,
+      "model_tok_s": 49.73451327433629,
+      "rel_error": -0.256049822064057
+    },
+    {
+      "family": "phase2_mixed",
+      "N": 5.25,
+      "measured_tok_s": 324.94117647058823,
+      "model_tok_s": 259.875,
+      "rel_error": 0.25037489743372093
+    },
+    {
+      "family": "phase2_chat",
+      "N": 11.15625,
+      "measured_tok_s": 435.1764705882353,
+      "model_tok_s": 355.0,
+      "rel_error": 0.2258492129246065
+    },
+    {
+      "family": "phase2_chat",
+      "N": 11.815384615384616,
+      "measured_tok_s": 433.8235294117647,
+      "model_tok_s": 355.0,
+      "rel_error": 0.2220381110190555
+    },
+    {
+      "family": "phase2_mixed",
+      "N": 3.847457627118644,
+      "measured_tok_s": 232.11764705882354,
+      "model_tok_s": 190.44915254237287,
+      "rel_error": 0.21879065335919454
+    },
+    {
+      "family": "phase2_mixed",
+      "N": 5.2,
+      "measured_tok_s": 312.5882352941176,
+      "model_tok_s": 257.40000000000003,
+      "rel_error": 0.21440650852415533
+    }
+  ],
+  "n_divergence_points": 19
+}

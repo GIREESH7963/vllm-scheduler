@@ -1,0 +1,49 @@
+# Phase 3 — queueing model fit + validation. No serving here: this is offline analysis of the
+# measured Phase-1/2 runs. No magic numbers in model.py — every knob lives here.
+model_analysis: phase3_mg1ps_capacity
+
+# Measured runs exported from every results/*.json (one row per run). Produced by the Phase-3
+# extraction step; committed alongside the model so the fit is reproducible.
+data:
+  csv: phase3-model/measured_runs.csv
+
+# The analytical model: continuous batching ~= M/G/1 processor sharing with a load-dependent
+# (batched) service rate and a knee N* = mumax / r0.
+#   throughput(N) = min(N * r0, mumax)          # linear batching regime -> flat compute ceiling
+#   tpot(N)       = max(1/r0, N / mumax)         # flat standalone -> linear sharing (PS signature)
+# r0    = single-stream output rate (tok/s/seq), fit from low-concurrency runs.
+# mumax = aggregate compute ceiling (tok/s), fit from the throughput plateau.
+fit:
+  # r0 is taken from runs below this concurrency (spare compute -> per-seq rate ~ standalone).
+  low_concurrency_N: 6.0
+  # Grid search bounds for the least-squares fit of throughput(N) = min(N*r0, mumax).
+  r0_grid:   [20.0, 90.0, 0.5]     # tok/s/seq  [min, max, step]
+  mumax_grid: [150.0, 600.0, 5.0]  # tok/s      [min, max, step]
+  # Fit these workload families independently: output-token mumax depends on the mix
+  # (heavier prompts/longer outputs -> more prefill/KV -> lower output-token ceiling).
+  families: [phase2_mixed, phase2_chat, phase1_mixed]
+  # The clean no-scheduler baseline used for the headline numbers (admit-all == pure vLLM).
+  baseline_family: phase2_mixed
+  baseline_policy: nocap
+
+# KV-capacity extension. C_kv (concurrent sequences that fill the KV cache) is derived from the
+# measurements themselves: at known concurrency N with measured kv_occupancy f, C_kv = N / f.
+kv:
+  # Only trust the ratio where kv_occupancy is above the sampler noise floor.
+  min_kv_occupancy: 0.005
+  # Projection: KV becomes the binding constraint (instead of compute) once the average sequence
+  # length grows enough that C_kv drops below the compute knee N*. Report the crossover context.
+  current_avg_context_tokens: 300   # ~200 prompt + ~100 output on these mixes (order-of-magnitude)
+
+# Divergence flags: where the model is expected to (and does) part from the measurements.
+divergence:
+  # Relative throughput error above this is called out as a divergence point.
+  rel_error_flag: 0.20
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125
+
+output:
+  summary_json: results/summaries/phase3_model_fit.json
+  figures_dir: results/figures

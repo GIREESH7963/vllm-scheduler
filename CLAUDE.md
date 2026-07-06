@@ -22,7 +22,7 @@ in that folder — so only the current phase's instructions enter context.
 0. [phase0-setup](phase0-setup/CLAUDE.md) — vLLM + DCGM + first measurement · status: DONE
 1. [phase1-harness](phase1-harness/CLAUDE.md) — workload generator + measurement harness · DONE
 2. [phase2-policies](phase2-policies/CLAUDE.md) — admission/ordering scheduler + policy comparison · DONE
-3. [phase3-model](phase3-model/CLAUDE.md) — queueing model + validation · TODO
+3. [phase3-model](phase3-model/CLAUDE.md) — queueing model + validation · DONE
 4. [phase4-writeup](phase4-writeup/CLAUDE.md) — report, plots, repo polish · TODO
 
 Update the status tag as you finish each phase.
