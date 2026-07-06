@@ -1,0 +1,33 @@
+# Dense model-validation sweep (Phase-3 follow-up). No scheduler — pure vLLM (admit-all) on the
+# mixed workload, swept at fine arrival-rate granularity so the queueing model can be validated
+# against a proper throughput/TPOT-vs-load curve *across* the knee (not just the two rate-points the
+# original Phase-2 matrix provided). Run with harness/run.py; extract to model/measured_runs.csv and
+# re-fit model/model.py to overlay predicted vs measured with error bars.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 55
+  warmup_s: 15
+  repeats: 3
+  seed: 12345
+  # Fine grid bracketing the mixed-workload knee (nocap saturates ~λ4-5: μmax~495, b~104 -> λ*~4.8).
+  arrival_rates: [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0]
+  save_raw: false
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

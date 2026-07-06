@@ -171,6 +171,18 @@ throughput(N) = min(N · r0, μmax)      tpot(N) = max(1/r0, N/μmax)      knee 
   per-token latency rises linearly. **The knee is derivable from first principles**: it is exactly
   where the fair share `μmax/N` drops below the standalone rate `r0`.
 
+**Formal statement.** Requests arrive Poisson(λ); each needs a random number of output tokens with
+mean `b`. The engine is a processor-sharing server whose aggregate token rate is load-dependent:
+`μ(N) = min(N·r0, μmax)`. Two ceilings can cap the running population `N`: the compute knee
+`N* = μmax/r0`, and a KV-cache limit `C_kv = B_kv / L̄` where `B_kv` is the KV budget in tokens and
+`L̄` the mean live sequence length. The effective concurrency cap is `C = min(N*, C_kv)`; excess
+arrivals wait in an admission queue. Token utilisation is `ρ = λb/μmax`. In the sub-cap PS regime,
+processor-sharing insensitivity gives a mean sojourn time `E[T] = E[S]/(1−ρ)` that depends only on the
+load, not the service-time distribution — which is why token-aware ordering (SRPT) rides the *same*
+`throughput(N)` law and can only reshape *who* waits, not the aggregate curve. The system is
+KV-bound rather than compute-bound iff `C_kv < N*`, i.e. `L̄ > B_kv/N* = B_kv·r0/μmax` — the crossover
+context this project measures (~36k tokens; see §5.1).
+
 **Fit** (from 78 measured runs; `phase3_throughput_vs_concurrency.png`, `phase3_tpot_vs_concurrency.png`):
 
 | Mix | r0 (tok/s/seq) | μmax (tok/s) | knee N* |
@@ -200,10 +212,22 @@ gives **C_kv ≈ 830 concurrent sequences** versus the compute knee **N\* ≈ 10
 KV-blocking regime that PagedAttention/vLLM were built for is simply outside this hardware's envelope.
 
 Because the KV budget is fixed in *tokens*, `C_kv(context) = C_kv · (ctx₀ / context)`, so KV overtakes
-compute when the average sequence length reaches **~25k tokens** on this exact setup
+compute when the average sequence length reaches **~25–36k tokens** on this exact setup
 (`phase3_capacity_regimes.png`). Below that, compute binds (what we measured); above it — long-document
 RAG, or a larger model with fatter KV/token — KV blocking dominates and admission-layer KV control
-starts to matter. We can *derive* where that regime begins even though a T4 + 1.5B cannot reach it.
+starts to matter.
+
+**We tried to reach that regime empirically** (see `report/kv_regime_experiment.md`). A long-context
+calibration probe (8k-token prompts) held 27 running sequences at only **60 % KV occupancy while
+SM-active pinned at 97 %** — i.e., the binding constraint at 8k is *prefill compute*, not KV. That
+measurement fixes the KV budget at ~360k tokens, placing the KV-crossover at ~36k-token contexts —
+just past the model's 32k `max_model_len`. The two ways to push there both fail on this platform: long
+prompts saturate prefill compute first (measured), and long outputs make decode impractically slow
+(tens of thousands of sequential tokens per request). **So across its entire feasible envelope
+(≤32k context), a T4 + 1.5B vLLM instance is compute/bandwidth-bound and never KV-capacity-bound.**
+This is a rigorously bounded negative result: it *confirms and hardens* the compute-bound thesis, and
+tells you precisely what it would take to enter the KV regime (a bigger model or a longer context
+window than this hardware admits).
 
 ### 5.2 Where model and measurement diverge
 
@@ -222,8 +246,10 @@ tuned complex one, per the project's modeling rule.
 - **The aggregate result is largely a null result.** On a T4 + 1.5B, vLLM's batcher is hard to beat on
   throughput/latency; the scheduler's demonstrated value is *differentiated service and convoy
   avoidance under overload*, not a strict aggregate win. We do not claim to beat production systems.
-- **Compute-bound regime only.** Because KV never binds here, we could not empirically exercise
-  KV-admission control — we could only derive analytically where it would matter.
+- **Compute-bound regime only.** Because KV never binds within the 32k context ceiling, we could not
+  empirically exercise KV-admission control — we probed for it, bounded the crossover at ~36k-token
+  contexts, and confirmed the platform is compute/bandwidth-bound throughout its feasible envelope
+  (§5.1).
 - **Thermal noise.** The passively-cooled T4 throttles on long runs; we gate on temperature and report
   variance, but it inflates run-to-run spread near the knee.
 - **Off-the-shelf drafts.** Speculative decoding uses n-gram lookup as shipped. We did not train draft
@@ -246,7 +272,42 @@ tuned complex one, per the project's modeling rule.
 
 ---
 
-## 8. Reproducing
+## 8. Related work
+
+**Serving engines and batching.** vLLM's continuous batching and PagedAttention (Kwon et al., SOSP
+2023) are the substrate this project measures; PagedAttention specifically targets *KV-cache*
+fragmentation and capacity, which motivated our test of whether KV is the binding constraint on
+commodity hardware (§5.1) — we find it is not, within a 32k context on a T4 + 1.5B. Orca (Yu et al.,
+OSDI 2022) introduced iteration-level (continuous) scheduling inside the engine; we deliberately stay
+*in front* of that mechanism, controlling admission and ordering rather than intra-engine batch
+formation.
+
+**Inference scheduling and SLOs.** A line of work schedules LLM requests for latency SLOs and
+fairness — e.g. output-length-prediction scheduling (S³, Jin et al., NeurIPS 2023), fair KV-cache
+sharing (VTC, Sheng et al., OSDI 2024), and disaggregated prefill/decode (DistServe, OSDI 2024;
+Splitwise, ISCA 2024). Our contribution is narrower and complementary: a *measured characterization*
+of what an admission/ordering layer adds on top of an already-batching engine on a single commodity
+GPU, including the honest finding that the gain is differentiated service under overload rather than
+aggregate throughput. Our negative predictor result (§4.4) is a small counterpoint to the S³-style
+premise that better length prediction improves scheduling — at our operating point it does not.
+
+**Queueing theory.** The processor-sharing (PS) and Shortest-Remaining-Processing-Time (SRPT) models
+we use are classical (Kleinrock; Schrage). The PS *insensitivity* property — mean sojourn time
+depending only on load, not the service-time distribution — is exactly why we observe every policy
+collapsing onto one `throughput(N)` curve (§5). Our extension is the load-dependent batched service
+rate `μ(N) = min(N·r0, μmax)` and the explicit dual capacity cap `min(N*, C_kv)`, which localizes the
+compute-vs-KV crossover.
+
+**Speculative decoding.** We serve off-the-shelf n-gram prompt-lookup speculation (as in vLLM) and
+measure its acceptance per class; we do **not** train draft models. Draft-training methods (EAGLE,
+Medusa, and related loss-function work) are orthogonal to the scheduling question studied here.
+
+*(Citations are by name/venue for orientation; this is an engineering report, not a peer-reviewed
+paper, and the framing above states its boundaries plainly.)*
+
+---
+
+## 9. Reproducing
 
 See the repository `README.md` for exact environment, server, and run commands, and `reproduce.sh`
 for an end-to-end regeneration of the headline figures from `results/`. All committed summaries
