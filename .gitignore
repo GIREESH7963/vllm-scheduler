@@ -8,6 +8,7 @@ __pycache__/
 
 # Run outputs: never commit raw results (only committed summaries under results/summaries/)
 results/*.json
+results/raw/            # per-request + telemetry time-series dumps (save_raw); large, data not artifact
 !results/summaries/
 
 # Logs

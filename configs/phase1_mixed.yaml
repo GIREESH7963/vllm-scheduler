@@ -10,12 +10,13 @@ server:
   dtype: float16
 
 workload:
-  duration_s: 90
-  warmup_s: 30            # root rule: discard first ~30s
+  # λ grid brackets the ~1 req/s knee measured in Phase-1 validation (below / at / above capacity).
+  duration_s: 75
+  warmup_s: 20           # root rule: discard first ~30s; low-λ needs a longer window (see summary)
   repeats: 3             # >=3 repeats for variance reporting
   seed: 12345
-  arrival_rates: [1, 2, 4]   # open-loop Poisson λ sweep (req/s)
-  save_raw: false
+  arrival_rates: [0.5, 1.0, 2.0]   # open-loop Poisson λ sweep (req/s)
+  save_raw: true         # keep per-request + telemetry time-series for Phase-3 model fitting
   mix:                   # tenant class weights (profiles from common.workload.DEFAULT_PROFILES)
     short: 0.4
     long: 0.2

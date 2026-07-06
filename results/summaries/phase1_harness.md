@@ -45,4 +45,29 @@ Figures: `results/figures/phase1_validation_{latency,throughput,utilization}_vs_
 - **Actual vs requested output length ≈ 0.87** (model emits EOS before max_tokens); recorded
   per-request — Phase 2 scheduling needs this.
 
-## Not a git repo yet — this summary + committed figures are the artifact. `git init` when ready.
+## Calibration sweep = no-scheduler baseline (`phase1_mixed`, retuned)
+
+After validation, the λ grids were retuned to bracket the knee and `save_raw` enabled. The
+`phase1_mixed` sweep (λ = 0.5 / 1.0 / 2.0, 3 repeats, 75 s windows) is the **no-scheduler
+baseline** Phase 2 compares against. Figures: `results/figures/phase1_mixed_*_vs_load.png`.
+
+| λ (req/s) | throughput (tok/s) | TTFT p50 (ms) | TPOT p50 (ms) | SM % | SLO attain |
+|---|---|---|---|---|---|
+| 0.5 | 45.0 ± 7.9 | 180 | 59 | 70 | 0.28 |
+| 1.0 | 122.0 ± 10.0 | 301 | 112 | 79 | 0.17 |
+| 2.0 | 247.5 ± 6.6 | 492 | 356 | 84 | 0.00 |
+
+**Reading:** aggregate throughput scales ~linearly (vLLM batches harder) but **per-request TPOT
+degrades 6× and SLO attainment collapses to 0** — the saturation knee lives in the latency/SLO
+curves (TPOT p99 elbows up between λ=1 and λ=2), which is the right lens for a scheduling project.
+Variance tightens as λ rises (more requests/window); client dispatch-lag stayed < 5 ms throughout.
+
+**Action for Phase 2:** the `tpot_ms: 50` SLO is too tight — even λ=0.5 (TPOT p50 59 ms) fails it,
+so attainment starts at 0.28 with no high-attainment anchor. Relax to ~75 ms so admission/ordering
+policies have a meaningful attainment gradient to optimize.
+
+Raw per-request + telemetry dumps for this sweep live on the server at
+`~/vllm_scheduler/results/raw/` (9 files); git-ignored, kept for Phase-3 model fitting.
+
+## git: repo is https://github.com/GIREESH7963/vllm-scheduler (private). Committed summaries +
+## figures are the artifacts of record; raw run JSONs and `.env` stay local/git-ignored.

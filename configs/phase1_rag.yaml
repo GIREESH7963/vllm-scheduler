@@ -6,12 +6,13 @@ server:
   dtype: float16
 
 workload:
+  # Long prompts are prefill-heavy -> lowest capacity; longer window to stabilise low-λ stats.
   duration_s: 90
   warmup_s: 30
   repeats: 3
   seed: 12345
-  arrival_rates: [1, 2, 3]
-  save_raw: false
+  arrival_rates: [0.5, 0.75, 1.0, 1.5]
+  save_raw: true
   mix:
     long: 0.8
     short: 0.2

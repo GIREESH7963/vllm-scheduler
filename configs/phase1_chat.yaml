@@ -6,12 +6,13 @@ server:
   dtype: float16
 
 workload:
-  duration_s: 90
-  warmup_s: 30
+  # Short outputs finish fast -> higher capacity than the other mixes; sweep bracket is higher.
+  duration_s: 60
+  warmup_s: 20
   repeats: 3
   seed: 12345
-  arrival_rates: [2, 4, 8]
-  save_raw: false
+  arrival_rates: [1, 2, 3, 4]
+  save_raw: true
   mix:
     short: 0.85
     reasoning: 0.15
