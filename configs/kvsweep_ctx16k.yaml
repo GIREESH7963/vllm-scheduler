@@ -1,0 +1,31 @@
+# KV-regime sweep — point 3 of 4: ~16k-token context (near the predicted crossover; C_kv ~ N*).
+# See kvsweep_ctx2k.yaml for the design; only prompt length and arrival rate change across points.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 90
+  warmup_s: 25
+  repeats: 2
+  seed: 12345
+  arrival_rates: [0.6]        # ~16k context -> low capacity; expect KV occupancy to climb here
+  save_raw: false
+  mix:
+    longctx: 1.0
+  profiles:
+    longctx:
+      prompt_len: {kind: fixed, lo: 12300}   # ~16k tokens
+      output_len: {kind: fixed, lo: 96}
+      corpus: prose
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 8000
+  tpot_ms: 125

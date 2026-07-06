@@ -182,5 +182,6 @@
       "rel_error": 0.21440650852415533
     }
   ],
-  "n_divergence_points": 19
+  "n_divergence_points": 19,
+  "kv_regime_validation": {}
 }

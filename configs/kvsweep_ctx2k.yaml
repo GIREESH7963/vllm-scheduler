@@ -1,0 +1,35 @@
+# KV-regime sweep — point 1 of 4: ~2k-token context (compute-bound end of the sweep).
+# Holds a long-context single-class workload and pushes to saturation; the SWEEP variable across
+# the four kvsweep_ctx*.yaml files is the prompt length. As context grows, the KV cap C_kv shrinks
+# toward the compute knee N* (~10) — this traces the compute→KV crossover the Phase-3 model derives.
+# Prompt length is in WORDS (~1.3 tok/word for this prose corpus); actual prompt tokens come from
+# vLLM usage and are recorded per run. Output kept small so KV is dominated by the prompt.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 70
+  warmup_s: 20
+  repeats: 2
+  seed: 12345
+  arrival_rates: [2.0]        # biased to saturate this (cheap, short-context) point
+  save_raw: false
+  mix:
+    longctx: 1.0
+  profiles:
+    longctx:
+      prompt_len: {kind: fixed, lo: 1540}    # ~2k tokens
+      output_len: {kind: fixed, lo: 96}
+      corpus: prose
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 3000       # long-prompt prefill dominates TTFT; loose so it isn't the only signal
+  tpot_ms: 125

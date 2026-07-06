@@ -1,0 +1,34 @@
+# KV-regime sweep — point 4 of 4: ~24k-token context (predicted KV-bound end of the sweep).
+# See kvsweep_ctx2k.yaml for the design. At this context the model predicts C_kv drops below the
+# compute knee N*; the experiment TESTS whether the binding ceiling is KV (kv_occupancy->~1,
+# num_waiting>0, SM below its short-context ceiling) or prefill compute (SM saturated, kv<1).
+# See report/kv_regime_experiment.md. 24k prompt + 96 out < 32k max_model_len.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 100
+  warmup_s: 30
+  repeats: 2
+  seed: 12345
+  arrival_rates: [0.4]        # lowest capacity; still enough to saturate a shrunken KV cap
+  save_raw: false
+  mix:
+    longctx: 1.0
+  profiles:
+    longctx:
+      prompt_len: {kind: fixed, lo: 18460}   # ~24k tokens
+      output_len: {kind: fixed, lo: 96}
+      corpus: prose
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 12000
+  tpot_ms: 125
