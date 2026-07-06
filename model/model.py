@@ -3,7 +3,7 @@
 Offline analysis (no serving, no GPU): fit a legible analytical model to the measured Phase-1/2
 runs and show where it predicts behaviour and where it breaks down.
 
-Model (root Phase-3 CLAUDE.md): vLLM continuous batching ~= M/G/1 **processor sharing** with a
+Model: vLLM continuous batching ~= M/G/1 **processor sharing** with a
 load-dependent (batched) service rate, extended with a hard concurrency capacity limit.
 
     throughput(N) = min(N * r0, mumax)     # linear batching regime  ->  flat compute ceiling
@@ -20,7 +20,7 @@ compute (the knee N*) and KV cache (C_kv sequences before the KV cache is full).
 from the data (C_kv = N / kv_occupancy) and show which one binds on this hardware, then project
 where the other would take over.
 
-Run:  python phase3-model/model.py --config configs/phase3_model.yaml
+Run:  python model/model.py --config configs/phase3_model.yaml
 """
 
 from __future__ import annotations

@@ -4,7 +4,7 @@ Sweeps ``workload.arrival_rates`` x ``workload.repeats`` open-loop Poisson runs 
 vLLM server, writing one results JSON per run, a per-rate variance summary, and load-sweep figures.
 
 Run on the serving box (venv active), server already up with the n-gram spec-decode config:
-    python phase1-harness/run.py --config configs/phase1_mixed.yaml
+    python harness/run.py --config configs/phase1_mixed.yaml
 
 (The folder name has a hyphen so ``-m phase1.run`` won't import; run the file path directly.)
 """

@@ -1,6 +1,6 @@
 """Phase-2 tests: policy ordering, adaptive feedback, length predictor. No GPU needed.
 
-Run from repo root: `python -m pytest phase2-policies/test_policies.py -q`
+Run from repo root: `python -m pytest scheduler/test_policies.py -q`
 """
 import sys
 from pathlib import Path

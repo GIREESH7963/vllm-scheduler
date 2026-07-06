@@ -5,7 +5,7 @@ model_analysis: phase3_mg1ps_capacity
 # Measured runs exported from every results/*.json (one row per run). Produced by the Phase-3
 # extraction step; committed alongside the model so the fit is reproducible.
 data:
-  csv: phase3-model/measured_runs.csv
+  csv: model/measured_runs.csv
 
 # The analytical model: continuous batching ~= M/G/1 processor sharing with a load-dependent
 # (batched) service rate and a knee N* = mumax / r0.

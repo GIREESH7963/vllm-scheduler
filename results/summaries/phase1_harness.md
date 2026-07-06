@@ -11,7 +11,7 @@ vLLM 0.8.5.post1 with n-gram spec decode.
 | `common/loadgen.py` | **Open-loop Poisson** driver: Exp(λ) inter-arrival gaps, dispatched on schedule regardless of in-flight count. Streams each request; records arrival, dispatch, TTFT, per-token times, e2e, actual-vs-requested length, prompt tokens. |
 | `common/metrics.py` | `aggregate_run()` → root schema + extras (per-class breakdown, dispatch-lag, queue depths, output-len); warmup discarded by arrival time; telemetry filtered to the measured window via the shared monotonic clock. `summarize_repeats()` → mean±std across repeats. |
 | `common/plots.py` | Headless figures: latency-vs-load, throughput-vs-load, utilization-vs-load, with ±1 std error bars over repeats. |
-| `phase1-harness/run.py` | Sweeps `arrival_rates × repeats`, one JSON per run + sweep summary + figures. One-time pre-sweep warmup from idle. Optional `save_raw` dumps per-request + per-sample time-series. |
+| `harness/run.py` | Sweeps `arrival_rates × repeats`, one JSON per run + sweep summary + figures. One-time pre-sweep warmup from idle. Optional `save_raw` dumps per-request + per-sample time-series. |
 | `configs/phase1_{chat,mixed,rag,specheavy}.yaml` | Four workload mixes; `phase1_specheavy` is the spec-decode-heavy one. `phase1_validation.yaml` = fast fixed-workload stability check. |
 
 ## Validation run (`phase1_validation`, 2 rates × 3 repeats, 40s windows)

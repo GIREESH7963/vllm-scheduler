@@ -10,12 +10,12 @@ POLICIES=nocap,fcfs,srpt,edf,adaptive
 echo "===== PHASE 2 START $(date -u +%FT%TZ) ====="
 
 echo "----- [1/3] mixed policy matrix $(date -u +%TZ) -----"
-$PY -u phase2-policies/run.py --config configs/phase2_mixed.yaml --policies "$POLICIES" --results-dir results
+$PY -u scheduler/run.py --config configs/phase2_mixed.yaml --policies "$POLICIES" --results-dir results
 
 echo "----- [2/3] predictor experiment $(date -u +%TZ) -----"
-$PY -u phase2-policies/run.py --config configs/phase2_mixed.yaml --experiment predictor --results-dir results
+$PY -u scheduler/run.py --config configs/phase2_mixed.yaml --experiment predictor --results-dir results
 
 echo "----- [3/3] chat policy matrix $(date -u +%TZ) -----"
-$PY -u phase2-policies/run.py --config configs/phase2_chat.yaml --policies "$POLICIES" --results-dir results
+$PY -u scheduler/run.py --config configs/phase2_chat.yaml --policies "$POLICIES" --results-dir results
 
 echo "===== PHASE 2 DONE $(date -u +%FT%TZ) ====="

@@ -1,6 +1,6 @@
 """Aggregate per-request timings + telemetry into the project's results schema.
 
-Schema (root CLAUDE.md) — one JSON per run:
+Schema (see README) — one JSON per run:
   config, throughput_tok_s, ttft_ms{p50,p99}, tpot_ms{p50,p99}, kv_occupancy,
   sm_active_pct, dram_active_pct, energy_j_per_tok, slo_attainment, acceptance_rate
 

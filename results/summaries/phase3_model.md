@@ -1,7 +1,7 @@
 # Phase 3 — Queueing model + validation (committed summary)
 
 **Date:** 2026-07-06 · **Model:** Qwen/Qwen2.5-1.5B-Instruct · **GPU:** T4 (float16) · offline
-analysis of the Phase-1/2 measurements (no serving). Code: `phase3-model/model.py`,
+analysis of the Phase-1/2 measurements (no serving). Code: `model/model.py`,
 config `configs/phase3_model.yaml`, fitted constants `results/summaries/phase3_model_fit.json`.
 
 ## The model (kept deliberately simple and legible)

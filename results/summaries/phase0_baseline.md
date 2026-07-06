@@ -25,7 +25,7 @@
 - ✅ vLLM serves a 1–3B model with n-gram speculative decoding on the T4 (`--dtype float16`).
 - ✅ Telemetry pipeline wired: vLLM `/metrics` (KV occ, queue depth, spec counters) + DCGM
   `dmon` (SM-active/DRAM-active) + NVML power — all three sources produce non-zero data.
-- ✅ `phase0-setup/smoke.py` fires warmup+measured bursts and writes one schema-valid results JSON.
+- ✅ `baseline/smoke.py` fires warmup+measured bursts and writes one schema-valid results JSON.
 - ✅ Warmup discarded before measuring; p50 AND p99 reported; power from NVML, utilization from DCGM.
 
 ## Notes / gotchas found

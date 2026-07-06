@@ -25,22 +25,22 @@ echo "===== REPRODUCE START $(date -u +%FT%TZ) ====="
 
 # ---- 1. Phase 1: measurement-harness sweeps (no-scheduler baseline) --------------------------
 echo "----- [1/4] Phase-1 harness sweeps $(date -u +%TZ) -----"
-"$PY" -u phase1-harness/run.py --config configs/phase1_validation.yaml   # fast fixed-workload check
-"$PY" -u phase1-harness/run.py --config configs/phase1_mixed.yaml        # no-scheduler baseline sweep
+"$PY" -u harness/run.py --config configs/phase1_validation.yaml   # fast fixed-workload check
+"$PY" -u harness/run.py --config configs/phase1_mixed.yaml        # no-scheduler baseline sweep
 
 # ---- 2. Phase 2: policy comparison matrices --------------------------------------------------
 echo "----- [2/4] Phase-2 policy matrices $(date -u +%TZ) -----"
-"$PY" -u phase2-policies/run.py --config configs/phase2_mixed.yaml --policies "$POLICIES" --results-dir results
-"$PY" -u phase2-policies/run.py --config configs/phase2_chat.yaml  --policies "$POLICIES" --results-dir results
+"$PY" -u scheduler/run.py --config configs/phase2_mixed.yaml --policies "$POLICIES" --results-dir results
+"$PY" -u scheduler/run.py --config configs/phase2_chat.yaml  --policies "$POLICIES" --results-dir results
 
 # ---- 3. Phase 2: output-length prediction mini-experiment ------------------------------------
 echo "----- [3/4] Phase-2 predictor experiment $(date -u +%TZ) -----"
-"$PY" -u phase2-policies/run.py --config configs/phase2_mixed.yaml --experiment predictor --results-dir results
+"$PY" -u scheduler/run.py --config configs/phase2_mixed.yaml --experiment predictor --results-dir results
 
 # ---- 4. Phase 3: queueing model + figures (OFFLINE — no GPU needed) ---------------------------
 # Re-fits M/G/1-PS + capacity model from the extracted measurements and regenerates Phase-3 figures.
 echo "----- [4/4] Phase-3 model fit $(date -u +%TZ) -----"
-"$PY" -u phase3-model/model.py --config configs/phase3_model.yaml
+"$PY" -u model/model.py --config configs/phase3_model.yaml
 
 echo "===== REPRODUCE DONE $(date -u +%FT%TZ) ====="
-echo "Summaries: results/summaries/   Figures: results/figures/   Report: phase4-writeup/report.md"
+echo "Summaries: results/summaries/   Figures: results/figures/   Report: report/report.md"

@@ -5,7 +5,7 @@ model: Qwen/Qwen2.5-1.5B-Instruct
 
 server:
   base_url: http://localhost:8000
-  # For reference/reproducibility — how the server is launched (see phase0-setup/CLAUDE.md):
+  # For reference/reproducibility — how the server is launched (see README.md):
   #   vllm serve Qwen/Qwen2.5-1.5B-Instruct --dtype float16 --port 8000 \
   #     --speculative-config '{"method":"ngram","num_speculative_tokens":4,
   #                            "prompt_lookup_min":2,"prompt_lookup_max":5}'

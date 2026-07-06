@@ -5,10 +5,10 @@ running vLLM server, collects telemetry over the measured window, and writes one
 JSON in the project schema.
 
 Usage (on the serving box, venv active):
-    python -m phase0-setup.smoke --config configs/phase0_qwen1.5b.yaml
+    python -m baseline.smoke --config configs/phase0_qwen1.5b.yaml
 
 Note: the folder name has a hyphen, so it is not importable as a package path. Run this file
-directly instead:  python phase0-setup/smoke.py --config configs/phase0_qwen1.5b.yaml
+directly instead:  python baseline/smoke.py --config configs/phase0_qwen1.5b.yaml
 """
 from __future__ import annotations
 

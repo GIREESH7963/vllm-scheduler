@@ -8,9 +8,9 @@ vLLM with n-gram spec decode. All scheduling is an **admission/ordering layer IN
 
 | Module | Role |
 |---|---|
-| `phase2-policies/scheduler.py` | Queue + admission concurrency cap + pluggable policy interface. Policies: `nocap` (admit-all baseline ≈ Phase 1), `fcfs`, `srpt` (size = prompt-length proxy), `edf` (class-aware deadlines), `adaptive` (rule-based feedback: widen cap when SM idle, throttle when TTFT p99 rises, deprioritize long jobs when KV > threshold). **Load-shedding:** drop requests queued longer than `max_queue_wait_s` (counts as an SLO miss). |
-| `phase2-policies/predictor.py` | Class-aware linear output-length predictor; drives SRPT oracle / prediction / prompt-proxy variants. |
-| `phase2-policies/run.py` | Policy matrix (policies × rates × repeats) + predictor experiment mode; writes per-run JSON + policy summary + figures. |
+| `scheduler/scheduler.py` | Queue + admission concurrency cap + pluggable policy interface. Policies: `nocap` (admit-all baseline ≈ Phase 1), `fcfs`, `srpt` (size = prompt-length proxy), `edf` (class-aware deadlines), `adaptive` (rule-based feedback: widen cap when SM idle, throttle when TTFT p99 rises, deprioritize long jobs when KV > threshold). **Load-shedding:** drop requests queued longer than `max_queue_wait_s` (counts as an SLO miss). |
+| `scheduler/predictor.py` | Class-aware linear output-length predictor; drives SRPT oracle / prediction / prompt-proxy variants. |
+| `scheduler/run.py` | Policy matrix (policies × rates × repeats) + predictor experiment mode; writes per-run JSON + policy summary + figures. |
 | `configs/phase2_{mixed,chat}.yaml` | The two workload mixes for the head-to-head. |
 
 Metrics extended for scheduling: `queue_wait`, `total_latency` (arrival→done), per-class SLO/queue/total.

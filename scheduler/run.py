@@ -5,9 +5,9 @@ harness (workload, telemetry, aggregation, plots).
 
 On the serving box (venv active), server already up with n-gram spec decode:
     # policy comparison across policies x rates x repeats
-    python phase2-policies/run.py --config configs/phase2_mixed.yaml
+    python scheduler/run.py --config configs/phase2_mixed.yaml
     # length-prediction mini-experiment (SRPT oracle vs prediction vs prompt-proxy)
-    python phase2-policies/run.py --config configs/phase2_mixed.yaml --experiment predictor
+    python scheduler/run.py --config configs/phase2_mixed.yaml --experiment predictor
 """
 from __future__ import annotations
 
