@@ -71,7 +71,13 @@ class MetricsSample:
     power_w: float
     spec_accepted: float | None  # cumulative counter, if exposed
     spec_draft: float | None
+    temp_c: float = float("nan")   # GPU temperature (NVML)
+    throttled: bool = False        # thermal clock-slowdown active (SW or HW) — data suspect if True
     raw: dict[str, float] = field(repr=False, default_factory=dict)
+
+
+# Thermal bits of the NVML clocks-throttle-reasons bitmask.
+_THERMAL_BITS = 0x0000000000000020 | 0x0000000000000040 | 0x0000000000000008  # SWThermal|HWThermal|HWSlowdown
 
 
 @dataclass
@@ -145,6 +151,22 @@ class TelemetrySampler:
         if self._client:
             self._client.close()
 
+    # -- live snapshot for feedback control (Phase-2 adaptive policy) --
+    def latest(self) -> dict:
+        """Most-recent telemetry snapshot: kv_occupancy, sm_active (0..1), queue depths.
+
+        Returns NaNs for any source with no samples yet. Cheap; safe to call from the scheduler
+        loop between admissions.
+        """
+        m = self.metrics_samples[-1] if self.metrics_samples else None
+        d = self.dcgm_samples[-1] if self.dcgm_samples else None
+        return {
+            "kv_occupancy": m.kv_occupancy if m else float("nan"),
+            "num_running": m.num_running if m else float("nan"),
+            "num_waiting": m.num_waiting if m else float("nan"),
+            "sm_active": d.sm_active if d else float("nan"),
+        }
+
     # -- /metrics + NVML poll loop --
     def _read_power_w(self) -> float:
         if self._nvml_handle is None:
@@ -153,6 +175,20 @@ class TelemetrySampler:
             return pynvml.nvmlDeviceGetPowerUsage(self._nvml_handle) / 1000.0  # mW -> W
         except Exception:  # pragma: no cover
             return float("nan")
+
+    def _read_thermal(self) -> tuple[float, bool]:
+        if self._nvml_handle is None:
+            return float("nan"), False
+        try:
+            temp = float(pynvml.nvmlDeviceGetTemperature(self._nvml_handle, pynvml.NVML_TEMPERATURE_GPU))
+        except Exception:  # pragma: no cover
+            temp = float("nan")
+        try:
+            reasons = pynvml.nvmlDeviceGetCurrentClocksThrottleReasons(self._nvml_handle)
+            throttled = bool(reasons & _THERMAL_BITS)
+        except Exception:  # pragma: no cover
+            throttled = False
+        return temp, throttled
 
     def _poll_loop(self) -> None:
         while not self._stop.is_set():
@@ -164,6 +200,7 @@ class TelemetrySampler:
                     m = parse_prometheus(resp.text)
             except Exception:
                 pass  # transient; skip this tick's /metrics
+            temp_c, throttled = self._read_thermal()
             self.metrics_samples.append(
                 MetricsSample(
                     t=t,
@@ -173,6 +210,8 @@ class TelemetrySampler:
                     power_w=self._read_power_w(),
                     spec_accepted=_first(m, "spec_decode_num_accepted_tokens"),
                     spec_draft=_first(m, "spec_decode_num_draft_tokens"),
+                    temp_c=temp_c,
+                    throttled=throttled,
                     raw=m,
                 )
             )
@@ -208,6 +247,42 @@ class TelemetrySampler:
             self.dcgm_samples.append(
                 DcgmSample(t=time.monotonic(), sm_active=vals[0], dram_active=vals[1])
             )
+
+
+def read_temp_c(gpu_index: int = 0) -> float:
+    """One-shot GPU temperature read via NVML (for the cooldown gate). NaN if unavailable."""
+    if not _NVML_OK:
+        return float("nan")
+    try:
+        pynvml.nvmlInit()
+        h = pynvml.nvmlDeviceGetHandleByIndex(gpu_index)
+        return float(pynvml.nvmlDeviceGetTemperature(h, pynvml.NVML_TEMPERATURE_GPU))
+    except Exception:  # pragma: no cover
+        return float("nan")
+
+
+def wait_for_cool(threshold_c: float = 75.0, gpu_index: int = 0, timeout_s: float = 300.0,
+                  poll_s: float = 5.0, log=print) -> float:
+    """Block until GPU temp <= threshold (passive T4 throttles ~85C, wrecking measurements).
+
+    Returns the final temperature. Times out after ``timeout_s`` to avoid stalling forever.
+    """
+    import time as _time
+
+    t = read_temp_c(gpu_index)
+    if t != t:  # NaN -> can't read; don't block
+        return t
+    start = _time.monotonic()
+    warned = False
+    while t > threshold_c and _time.monotonic() - start < timeout_s:
+        if not warned:
+            log(f"[thermal] GPU {t:.0f}C > {threshold_c:.0f}C — cooling down before measuring ...")
+            warned = True
+        _time.sleep(poll_s)
+        t = read_temp_c(gpu_index)
+    if warned:
+        log(f"[thermal] resumed at {t:.0f}C")
+    return t
 
 
 def _first(m: dict[str, float], needle: str) -> float | None:

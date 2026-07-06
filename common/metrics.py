@@ -167,6 +167,9 @@ def aggregate_run(config, results, sampler, t0: float, rate: float, seed: int, r
     ttfts = [r.ttft_ms for r in ok if not math.isnan(r.ttft_ms)]
     tpots = [r.tpot_ms for r in ok if not math.isnan(r.tpot_ms)]
     e2e = [r.latency_ms for r in ok if not math.isnan(r.latency_ms)]
+    # Phase-2: queue wait (arrival->admission) and total arrival->last-token latency.
+    qwaits = [r.queue_wait_ms for r in ok]
+    totals = [r.queue_wait_ms + r.latency_ms for r in ok if not math.isnan(r.latency_ms)]
     total_out = sum(r.output_tokens_actual for r in ok)
     throughput = total_out / measure_window_s
 
@@ -178,6 +181,10 @@ def aggregate_run(config, results, sampler, t0: float, rate: float, seed: int, r
     mean_power_w = _nanmean([s.power_w for s in msamps])
     sm = _nanmean([s.sm_active for s in dsamps]) * 100.0
     dram = _nanmean([s.dram_active for s in dsamps]) * 100.0
+    # Thermal validity: on the passively-cooled T4, clock throttling silently corrupts timings.
+    temps = [s.temp_c for s in msamps if not math.isnan(s.temp_c)]
+    max_temp_c = float(max(temps)) if temps else float("nan")
+    thermal_throttled = any(s.throttled for s in msamps)
     energy_j_per_tok = (
         mean_power_w * measure_window_s / total_out
         if total_out > 0 and not math.isnan(mean_power_w)
@@ -186,14 +193,18 @@ def aggregate_run(config, results, sampler, t0: float, rate: float, seed: int, r
 
     slo = config.get("slo", {}) or {}
     ttft_slo, tpot_slo = slo.get("ttft_ms"), slo.get("tpot_ms")
-    if ok and (ttft_slo is not None or tpot_slo is not None):
+    if measured and (ttft_slo is not None or tpot_slo is not None):
+        # Denominator is ALL measured requests: a dropped/failed request is an SLO miss, not excluded
+        # (else load-shedding policies would look artificially good). Effective TTFT is
+        # arrival-relative: queue wait (0 in direct Phase-1 runs) + server TTFT.
         met = sum(
             1
-            for r in ok
-            if (ttft_slo is None or r.ttft_ms <= ttft_slo)
+            for r in measured
+            if r.success
+            and (ttft_slo is None or (r.queue_wait_ms + r.ttft_ms) <= ttft_slo)
             and (tpot_slo is None or math.isnan(r.tpot_ms) or r.tpot_ms <= tpot_slo)
         )
-        slo_attainment = met / len(ok)
+        slo_attainment = met / len(measured)
     else:
         slo_attainment = float("nan")
 
@@ -215,6 +226,8 @@ def aggregate_run(config, results, sampler, t0: float, rate: float, seed: int, r
         "ttft_ms": _p50_p99(ttfts),
         "tpot_ms": _p50_p99(tpots),
         "e2e_latency_ms": _p50_p99(e2e),
+        "queue_wait_ms": _p50_p99(qwaits),
+        "total_latency_ms": _p50_p99(totals),
         "kv_occupancy": kv,
         "num_running_mean": running,
         "num_waiting_mean": waiting,
@@ -222,6 +235,8 @@ def aggregate_run(config, results, sampler, t0: float, rate: float, seed: int, r
         "dram_active_pct": dram,
         "mean_power_w": mean_power_w,
         "energy_j_per_tok": energy_j_per_tok,
+        "max_temp_c": max_temp_c,
+        "thermal_throttled": thermal_throttled,  # True => timings suspect (clocks were slowed)
         "slo_attainment": slo_attainment,
         "acceptance_rate": _acceptance_rate_windowed(msamps),
         "dispatch_lag_ms": {
@@ -230,7 +245,7 @@ def aggregate_run(config, results, sampler, t0: float, rate: float, seed: int, r
             "max": max(lags_ms) if lags_ms else float("nan"),
         },
         "output_len": _len_stats(ok),
-        "by_class": _by_class(measured),
+        "by_class": _by_class(measured, ttft_slo, tpot_slo),
         "notes": sampler.notes,
     }
 
@@ -257,16 +272,34 @@ def _len_stats(ok) -> dict:
     }
 
 
-def _by_class(measured) -> dict:
+def _by_class(measured, ttft_slo, tpot_slo) -> dict:
+    """Per-class breakdown incl. queue wait, total latency, and SLO — the differentiated-service
+    lens: under overload, ordering policies protect some classes at the expense of others."""
     classes = sorted({r.profile for r in measured})
     out = {}
     for c in classes:
-        rc = [r for r in measured if r.profile == c and r.success]
+        mc = [r for r in measured if r.profile == c]           # all measured of this class
+        rc = [r for r in mc if r.success]                       # successful ones
+        totals = [r.queue_wait_ms + r.latency_ms for r in rc if not math.isnan(r.latency_ms)]
+        if mc and (ttft_slo is not None or tpot_slo is not None):
+            met = sum(
+                1 for r in mc
+                if r.success
+                and (ttft_slo is None or (r.queue_wait_ms + r.ttft_ms) <= ttft_slo)
+                and (tpot_slo is None or math.isnan(r.tpot_ms) or r.tpot_ms <= tpot_slo)
+            )
+            slo_c = met / len(mc)
+        else:
+            slo_c = float("nan")
         out[c] = {
             "spec_decode": bool(rc[0].spec_decode) if rc else False,
             "n": len(rc),
+            "n_dropped": len(mc) - len(rc),
             "ttft_ms": _p50_p99([r.ttft_ms for r in rc if not math.isnan(r.ttft_ms)]),
             "tpot_ms": _p50_p99([r.tpot_ms for r in rc if not math.isnan(r.tpot_ms)]),
+            "queue_wait_ms": _p50_p99([r.queue_wait_ms for r in rc]),
+            "total_latency_ms": _p50_p99(totals),
+            "slo_attainment": slo_c,
             "output_tokens_actual_mean": float(np.mean([r.output_tokens_actual for r in rc])) if rc else float("nan"),
         }
     return out

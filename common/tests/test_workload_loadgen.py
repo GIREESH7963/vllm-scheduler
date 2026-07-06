@@ -44,9 +44,9 @@ def _cfg():
     })
 
 
-def _mk_result(profile, arrival_t, ttft, tpot, out, warmup, ok=True):
+def _mk_result(profile, arrival_t, ttft, tpot, out, warmup, ok=True, seq=0):
     return RequestResult(
-        profile=profile, spec_decode=(profile == "coding"), arrival_t=arrival_t,
+        profile=profile, spec_decode=(profile == "coding"), seq=seq, arrival_t=arrival_t,
         dispatch_t=arrival_t + 0.001, ttft_ms=ttft, tpot_ms=tpot, latency_ms=ttft + tpot * out,
         output_tokens_requested=out, output_tokens_actual=out, prompt_tokens=20,
         success=ok, is_warmup=warmup,

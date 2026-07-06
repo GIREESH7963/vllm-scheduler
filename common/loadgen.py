@@ -26,6 +26,7 @@ from .workload import Profile, RequestSpec, WorkloadMix
 class RequestResult:
     profile: str
     spec_decode: bool
+    seq: int                  # arrival index (stable under a fixed seed) — used for oracle lookup
     arrival_t: float          # scheduled arrival, seconds since run start
     dispatch_t: float         # actual dispatch, seconds since run start
     ttft_ms: float
@@ -37,6 +38,10 @@ class RequestResult:
     success: bool
     is_warmup: bool = False
     error: str = ""
+    # Phase-2 admission layer (0 in Phase-1 direct-dispatch runs): time spent waiting in the
+    # scheduler queue before admission, and the total arrival->last-token latency.
+    queue_wait_ms: float = 0.0
+    admit_t: float = 0.0
 
 
 @dataclass
@@ -128,6 +133,7 @@ async def _send(client: httpx.AsyncClient, base_url: str, model: str, spec: Requ
     return RequestResult(
         profile=spec.profile,
         spec_decode=spec.spec_decode,
+        seq=spec.seq,
         arrival_t=arrival_t,
         dispatch_t=dispatch_t,
         ttft_ms=ttft_ms,
