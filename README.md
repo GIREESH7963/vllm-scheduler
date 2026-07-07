@@ -29,8 +29,10 @@ vLLM** (we never modify vLLM's internal batcher).
   class (short-job SLO 0.85 while reasoning drops to 0.04), `srpt` protects short jobs but starves long
   ones, `adaptive` keeps every class alive. `fcfs` suffers the convoy collapse (SLO 0.12). Admit-all
   looks great on aggregate but offers **zero control** over who suffers.
-- **Output-length prediction barely matters** for SRPT here: a free prompt-length proxy (SLO 0.462)
-  matches a learned predictor (0.441) and beats even a true-length oracle (0.376).
+- **Output-length prediction barely matters** for SRPT here: on one fixed arrival trace (a paired
+  comparison), a free prompt-length proxy (SLO 0.462) matches a learned predictor (0.441) and even
+  edges out a true-length oracle (0.376) — suggestive of SRPT-optimal ≠ SLO-optimal, though it is a
+  single trace, not repeated (see report §4.4).
 - **The ceiling is a bandwidth-bound throughput limit, not KV:** a roofline check puts decode at ~2 %
   of the T4's FLOP peak (so it's memory-bandwidth-bound, not compute-bound); the throughput knee
   N\* ≈ 10 vs a derived KV cap ≈ 830 seqs means **the ceiling binds ~83× before KV capacity.** KV would

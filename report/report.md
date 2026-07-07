@@ -142,7 +142,9 @@ capacity a fixed cap wastes, so it does not *pay* the throughput penalty the oth
 
 ### 4.4 Output-length prediction barely matters here — and a perfect oracle is *worst* (Phase 2 mini-experiment)
 
-SRPT needs to know job size. We compared three size signals (mixed, λ=4; predictor MAE = 19 tokens):
+SRPT needs to know job size. We compared three size signals (mixed, λ=4; predictor MAE = 19 tokens)
+on a **single fixed arrival trace** (seed 12345), so the three variants differ *only* in the size
+signal handed to SRPT — a paired comparison, not three independent draws:
 
 | SRPT variant | aggregate SLO |
 |---|---|
@@ -152,9 +154,9 @@ SRPT needs to know job size. We compared three size signals (mixed, λ=4; predic
 
 Two findings, one expected and one not.
 
-**Misprediction cost is negligible.** The learned predictor (0.441) matches the free prompt-length
-proxy (0.462) within run-to-run noise, so investing in a length model buys nothing at this operating
-point. A clean secondary null result.
+**Misprediction cost is negligible.** On the same trace the learned predictor (0.441) lands within
+0.021 of the free prompt-length proxy (0.462) — a gap ~4× smaller than the oracle's, and small enough
+that investing in a length model buys nothing at this operating point. A clean secondary null result.
 
 **A perfect oracle is the *worst* variant.** The *direction* is principled: SRPT is optimal for *mean*
 response time, but our metric is *per-request deadline attainment*, and better size information makes
@@ -172,9 +174,14 @@ mechanism, because our data does not support one. The single-repeat per-class br
 The tempting story — "the oracle enacts SRPT hardest and starves the *long* jobs" — is **not** what the
 data shows: the oracle is actually *better* on `long` (0.24 vs 0.19) and on `coding`. The aggregate
 drop is led by the numerous `short` class falling (0.57 vs 0.75) and `reasoning` falling, and with a
-single repeat and small per-class counts these figures are noisy. So we report the oracle's
-underperformance as a robust *aggregate* result with an honest hypothesis (SRPT-optimal ordering ≠
-SLO-optimal), not a validated per-class mechanism — it would take repeats to pin the cause.
+single trace and small per-class counts these figures are noisy. Because the three variants share one
+arrival trace, the *aggregate* ordering (oracle worst, by 0.086 over the proxy — ~4× the
+prediction-vs-proxy gap we just called noise) is a **clean paired difference**: on this trace, holding
+arrivals fixed, sharper size information demonstrably hurt SLO. What one trace cannot tell us is whether
+that ordering *generalizes* — a different arrival pattern could narrow or reverse it. So we report the
+oracle's underperformance as a **suggestive, not established, single-trace result** carrying an honest
+hypothesis (SRPT-optimal ordering ≠ SLO-optimal), not a validated per-class mechanism — repeats across
+seeds would be needed to confirm both the effect and its cause.
 
 The practical takeaway is unchanged: at this operating point SRPT ordering is inherently weak for an
 SLO objective (all variants < 0.47); the lever is a deadline-aware (`edf`) or balanced (`adaptive`)

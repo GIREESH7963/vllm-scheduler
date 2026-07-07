@@ -82,9 +82,11 @@ per-class *differentiation* is far more robust than the aggregate SLO — that i
 | prediction (learned length) | 0.441 |
 | oracle (true output length) | 0.376 |
 
-**Misprediction cost is negligible.** Prediction (0.44) essentially matches the free prompt-length
-proxy (0.46), and even a perfect output-length oracle does not win at this operating point — SRPT
-ordering is inherently weak here (all variants < 0.47, consistent with srpt losing to nocap). The
+**Misprediction cost is negligible.** All three variants ran on one fixed arrival trace (paired
+comparison, single seed). Prediction (0.44) essentially matches the free prompt-length proxy (0.46),
+and even a perfect output-length oracle does not win at this operating point — SRPT
+ordering is inherently weak here (all variants < 0.47, consistent with srpt losing to nocap). Single
+trace, so read the oracle ordering as suggestive not established. The
 takeaway: investing in an accurate length predictor buys nothing in this regime; the cheap
 prompt-length proxy is sufficient. A clean, defensible negative result.
 
