@@ -242,12 +242,25 @@ knob. Two observations validate the framing:
 The Phase-3 brief anticipated a KV-cache capacity limit as the thing that breaks the model. The data
 says otherwise, and pinning down *which* resource actually binds is the interesting result.
 
-**First, KV is slack.** `kv_occupancy` never exceeds ~8 %, even at 60 concurrent sequences.
+**First, KV is slack — confirmed far past the knee.** `kv_occupancy` never exceeds ~13 %, even when a
+dense admit-all stress sweep drives the running population to **~117 concurrent sequences** — 6× the
+concurrency the main Phase-2 runs reached — with `num_waiting` pinned at 0 the whole time (full
+outcome, and why this sweep is not folded into the fit, in `report/dense_sweep_note.md`).
 Extrapolating the KV cap from the measurements (`C_kv = N / kv_occupancy`, at fixed mean length) gives
-**C_kv ~ 10³ concurrent sequences** (≈ 830 at the observed average length) versus the throughput knee
+**C_kv ~ 10³ concurrent sequences** (≈ 830–920 at the observed average length) versus the throughput knee
 **N\* ≈ 10** — the throughput ceiling is reached roughly two orders of magnitude before KV memory
-fills. (This is a ~12× linear extrapolation from ≤8 % occupancy and assumes the server's
+fills. (A linear extrapolation from ≤13 % occupancy, assuming the server's
 `gpu_memory_utilization = 0.9` default, so treat the absolute figure as order-of-magnitude.)
+
+**A corollary the stress sweep exposed — the real failure mode of unbounded admission is not KV.**
+Pushed past λ = 4 sustained, admit-all drove the batch beyond ~140 sequences and **OOM-crashed the vLLM
+engine** — but on *activation/scratch* memory, not the KV pool (still only ~13 % occupied). With the
+default `max_num_seqs = 256` and no admission cap, the engine keeps admitting until the per-step
+activation tensors exhaust the non-KV headroom on the 16 GB card. So on this hardware the practical
+consequence of unbounded admission is an activation-memory OOM *well before* KV blocking, and the
+concurrency cap the admission layer provides is exactly what prevents it — a stability argument for
+admission control that the aggregate-SLO parity result (§4.1) does not capture. (Single stress-run
+observation; the mechanism is unambiguous from the CUDA OOM at batch ≈ 140, but we did not repeat it.)
 
 **Second — the correction worth making precisely — the ceiling `μmax` is set by memory bandwidth, not
 compute FLOPs.** A roofline check on this exact setup:
