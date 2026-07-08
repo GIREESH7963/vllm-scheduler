@@ -51,6 +51,12 @@ decoding (`num_speculative_tokens=4, prompt_lookup_min=2, prompt_lookup_max=5`).
 The n-gram acceptance rate of 0.458 was cross-checked against vLLM's own server-log counter
 (484/1056) — the telemetry pipeline is trustworthy.
 
+This baseline uses the **Phase-0 fixed prompt set** — a lighter profile than the heterogeneous
+"mixed" workload used from Phase 1 onward, which runs a slower ~21 ms single-stream TPOT (§5); the
+16.2 vs 21 ms difference is two workloads, not a discrepancy. And with only 20 measured requests the
+p99 columns here are weakly resolved (the 99th percentile of 20 samples is essentially the max) — read
+them as an upper-ish bound, not a stable percentile.
+
 ---
 
 ## 3. Measurement harness (Phase 1)
@@ -83,7 +89,9 @@ class-aware), and `adaptive` (a rule-based feedback controller: widen the admiss
 idle, throttle when TTFT p99 rises, deprioritize long jobs when KV is high). Requests queued longer
 than a bound are load-shed and counted as SLO misses (so shedding policies don't look artificially
 good). We ran two workload mixes (a heterogeneous "mixed" and a short-dominated "chat"), three repeats
-each, across arrival rates that bracket the saturation knee.
+each, across arrival rates that bracket the saturation knee. Each run is 25 s with the first 8 s
+discarded as warmup, yielding **≈45–90 measured requests per run** at λ=4 (mean ~60); reported cells
+are the mean over 3 reps, so each per-run p99 rests on ~60 requests.
 
 ### 4.1 The uncomfortable headline: nobody beats admit-all on aggregate SLO
 
@@ -226,8 +234,10 @@ context this project measures (~36k tokens; see §5.1).
 | chat | 58.0 | 355 | 6.1 |
 | phase1 heavy mix | 20.0 | 250 | 12.5 |
 
-`r0 ≈ 48` independently matches the measured ~21 ms standalone TPOT — a physical anchor, not a free
-knob. Two observations validate the framing:
+`r0 ≈ 48` independently matches the *mixed* workload's low-load single-stream TPOT (~21 ms, measured
+at λ=0.5 with ~1 running sequence) — a physical anchor, not a free knob. (This is the heavier mixed
+profile; the §2 Phase-0 baseline runs a lighter prompt set at 16.2 ms / 59.7 tok/s — a different
+workload, not an inconsistency.) Two observations validate the framing:
 
 1. **All five Phase-2 policies collapse onto one `throughput(N)` curve.** They differ only in the
    concurrency `N` they induce; they ride the same service law. This is direct evidence that the
@@ -249,8 +259,8 @@ outcome, and why this sweep is not folded into the fit, in `report/dense_sweep_n
 Extrapolating the KV cap from the measurements (`C_kv = N / kv_occupancy`, at fixed mean length) gives
 **C_kv ~ 10³ concurrent sequences** (≈ 830–920 at the observed average length) versus the throughput knee
 **N\* ≈ 10** — the throughput ceiling is reached roughly two orders of magnitude before KV memory
-fills. (A linear extrapolation from ≤13 % occupancy, assuming the server's
-`gpu_memory_utilization = 0.9` default, so treat the absolute figure as order-of-magnitude.)
+fills. (A linear extrapolation from ≤13 % occupancy at the server's configured
+`gpu_memory_utilization = 0.9`, so treat the absolute figure as order-of-magnitude.)
 
 **A corollary the stress sweep exposed — the real failure mode of unbounded admission is not KV.**
 Pushed past λ = 4 sustained, admit-all drove the batch beyond ~140 sequences and **OOM-crashed the vLLM
