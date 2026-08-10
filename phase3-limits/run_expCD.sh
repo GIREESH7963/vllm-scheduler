@@ -95,17 +95,43 @@ stop_server() {
 }
 trap stop_server EXIT
 
+# Scoped to phase2_mixed λ=4 only. Each run measures for 33 s but the harness then waits for the
+# passively-cooled T4 to fall back to 77 C, so the real cost is ~220 s per run — 85% of it
+# cooling. Two cells would have been ~6 h. This cell carries by far the larger policy separation
+# (nocap SLO 0.908 vs fcfs 0.122), so it is the one that can actually settle the claim.
 wait_for_cool
 if start_server; then
-    for CFG in configs/phase2_mixed_n10.yaml configs/phase2_chat_n10.yaml; do
-        log "Experiment D: $CFG  (5 policies x 10 repeats)"
-        $PY -u phase2-policies/run.py --config "$CFG" --policies "$POLICIES" \
-            --results-dir results 2>&1 | sed "s/^/  [D] /"
-        log "Experiment D: $CFG done (rc=${PIPESTATUS[0]})"
-    done
+    CFG=configs/phase2_mixed_n10.yaml
+    log "Experiment D: $CFG  (5 policies x 10 repeats, ~3 h)"
+    $PY -u phase2-policies/run.py --config "$CFG" --policies "$POLICIES" \
+        --results-dir results 2>&1 | sed "s/^/  [D] /"
+    log "Experiment D done (rc=${PIPESTATUS[0]})"
 else
     log "SKIPPING Experiment D (server would not start)"
 fi
 stop_server
 
+# ============================================================================================
+# Regenerate every derived artefact, so the analysis is finished on return rather than the
+# raw data merely being present. Each step is independent; a failure in one is logged and the
+# rest still run.
+# ============================================================================================
+log "regenerating derived artefacts"
+$PY -u tools/fit_queueing_model.py --results-dir results 2>&1 | sed 's/^/  [fit] /' \
+    || log "WARNING: queueing-model fit failed"
+$PY -u tools/analyze_expB.py 2>&1 | sed 's/^/  [expB] /' \
+    || log "WARNING: Experiment B analysis failed"
+$PY -u tools/analyze_stats.py --results-dir results --baseline fcfs 2>&1 | sed 's/^/  [stats] /' \
+    || log "WARNING: policy statistics failed"
+$PY -u tools/make_paper_figures.py 2>&1 | sed 's/^/  [figs] /' \
+    || log "WARNING: figure generation failed"
+
 log "EXPERIMENTS C AND D COMPLETE"
+log "summary:"
+for tag in spec_on spec_off; do
+    n=$(ls "$OUT/regime_$tag"/*trial*.json 2>/dev/null | wc -l)
+    log "  C/$tag: $n trials"
+done
+log "  D: $(ls results/*phase2_mixed_n10_*.json 2>/dev/null | wc -l) / 50 runs"
+log "  3B probe: $(ls results/expB/oom3b/*trial*.json results/expB/oom3b_more/*trial*.json 2>/dev/null | wc -l) / 10 trials"
+log "read next: docs/experiment_b.md, results/stats/STATISTICS.md, results/figures/paper/"
