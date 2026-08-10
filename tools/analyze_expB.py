@@ -115,6 +115,21 @@ def mean_ci(x: np.ndarray) -> tuple[float, float]:
     return float(x.mean()), t * float(x.std(ddof=1)) / math.sqrt(n)
 
 
+def wilson(k: int, n: int, z: float = 1.959963985) -> list[float]:
+    """Wilson score interval for a proportion.
+
+    Used rather than the normal approximation because the counts here are small and the
+    proportion sits near 1, where the Wald interval overshoots past 1 and is worthless.
+    """
+    if n == 0:
+        return [float("nan")] * 2
+    p = k / n
+    d = 1 + z**2 / n
+    centre = (p + z**2 / (2 * n)) / d
+    half = z * math.sqrt(p * (1 - p) / n + z**2 / (4 * n**2)) / d
+    return [max(0.0, centre - half), min(1.0, centre + half)]
+
+
 def local_slope(N: np.ndarray, X: np.ndarray, lo_frac: float, hi_frac: float) -> float:
     order = np.argsort(N)
     N, X = N[order], X[order]
@@ -298,21 +313,50 @@ def main() -> None:
                        "death_run": deaths[0]["file"] if deaths else None})
             events.append(ev)
 
-    for tag, sub in [("1.5b", RESULTS / "expA" / "expA_summary_corrected.json"),
-                     ("3b", RESULTS / "expB" / "oom3b" / "expA_summary.json")]:
+    # Probe campaigns. The 3B boundary was probed twice: an initial batch of 3 alongside the
+    # sweep, then a follow-up batch once 2/3 proved too thin to characterise it. They are pooled
+    # — same config, same script, same machine — but kept individually addressable.
+    probes = [("1.5b", RESULTS / "expA" / "expA_summary_corrected.json", ""),
+              ("3b", RESULTS / "expB" / "oom3b" / "expA_summary.json", "a"),
+              ("3b", RESULTS / "expB" / "oom3b_more" / "expA_summary.json", "b")]
+    trials = {"1.5b": {"n": 0, "died": 0, "kv_died": [], "kv_survived": []},
+              "3b": {"n": 0, "died": 0, "kv_died": [], "kv_survived": []}}
+    for tag, sub, batch in probes:
         if not sub.exists():
             continue
         for r in json.loads(sub.read_text()):
+            trials[tag]["n"] += 1
             o = r.get("oom_corrected") or r.get("oom") or {}
+            kv = (r.get("peaks") or {}).get("kv_occupancy")
             if not o.get("failed_alloc_mib"):
+                # A survivor is not a trial that failed to reach the boundary — it rides the
+                # same ramp to the same concurrency ceiling and keeps serving. Its peak KV is
+                # the most direct evidence available that occupancy does not predict failure.
+                if kv is not None:
+                    trials[tag]["kv_survived"].append(kv * 100)
                 continue
+            trials[tag]["died"] += 1
+            if kv is not None:
+                trials[tag]["kv_died"].append(kv * 100)
             peaks = r.get("peaks") or {}
-            events.append({"arm": tag, "source": f"probe trial {r.get('trial')}",
+            events.append({"arm": tag, "source": f"probe{batch} trial {r.get('trial')}",
                            "failed_alloc_mib": o["failed_alloc_mib"],
                            "free_at_failure_mib": o.get("free_at_failure_mib"),
                            "alloc_site": "batch_expansion.py:227 in _contract_batch",
                            "telemetry": {"peak_num_running": peaks.get("num_running"),
                                          "peak_kv_occupancy": peaks.get("kv_occupancy")}})
+    out["reproduction"] = {
+        tag: {"trials": t["n"], "died": t["died"],
+              "rate": t["died"] / t["n"] if t["n"] else float("nan"),
+              "wilson_ci95": wilson(t["died"], t["n"]),
+              "peak_kv_when_died": t["kv_died"],
+              "peak_kv_when_survived": t["kv_survived"],
+              # The headline test of clause 1: if occupancy were the constraint, no survivor
+              # could peak above the lowest occupancy at which a death occurred.
+              "survivor_exceeds_death_kv": bool(
+                  t["kv_survived"] and t["kv_died"]
+                  and max(t["kv_survived"]) > min(t["kv_died"]))}
+        for tag, t in trials.items()}
 
     # For the sweep deaths use concurrency in the *last* telemetry sample before the engine
     # stopped answering, not the run peak: the peak may have occurred seconds earlier, and it is
@@ -559,8 +603,8 @@ def write_markdown(out: dict, path: Path) -> None:
     w("Supported:")
     w("")
     w("- The low-KV OOM reproduces across model sizes, experiments and load profiles, always at")
-    w("  the same allocation site. Experiment B adds two unplanned reproductions to Experiment A's")
-    w("  three and the 3B probe's two.")
+    w(f"  the same allocation site — {len(ev)} independent engine deaths in total, including two")
+    w("  unplanned ones during the sweeps themselves.")
     w("- The failing allocation is a dense fp32 scorer tensor linear in concurrency, with a")
     w(f"  measured coefficient of {out['oom']['scorer_mib_per_seq']:.3f} MiB per sequence,")
     w("  confirmed against two different allocation sizes.")
@@ -573,10 +617,75 @@ def write_markdown(out: dict, path: Path) -> None:
     w("- Any statement about μ_max or N\\* for either arm. Neither sweep saturated.")
     w("- Any absolute throughput or power figure as a hardware ceiling — the device throttled")
     w("  through nearly the whole campaign.")
-    w("- Determinism of the 3B boundary. The 3B probe reproduced the OOM in 2 of 3 trials; trial 3")
-    w("  survived to λ=8 at 80.7% KV with 256 sequences running. The 1.5B boundary reproduced")
-    w("  3 of 3. Either run more trials or report the boundary as stochastic.")
+    rep = out["reproduction"]
+    r15, r3 = rep["1.5b"], rep["3b"]
+    if r3["died"] < r3["trials"]:
+        w(f"- **Determinism of the 3B boundary.** It is stochastic: {r3['died']} of")
+        w(f"  {r3['trials']} probe trials died, a reproduction rate of {r3['rate']:.0%} with a")
+        w(f"  Wilson 95% interval of [{r3['wilson_ci95'][0]:.0%}, {r3['wilson_ci95'][1]:.0%}].")
+        w(f"  The 1.5B boundary reproduced {r15['died']} of {r15['trials']}. Survivors ride the")
+        w("  ramp to λ=8 at high occupancy without failing, so the boundary must be reported as a")
+        w("  rate rather than a threshold — see §8.")
+    else:
+        w(f"- The 3B boundary reproduced {r3['died']} of {r3['trials']} trials, so within this")
+        w("  campaign it is deterministic. That is an upper bound on what the evidence shows, not")
+        w("  a guarantee for other load profiles.")
     w("")
+
+    w("## 8. Is the boundary deterministic?")
+    w("")
+    w("| Arm | Probe trials | Engine died | Rate | Wilson 95% CI |")
+    w("|---|---|---|---|---|")
+    for tag in ("1.5b", "3b"):
+        r = rep[tag]
+        if not r["trials"]:
+            continue
+        w(f"| `{tag}` | {r['trials']} | {r['died']} | {r['rate']:.0%} | "
+          f"[{r['wilson_ci95'][0]:.0%}, {r['wilson_ci95'][1]:.0%}] |")
+    w("")
+    w("Each trial is an independent run: a fresh server, a fresh engine, and a load ramp that")
+    w("escalates until the engine dies or the ramp is exhausted. A trial that survives is not a")
+    w("trial that failed to reach the boundary — it reaches the same concurrency ceiling and")
+    w("keeps serving.")
+    w("")
+
+    inverted = [t for t in ("1.5b", "3b") if rep[t].get("survivor_exceeds_death_kv")]
+    if inverted:
+        w("### The survivors settle the KV question on their own")
+        w("")
+        w("If KV occupancy were the binding constraint, no trial could survive at an occupancy")
+        w("above the lowest occupancy at which another trial died. That ordering is violated:")
+        w("")
+        w("| Arm | Peak KV when the engine died | Peak KV when it survived |")
+        w("|---|---|---|")
+        for tag in ("1.5b", "3b"):
+            r = rep[tag]
+            if not r["trials"]:
+                continue
+            dd = r["peak_kv_when_died"]
+            ss = r["peak_kv_when_survived"]
+            w(f"| `{tag}` | {', '.join(f'{v:.1f}%' for v in sorted(dd)) or '—'} | "
+              f"{', '.join(f'{v:.1f}%' for v in sorted(ss)) or '—'} |")
+        w("")
+        for tag in inverted:
+            r = rep[tag]
+            w(f"For `{tag}` the engine **survived a full ramp at {max(r['peak_kv_when_survived']):.1f}% "
+              f"occupancy** having **died at {min(r['peak_kv_when_died']):.1f}%** in another trial "
+              "under the identical")
+            w("configuration. Occupancy is therefore not merely a poor predictor of failure here —")
+            w("it is not even monotonically related to it. This is the cleanest available refutation")
+            w("of the assumption that KV capacity is serving capacity, and it needs no model: two")
+            w("runs of the same configuration, one dead at low occupancy and one alive at high.")
+            w("")
+    if r3["trials"] and r3["died"] < r3["trials"]:
+        w("The 3B interval is the honest statement of what is known. The failure is common but")
+        w("not certain, which is consistent with the mechanism: the scorer tensor is requested")
+        w("once per engine step, and whether a request of that size succeeds depends on the state")
+        w("of the caching allocator — how fragmented the reserved-but-unallocated pool is at that")
+        w("instant. That is why the reported free memory at failure sits close to, but not below,")
+        w("the size of the allocation. Nothing about the boundary requires it to be crossed")
+        w("deterministically.")
+        w("")
 
     path.write_text("\n".join(L) + "\n")
 
