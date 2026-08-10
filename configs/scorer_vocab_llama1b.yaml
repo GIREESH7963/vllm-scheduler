@@ -1,0 +1,63 @@
+# Experiment E-3 — vary V, the one term of the scorer law that Qwen cannot test.
+#
+#     M_scorer = N * (k+1) * V * 4 bytes
+#
+# Qwen2.5-1.5B and Qwen2.5-3B both have V=151936, so every prediction confirmed so far tests
+# only N. Llama-3.2-1B has V=128256, which predicts a *different* allocation at the same
+# concurrency:
+#
+#     256 * 5 * 128256 * 4 B = 656.7 MiB     (against 741.9 MiB for Qwen at the same N)
+#
+# Observing ~657 rather than ~742 validates the V term directly and turns a fitted coefficient
+# into a validated law. This is the cheapest remaining experiment in the project.
+#
+# Llama-3.2-1B was chosen over the alternatives on the arithmetic, not availability. The test
+# requires a model that actually reaches high concurrency, since the scorer tensor must grow
+# large enough to be the binding allocation. With 16 layers, 8 KV heads and head_dim 64 it costs
+# 32 KiB/token and leaves ~8 GiB of block pool, reaching N ~ 586 — comfortably past the wall.
+# Phi-4-mini (already cached, V=200064) was rejected for this reason: at 128 KiB/token it
+# plateaus near N ~ 61, becomes KV-bound, and never reaches the scorer at all.
+#
+# ---------------------------------------------------------------------------------------------
+# BLOCKED: Llama-3.2 is a gated repository. To enable this arm:
+#
+#   1. accept the licence at https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct
+#   2. export HF_TOKEN=hf_...        (or run: .venv/bin/huggingface-cli login)
+#   3. ./phase3-limits/run_expE.sh   — it detects the token and runs this arm automatically
+#
+# The run driver skips this arm with a logged message when the model is unavailable, so the k
+# arms still complete unattended.
+# ---------------------------------------------------------------------------------------------
+model: meta-llama/Llama-3.2-1B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  max_num_seqs: 1024
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 4
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

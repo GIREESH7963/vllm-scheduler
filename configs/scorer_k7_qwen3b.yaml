@@ -1,0 +1,48 @@
+# Experiment E-2 — the other direction: k=7, so k+1=8.
+#
+# Companion to configs/scorer_k2_qwen3b.yaml. Each sequence now demands 4.637 MiB of scorer
+# memory instead of 2.898, so the prediction is that the engine dies *earlier* on the
+# concurrency axis — near N ~ 129 — while requesting a similar absolute number of MiB, because
+# the failure point is set by the headroom available, not by the tensor's size.
+#
+# Taken together the three k values give the sharpest available test of the law's form: one
+# quantity (MiB per sequence) that must come out as 1.739 / 2.898 / 4.637 for k = 2 / 4 / 7,
+# measured at three well-separated concurrencies. If the ratios hold, the (k+1) term is
+# validated even though V remains fixed.
+#
+# This arm also carries a practical result for the paper. If lowering k removes the failure and
+# raising it makes the failure arrive sooner, then `num_speculative_tokens` is a one-line
+# mitigation for the crash — which is worth stating explicitly for practitioners.
+model: Qwen/Qwen2.5-3B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  max_num_seqs: 1024
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 7
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

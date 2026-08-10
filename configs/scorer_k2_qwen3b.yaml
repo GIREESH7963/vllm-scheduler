@@ -1,0 +1,54 @@
+# Experiment E-1 — vary k in the scorer memory law.
+#
+# The law docs/experiment_b.md 5 asserts is
+#
+#     M_scorer = N * (k+1) * V * 4 bytes
+#
+# but only N has ever been varied: every death so far used k=4, and the two models tested share
+# V=151936, so the (k+1) and V terms are both untested. Llama-3.2-1B would vary V (see
+# configs/scorer_vocab_llama1b.yaml) but is gated. k costs nothing to vary and tests the same
+# multiplicative structure.
+#
+# k=2 gives k+1=3, so 1.739 MiB per sequence instead of 2.898. Predictions:
+#
+#   * the engine survives much further up the concurrency axis, dying near N ~ 344 rather than
+#     ~206, because each sequence now demands 60% as much scorer memory;
+#   * the reported failed allocation divided by N at the failing step comes out at 1.739 MiB,
+#     not 2.898.
+#
+# max_num_seqs is raised to 1024 so the death is not clipped by the default cap of 256 — at
+# k=2 the predicted failure point is beyond it, and a run that merely bumps the cap would
+# measure nothing.
+model: Qwen/Qwen2.5-3B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  max_num_seqs: 1024
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 2
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125
