@@ -1,0 +1,48 @@
+# phase2_mixed_n10 — powered re-run of the one cell where admission policies actually separate.
+#
+# The n=3 campaign could not resolve any policy contrast: 0 of 96 survived Holm
+# correction across the 171-comparison family, with the strongest at p_holm = 0.109.
+# This re-runs lambda=4.0 alone at n=10, all five policies, in a single session on one
+# server, so the comparison is internally consistent and free of the driver-version
+# confound that separates the original campaign from the current environment.
+#
+# Analysed as its own config name rather than pooled with the n=3 runs, for that reason.
+#
+# Server must already be running with n-gram spec decode (Phase 0 launch line).
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  # λ=2 is healthy for nocap (SLO~1), λ=4 overloads it (53 concurrent, SLO~0) — the regime where
+  # ordering + load-shedding matter. Calibrated from the nocap saturation probe (2026-07-06).
+  duration_s: 25       # short runs limit thermal rise (T4 passive cooling, ~11C headroom)
+  warmup_s: 8
+  repeats: 10
+  seed: 12345
+  arrival_rates: [4.0]
+  save_raw: false
+  mix:
+    short: 0.4
+    long: 0.2
+    reasoning: 0.2
+    coding: 0.2
+
+scheduler:
+  max_in_flight: 8      # admission concurrency cap (nocap policy ignores this). Moderate: keeps the
+                        # GPU reasonably batched (throughput scales with batch on the T4) while
+                        # bounding concurrency below nocap's ~53 so ordering/shedding can differentiate.
+  min_in_flight: 2      # adaptive lower bound
+  max_cap: 24           # adaptive upper bound
+  max_queue_wait_s: 6   # load-shed: drop a request queued longer than this (counts as SLO miss)
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77        # wait until GPU <= this before each run (idle floor ~74C; throttles ~85C)
+
+slo:
+  ttft_ms: 1000         # arrival-relative (queue wait + server TTFT) — what ordering directly controls
+  tpot_ms: 125          # loose enough that a moderately-batched served request can meet it

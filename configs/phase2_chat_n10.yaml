@@ -1,0 +1,43 @@
+# phase2_chat_n10 — powered re-run of the one cell where admission policies actually separate.
+#
+# The n=3 campaign could not resolve any policy contrast: 0 of 96 survived Holm
+# correction across the 171-comparison family, with the strongest at p_holm = 0.109.
+# This re-runs lambda=6.0 alone at n=10, all five policies, in a single session on one
+# server, so the comparison is internally consistent and free of the driver-version
+# confound that separates the original campaign from the current environment.
+#
+# Analysed as its own config name rather than pooled with the n=3 runs, for that reason.
+#
+# head-to-head required by the DoD.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  # Short-dominated -> higher capacity; push rates higher to reach nocap overload.
+  duration_s: 25       # short runs limit thermal rise (T4 passive cooling, ~11C headroom)
+  warmup_s: 8
+  repeats: 10
+  seed: 12345
+  arrival_rates: [6.0]
+  save_raw: false
+  mix:
+    short: 0.85
+    reasoning: 0.15
+
+scheduler:
+  max_in_flight: 12     # short jobs -> a larger cap keeps the GPU busy
+  min_in_flight: 3
+  max_cap: 32
+  max_queue_wait_s: 6   # load-shed: drop a request queued longer than this (counts as SLO miss)
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77        # wait until GPU <= this before each run (idle floor ~74C; throttles ~85C)
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

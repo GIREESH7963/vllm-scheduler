@@ -1,0 +1,48 @@
+# Experiment C-a — is the wall the scorer, or is it max_num_seqs?
+#
+# In every death so far the engine reached N = 256 and stopped, and 256 is also vLLM's default
+# `max_num_seqs`. Those two explanations are perfectly confounded in the existing data:
+#
+#   (i)  the scorer allocation N*(k+1)*V*4B grows until it cannot be satisfied, or
+#   (ii) something about the sequence cap itself kills the engine.
+#
+# Raising the cap to 1024 separates them, because they now predict different outcomes:
+#
+#   under (i)  the engine still dies near N ~ 256, where the scorer needs ~742 MiB, and the cap
+#              is never reached;
+#   under (ii) the engine runs to N ~ 1024 before failing.
+#
+# Everything else is identical to configs/oomprobe_qwen3b.yaml.
+model: Qwen/Qwen2.5-3B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  max_num_seqs: 1024
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 4
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

@@ -1,0 +1,46 @@
+# Experiment C-b — remove the scorer and the binding constraint has to move.
+#
+# Identical to configs/regime_qwen3b_spec_on_cap1024.yaml except that speculative decoding is
+# off, so the dense [N, k+1, V] fp32 scorer tensor is never allocated.
+#
+# The central hypothesis says the concurrency limit is set by whichever resource is active. With
+# the scorer gone the active resource should become the KV block pool, and the predicted
+# behaviour changes character entirely:
+#
+#   * no low-occupancy OOM, because the allocation that caused it does not exist;
+#   * N climbs past 256 (the cap is 1024 here) until KV occupancy approaches full, at which
+#     point vLLM's paged allocator preempts rather than crashing — the limit becomes a plateau
+#     enforced by admission control, not a fatal allocation.
+#
+# At the measured 0.2501% KV per sequence (docs/experiment_b.md 4) the pool fills near N ~ 400,
+# which this cap can reach and the previous one could not. A KV-bound plateau near there, with
+# no OOM, is the regime change the hypothesis asserts; it has so far only been extrapolated.
+model: Qwen/Qwen2.5-3B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  max_num_seqs: 1024
+  # speculative_config deliberately absent — this is the manipulated variable.
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

@@ -61,13 +61,31 @@ PY
     c=$(ls results/*expB_qwen${tag}_r*.json 2>/dev/null | wc -l)
     printf "  sweep %-5s : %2d / 21 runs\n" "$tag" "$c"
   done
-  c=$(ls results/expB/oom3b/*trial*.json 2>/dev/null | wc -l)
-  echo "  3B OOM probe: $c / 3 trials"
+  c=$(ls results/expB/oom3b/*trial*.json results/expB/oom3b_more/*trial*.json 2>/dev/null | wc -l)
+  echo "  3B OOM probe: $c / 10 trials (3 initial + 7 follow-up for reproduction rate)"
   if grep -q "EXPERIMENT B COMPLETE" results/expB/expB_run.log 2>/dev/null; then
     echo "  >> EXPERIMENT B COMPLETE"
   fi
   echo "  last log lines:"
   grep -E "^\[expB" results/expB/expB_run.log 2>/dev/null | tail -3 | sed 's/^/    /'
+
+  echo
+  echo "-- Experiment C: regime dependence (spec on/off, max_num_seqs 1024) ----------"
+  for tag in spec_on spec_off; do
+    c=$(ls results/expCD/regime_${tag}/*trial*.json 2>/dev/null | wc -l)
+    printf "  %-8s : %d / 3 trials\n" "$tag" "$c"
+  done
+
+  echo
+  echo "-- Experiment D: powered policy comparison (n=10) ----------------------------"
+  for tag in mixed_n10 chat_n10; do
+    c=$(ls results/*phase2_${tag}_*.json 2>/dev/null | wc -l)
+    printf "  %-10s : %2d / 50 runs\n" "$tag" "$c"
+  done
+  if grep -q "EXPERIMENTS C AND D COMPLETE" results/expCD/expCD_run.log 2>/dev/null; then
+    echo "  >> C AND D COMPLETE"
+  fi
+  grep -E "^\[expCD" results/expCD/expCD_run.log 2>/dev/null | tail -2 | sed 's/^/    /'
 
   echo
   echo "-- Artifacts ----------------------------------------------------------------"
