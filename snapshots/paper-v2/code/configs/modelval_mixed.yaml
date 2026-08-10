@@ -1,0 +1,27 @@
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 55
+  warmup_s: 15
+  repeats: 3
+  seed: 12345
+  arrival_rates: [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0]
+  save_raw: false
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

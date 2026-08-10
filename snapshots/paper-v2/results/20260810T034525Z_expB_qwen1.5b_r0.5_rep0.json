@@ -1,0 +1,127 @@
+{
+  "config": "expB_qwen1.5b",
+  "timestamp_utc": "2026-08-10T03:45:25+00:00",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "rate": 0.5,
+  "seed": 12345,
+  "repeat": 0,
+  "arrivals_total": 21,
+  "n_requests_measured": 15,
+  "n_requests_failed": 0,
+  "throughput_tok_s": 23.75,
+  "ttft_ms": {
+    "p50": 106.09833523631096,
+    "p99": 164.29445816203952
+  },
+  "tpot_ms": {
+    "p50": 19.723724902552718,
+    "p99": 21.261510999544576
+  },
+  "e2e_latency_ms": {
+    "p50": 805.3728742524981,
+    "p99": 3018.7337861210103
+  },
+  "queue_wait_ms": {
+    "p50": 0.0,
+    "p99": 0.0
+  },
+  "total_latency_ms": {
+    "p50": 805.3728742524981,
+    "p99": 3018.7337861210103
+  },
+  "kv_occupancy": 0.00035272050958415764,
+  "num_running_mean": 0.3698630136986301,
+  "num_waiting_mean": 0.0,
+  "sm_active_pct": 21.636363636363637,
+  "dram_active_pct": 20.219480519480516,
+  "mean_power_w": 49.88516438356164,
+  "energy_j_per_tok": 2.1004279740447003,
+  "max_temp_c": 75.0,
+  "thermal_throttled": false,
+  "slo_attainment": 1.0,
+  "acceptance_rate": 0.8122710622710623,
+  "dispatch_lag_ms": {
+    "p50": 1.9957103022871792,
+    "p99": 7.714858554126066,
+    "max": 7.832370568557678
+  },
+  "output_len": {
+    "requested_mean": 66.53333333333333,
+    "actual_mean": 63.333333333333336,
+    "actual_p50": 48.0,
+    "actual_p99": 164.01999999999998,
+    "actual_over_requested": 0.9519038076152304
+  },
+  "by_class": {
+    "coding": {
+      "spec_decode": true,
+      "n": 2,
+      "n_dropped": 0,
+      "ttft_ms": {
+        "p50": 89.38924176618457,
+        "p99": 99.23160570673645
+      },
+      "tpot_ms": {
+        "p50": 18.457754772897534,
+        "p99": 18.747331985862438
+      },
+      "queue_wait_ms": {
+        "p50": 0.0,
+        "p99": 0.0
+      },
+      "total_latency_ms": {
+        "p50": 2616.9986594468355,
+        "p99": 3163.804804086685
+      },
+      "slo_attainment": 1.0,
+      "output_tokens_actual_mean": 137.5
+    },
+    "long": {
+      "spec_decode": false,
+      "n": 3,
+      "n_dropped": 0,
+      "ttft_ms": {
+        "p50": 156.62498585879803,
+        "p99": 157.75288021191955
+      },
+      "tpot_ms": {
+        "p50": 5.198148462702246,
+        "p99": 5.52014899838884
+      },
+      "queue_wait_ms": {
+        "p50": 0.0,
+        "p99": 0.0
+      },
+      "total_latency_ms": {
+        "p50": 633.0738561227918,
+        "p99": 817.3829564265907
+      },
+      "slo_attainment": 1.0,
+      "output_tokens_actual_mean": 104.66666666666667
+    },
+    "short": {
+      "spec_decode": false,
+      "n": 10,
+      "n_dropped": 0,
+      "ttft_ms": {
+        "p50": 102.73471241816878,
+        "p99": 163.6241327598691
+      },
+      "tpot_ms": {
+        "p50": 20.163609456115715,
+        "p99": 21.291097720208413
+      },
+      "queue_wait_ms": {
+        "p50": 0.0,
+        "p99": 0.0
+      },
+      "total_latency_ms": {
+        "p50": 796.768085565418,
+        "p99": 1267.2272150125355
+      },
+      "slo_attainment": 1.0,
+      "output_tokens_actual_mean": 36.1
+    }
+  },
+  "notes": []
+}

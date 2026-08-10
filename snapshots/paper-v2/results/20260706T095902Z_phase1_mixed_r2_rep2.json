@@ -1,0 +1,100 @@
+{
+  "config": "phase1_mixed",
+  "timestamp_utc": "2026-07-06T09:59:02+00:00",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "rate": 2.0,
+  "seed": 12347,
+  "repeat": 2,
+  "arrivals_total": 157,
+  "n_requests_measured": 120,
+  "n_requests_failed": 0,
+  "throughput_tok_s": 249.3272727272727,
+  "ttft_ms": {
+    "p50": 421.60657001659274,
+    "p99": 1056.6201335284861
+  },
+  "tpot_ms": {
+    "p50": 304.7952976630912,
+    "p99": 545.0136801939864
+  },
+  "e2e_latency_ms": {
+    "p50": 23906.088769901544,
+    "p99": 79555.90150474106
+  },
+  "kv_occupancy": 0.051861912122286795,
+  "num_running_mean": 43.367231638418076,
+  "num_waiting_mean": 0.0,
+  "sm_active_pct": 82.95355191256832,
+  "dram_active_pct": 12.79016393442623,
+  "mean_power_w": 44.598338983050844,
+  "energy_j_per_tok": 0.17887469146560173,
+  "slo_attainment": 0.0,
+  "acceptance_rate": 0.7128235469264967,
+  "dispatch_lag_ms": {
+    "p50": 0.9162490499843301,
+    "p99": 2.3167346815082372,
+    "max": 3.100588395049897
+  },
+  "output_len": {
+    "requested_mean": 134.56666666666666,
+    "actual_mean": 114.275,
+    "actual_p50": 102.0,
+    "actual_p99": 296.72,
+    "actual_over_requested": 0.8492073321773594
+  },
+  "by_class": {
+    "coding": {
+      "spec_decode": true,
+      "n": 27,
+      "ttft_ms": {
+        "p50": 510.48718579113483,
+        "p99": 1028.2305429456753
+      },
+      "tpot_ms": {
+        "p50": 270.81406626109936,
+        "p99": 408.8724407620485
+      },
+      "output_tokens_actual_mean": 160.88888888888889
+    },
+    "long": {
+      "spec_decode": false,
+      "n": 20,
+      "ttft_ms": {
+        "p50": 774.5077486615628,
+        "p99": 1191.4478743728248
+      },
+      "tpot_ms": {
+        "p50": 128.494847036324,
+        "p99": 412.0051512765697
+      },
+      "output_tokens_actual_mean": 114.85
+    },
+    "reasoning": {
+      "spec_decode": false,
+      "n": 24,
+      "ttft_ms": {
+        "p50": 364.5612410036847,
+        "p99": 997.7498053619638
+      },
+      "tpot_ms": {
+        "p50": 228.9697743323452,
+        "p99": 366.4642598594672
+      },
+      "output_tokens_actual_mean": 221.54166666666666
+    },
+    "short": {
+      "spec_decode": false,
+      "n": 49,
+      "ttft_ms": {
+        "p50": 286.5624278783798,
+        "p99": 808.7985148280856
+      },
+      "tpot_ms": {
+        "p50": 433.5899338444793,
+        "p99": 564.7853269691263
+      },
+      "output_tokens_actual_mean": 35.816326530612244
+    }
+  },
+  "notes": []
+}

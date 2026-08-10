@@ -1,0 +1,34 @@
+# Phase 2 — policy comparison on the chat mix (short-dominated, higher rates). Second mix for the
+# head-to-head required by the DoD.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  # Short-dominated -> higher capacity; push rates higher to reach nocap overload.
+  duration_s: 25       # short runs limit thermal rise (T4 passive cooling, ~11C headroom)
+  warmup_s: 8
+  repeats: 3
+  seed: 12345
+  arrival_rates: [4.0, 6.0]
+  save_raw: false
+  mix:
+    short: 0.85
+    reasoning: 0.15
+
+scheduler:
+  max_in_flight: 12     # short jobs -> a larger cap keeps the GPU busy
+  min_in_flight: 3
+  max_cap: 32
+  max_queue_wait_s: 6   # load-shed: drop a request queued longer than this (counts as SLO miss)
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+  cooldown_c: 77        # wait until GPU <= this before each run (idle floor ~74C; throttles ~85C)
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

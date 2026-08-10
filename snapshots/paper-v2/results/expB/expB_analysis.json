@@ -1,0 +1,264 @@
+{
+  "arms": {
+    "1.5b": {
+      "model": "Qwen/Qwen2.5-1.5B-Instruct",
+      "n_runs_total": 21,
+      "n_runs_used": 17,
+      "excluded": [
+        {
+          "file": "20260810T040936Z_expB_qwen1.5b_r4_rep2.json",
+          "rate": 4.0,
+          "repeat": 2,
+          "reason": "silent output truncation (engine death mid-window)",
+          "actual_over_requested": 0.05602761550716941,
+          "n_failed": 0
+        },
+        {
+          "file": "20260810T041030Z_expB_qwen1.5b_r5_rep0.json",
+          "rate": 5.0,
+          "repeat": 0,
+          "reason": "failed requests (engine already dead)",
+          "n_failed": 205
+        },
+        {
+          "file": "20260810T041125Z_expB_qwen1.5b_r5_rep1.json",
+          "rate": 5.0,
+          "repeat": 1,
+          "reason": "failed requests (engine already dead)",
+          "n_failed": 194
+        },
+        {
+          "file": "20260810T041220Z_expB_qwen1.5b_r5_rep2.json",
+          "rate": 5.0,
+          "repeat": 2,
+          "reason": "failed requests (engine already dead)",
+          "n_failed": 217
+        }
+      ],
+      "N_range": [
+        0.3698630136986301,
+        117.0
+      ],
+      "kv_per_seq_pct": 0.11031533552074574,
+      "kv_per_seq_pct_ci95": [
+        0.10824176292326743,
+        0.11464763445580577
+      ],
+      "throughput_slope_low_third": 9.693465560829575,
+      "throughput_slope_high_third": 3.0599244661234897,
+      "saturation_ratio": 0.315668781915146,
+      "acceptance_rate_mean": 0.7232118972431503,
+      "acceptance_rate_ci95_halfwidth": 0.012700774197039277,
+      "thermally_throttled_runs": 16,
+      "max_temp_c": 89.0
+    },
+    "3b": {
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "n_runs_total": 21,
+      "n_runs_used": 18,
+      "excluded": [
+        {
+          "file": "20260810T045421Z_expB_qwen3b_r5_rep0.json",
+          "rate": 5.0,
+          "repeat": 0,
+          "reason": "silent output truncation (engine death mid-window)",
+          "actual_over_requested": 0.02401461759331767,
+          "n_failed": 21
+        },
+        {
+          "file": "20260810T045516Z_expB_qwen3b_r5_rep1.json",
+          "rate": 5.0,
+          "repeat": 1,
+          "reason": "failed requests (engine already dead)",
+          "n_failed": 194
+        },
+        {
+          "file": "20260810T045611Z_expB_qwen3b_r5_rep2.json",
+          "rate": 5.0,
+          "repeat": 2,
+          "reason": "failed requests (engine already dead)",
+          "n_failed": 217
+        }
+      ],
+      "N_range": [
+        0.9041095890410958,
+        129.24806201550388
+      ],
+      "kv_per_seq_pct": 0.2501346339950687,
+      "kv_per_seq_pct_ci95": [
+        0.24354023149310144,
+        0.2566705635208567
+      ],
+      "throughput_slope_low_third": 5.120979686625719,
+      "throughput_slope_high_third": 3.994049759445304,
+      "saturation_ratio": 0.7799386062546629,
+      "acceptance_rate_mean": 0.5886287773072889,
+      "acceptance_rate_ci95_halfwidth": 0.010814304162492166,
+      "thermally_throttled_runs": 17,
+      "max_temp_c": 88.0
+    }
+  },
+  "contrasts": {
+    "kv_per_seq_ratio_3b_over_1.5b": 2.267451146427676,
+    "kv_per_seq_ratio_ci95": [
+      2.165048023655843,
+      2.34351530261798
+    ],
+    "acceptance_rate": {
+      "mean_1.5b": 0.7232118972431503,
+      "mean_3b": 0.5886287773072889,
+      "delta": -0.13458311993586136,
+      "hedges_g": -5.661637055086302,
+      "welch_t": -17.069049311892847,
+      "welch_p": 1.330916115849087e-17,
+      "n_1.5b": 17,
+      "n_3b": 18
+    }
+  },
+  "oom": {
+    "events": [
+      {
+        "log": "server_1.5b.log",
+        "timestamp_local": "08-10 09:39:32",
+        "failed_alloc_mib": 638.0,
+        "free_at_failure_mib": 390.0,
+        "alloc_site": "batch_expansion.py:94 in score_proposals",
+        "arm": "1.5b",
+        "source": "sweep",
+        "telemetry": {
+          "peak_num_running": 223.0,
+          "final_num_running": 220.0,
+          "peak_kv_occupancy": 0.23881692799832188,
+          "final_kv_occupancy": 0.23881692799832188
+        },
+        "death_run": "20260810T040936Z_expB_qwen1.5b_r4_rep2.json",
+        "n_at_failing_step": 220.0,
+        "implied_n_from_alloc": 220.15568660488626,
+        "predicted_mib_at_n": 637.548828125
+      },
+      {
+        "log": "server_3b.log",
+        "timestamp_local": "08-10 10:24:16",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 598.0,
+        "alloc_site": "batch_expansion.py:94 in score_proposals",
+        "arm": "3b",
+        "source": "sweep",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "final_num_running": 256.0,
+          "peak_kv_occupancy": 0.5130877924484596,
+          "final_kv_occupancy": 0.5130877924484596
+        },
+        "death_run": "20260810T045421Z_expB_qwen3b_r5_rep0.json",
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "1.5b",
+        "source": "probe trial 1",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 736.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.28166133515129266
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "1.5b",
+        "source": "probe trial 2",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 694.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.28674812522942994
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "1.5b",
+        "source": "probe trial 3",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 734.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.28486024437568824
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "3b",
+        "source": "probe trial 1",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 610.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.5736622654621264
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "3b",
+        "source": "probe trial 2",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 588.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.595552466990966
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      }
+    ],
+    "scorer_mib_per_seq": 2.89794921875,
+    "tensor": "[N, k+1=5, V=151936] fp32"
+  },
+  "notes": {
+    "kv_mechanism": {
+      "arch": {
+        "1.5b": {
+          "layers": 28,
+          "kv_heads": 2,
+          "head_dim": 128,
+          "kv_bytes_per_token": 28672,
+          "weights_gib": 2.89,
+          "non_torch_gib": 0.05,
+          "activation_peak_gib": 2.02,
+          "kv_pool_gib": 8.15,
+          "max_concurrency": 9.31
+        },
+        "3b": {
+          "layers": 36,
+          "kv_heads": 2,
+          "head_dim": 128,
+          "kv_bytes_per_token": 36864,
+          "weights_gib": 5.79,
+          "non_torch_gib": 0.05,
+          "activation_peak_gib": 2.52,
+          "kv_pool_gib": 4.74,
+          "max_concurrency": 4.22
+        }
+      },
+      "per_token_kv_ratio": 1.2857142857142858,
+      "pool_ratio": 1.719409282700422,
+      "predicted_occupancy_ratio": 2.2106690777576854,
+      "vllm_reported_max_concurrency_ratio": 2.2061611374407586
+    }
+  }
+}

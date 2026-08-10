@@ -1,0 +1,150 @@
+{
+  "config": "expB_qwen1.5b",
+  "timestamp_utc": "2026-08-10T04:11:25+00:00",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "rate": 5.0,
+  "seed": 12346,
+  "repeat": 1,
+  "arrivals_total": 280,
+  "n_requests_measured": 0,
+  "n_requests_failed": 194,
+  "throughput_tok_s": 0.0,
+  "ttft_ms": {
+    "p50": NaN,
+    "p99": NaN
+  },
+  "tpot_ms": {
+    "p50": NaN,
+    "p99": NaN
+  },
+  "e2e_latency_ms": {
+    "p50": NaN,
+    "p99": NaN
+  },
+  "queue_wait_ms": {
+    "p50": NaN,
+    "p99": NaN
+  },
+  "total_latency_ms": {
+    "p50": NaN,
+    "p99": NaN
+  },
+  "kv_occupancy": NaN,
+  "num_running_mean": NaN,
+  "num_waiting_mean": NaN,
+  "sm_active_pct": 0.0,
+  "dram_active_pct": 0.0,
+  "mean_power_w": 18.93831081081081,
+  "energy_j_per_tok": NaN,
+  "max_temp_c": 74.0,
+  "thermal_throttled": false,
+  "slo_attainment": 0.0,
+  "acceptance_rate": null,
+  "dispatch_lag_ms": {
+    "p50": 1.0006523835208725,
+    "p99": 2.4245915569415626,
+    "max": 2.8991344967366217
+  },
+  "output_len": {
+    "requested_mean": NaN,
+    "actual_mean": NaN,
+    "actual_p50": NaN,
+    "actual_p99": NaN,
+    "actual_over_requested": NaN
+  },
+  "by_class": {
+    "coding": {
+      "spec_decode": false,
+      "n": 0,
+      "n_dropped": 40,
+      "ttft_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "tpot_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "queue_wait_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "total_latency_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "slo_attainment": 0.0,
+      "output_tokens_actual_mean": NaN
+    },
+    "long": {
+      "spec_decode": false,
+      "n": 0,
+      "n_dropped": 37,
+      "ttft_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "tpot_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "queue_wait_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "total_latency_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "slo_attainment": 0.0,
+      "output_tokens_actual_mean": NaN
+    },
+    "reasoning": {
+      "spec_decode": false,
+      "n": 0,
+      "n_dropped": 42,
+      "ttft_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "tpot_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "queue_wait_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "total_latency_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "slo_attainment": 0.0,
+      "output_tokens_actual_mean": NaN
+    },
+    "short": {
+      "spec_decode": false,
+      "n": 0,
+      "n_dropped": 75,
+      "ttft_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "tpot_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "queue_wait_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "total_latency_ms": {
+        "p50": NaN,
+        "p99": NaN
+      },
+      "slo_attainment": 0.0,
+      "output_tokens_actual_mean": NaN
+    }
+  },
+  "notes": []
+}
