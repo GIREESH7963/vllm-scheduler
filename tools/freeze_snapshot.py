@@ -91,6 +91,89 @@ def _git(*args: str) -> str | None:
     return (r.stdout or "").strip() if r.returncode == 0 else None
 
 
+def _readme(name: str, env: dict, dest: Path) -> str:
+    """Generate the provenance document from the captured environment.
+
+    The freeze-time environment is not necessarily the measurement-time environment — this box
+    had its userspace NVIDIA driver upgraded weeks after the runs — so the document states
+    which is which rather than implying the two are the same.
+    """
+    gpu = (env.get("torch_cuda", {}).get("devices") or [{}])[0]
+    drv = env.get("driver", {})
+    pkg = env.get("packages", {})
+    git = env.get("git", {})
+    nvml = env.get("nvml", {})
+
+    n_results = len(list((dest / "results").glob("*.json"))) if (dest / "results").is_dir() else 0
+    n_figs = len(list((dest / "results" / "figures").glob("*.png"))) if (dest / "results" / "figures").is_dir() else 0
+
+    warn = ""
+    if drv.get("mismatch"):
+        warn = (
+            "\n> **Driver state at freeze time is degraded.** "
+            f"{drv.get('mismatch_note')}\n>\n"
+            "> The CUDA driver API still works (compute runs fine), but every NVML-sourced\n"
+            "> field — power, temperature, utilisation, per-process memory — is unavailable.\n"
+            "> Results inside this snapshot were captured *earlier*, while NVML was healthy,\n"
+            "> which is why they contain valid `mean_power_w` and `max_temp_c` values.\n"
+            "> Do not read the driver block below as the environment that produced them.\n"
+        )
+
+    return f"""# Snapshot `{name}`
+
+Frozen at **{env.get('captured_at_utc')}** from commit
+**`{git.get('commit_short')}`** (`{git.get('branch')}`{', **dirty working tree**' if git.get('dirty') else ''}).
+
+This directory is **read-only by design**. It is a physical copy, not a reference: later sweeps
+write into the live `results/` tree and regenerate summaries and figures in place, so a git tag
+alone would not protect this baseline.
+{warn}
+## Contents
+
+| Path | What it holds |
+|---|---|
+| `code/` | Harness, policies, configs and `requirements.txt` as of the commit above |
+| `results/` | {n_results} per-run JSON files, raw traces, sweep/policy summaries |
+| `results/figures/` | {n_figs} generated plots |
+| `logs/` | gzipped stdout from the server and every sweep driver |
+| `ENVIRONMENT.json` | Full machine-readable environment capture |
+| `MANIFEST.sha256` | SHA-256 of every file above |
+
+## Environment at freeze time
+
+| | |
+|---|---|
+| Host | `{env.get('host', {}).get('hostname')}` — {env.get('host', {}).get('cpu_model')} |
+| Kernel | `{env.get('host', {}).get('kernel')}` |
+| GPU | {gpu.get('name')} — {gpu.get('memory_total_gib')} GiB, CC {gpu.get('compute_capability')}, {gpu.get('multi_processor_count')} SMs |
+| Driver (kernel module) | `{drv.get('kernel_module_version')}` |
+| Driver (userspace NVML) | `{drv.get('userspace_nvml_version')}` |
+| NVML usable | `{nvml.get('available')}`{' — ' + str(nvml.get('error')) if nvml.get('error') else ''} |
+| DCGM usable | `{env.get('dcgm', {}).get('available')}` |
+| CUDA (torch) | `{pkg.get('torch')}` / CUDA `{env.get('torch_cuda', {}).get('torch_cuda_version')}` / cuDNN `{env.get('torch_cuda', {}).get('cudnn_version')}` |
+| vLLM | `{pkg.get('vllm')}` |
+| transformers | `{pkg.get('transformers')}` |
+| Python | `{env.get('host', {}).get('python')}` |
+
+Exact resolved versions of every installed package are in
+`ENVIRONMENT.json` under `packages._pip_freeze`.
+
+## Verifying integrity
+
+```bash
+cd {dest.relative_to(REPO)}
+sha256sum -c MANIFEST.sha256
+```
+
+## Restoring the code
+
+```bash
+git checkout {git.get('commit_short')}      # or: git checkout {name}
+uv pip install -r requirements.txt
+```
+"""
+
+
 def build(name: str, force: bool) -> Path:
     dest = REPO / "snapshots" / name
     if dest.exists():
@@ -142,6 +225,9 @@ def build(name: str, force: bool) -> Path:
         "status_porcelain": _git("status", "--porcelain"),
     }
     (dest / "ENVIRONMENT.json").write_text(json.dumps(env, indent=2) + "\n")
+
+    # --- provenance README ----------------------------------------------------------------
+    (dest / "README.md").write_text(_readme(name, env, dest))
 
     # --- checksums over everything written so far ----------------------------------------
     manifest_path = dest / "MANIFEST.sha256"

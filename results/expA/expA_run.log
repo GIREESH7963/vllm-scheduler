@@ -1,0 +1,29 @@
+
+[trial 1] cooling / waiting for a free GPU ...
+[trial 1] GPU used=0.44GiB temp=55.0C -> starting server
+    stage λ=2: ok=112 fail=0 running=0.0 kv=0.0 mem=12.94GiB temp=79.0C
+    stage λ=3: ok=85 fail=0 running=104.0 kv=0.13744821437935917 mem=13.51GiB temp=84.0C
+[trial 1] wrote 20260810T032641Z_expA_trial1.json
+
+[trial 2] cooling / waiting for a free GPU ...
+[trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=106 fail=0 running=6.0 kv=0.007918611358749827 mem=13.05GiB temp=84.0C
+    stage λ=3: ok=44 fail=0 running=151.0 kv=0.17814253500445754 mem=14.08GiB temp=85.0C
+[trial 2] wrote 20260810T033044Z_expA_trial2.json
+
+[trial 3] cooling / waiting for a free GPU ...
+[trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=103 fail=0 running=9.0 kv=0.01253343122345163 mem=13.16GiB temp=84.0C
+    stage λ=3: ok=45 fail=0 running=154.0 kv=0.17667418322932504 mem=14.19GiB temp=85.0C
+[trial 3] wrote 20260810T033512Z_expA_trial3.json
+
+==============================================================================
+EXPERIMENT A SUMMARY
+==============================================================================
+trial  died  alloc MiB                               site    run     kv%  mem GiB
+    1  True      742.0  client.py:667 in _process_request    256   28.17     0.44
+    2  True      742.0  client.py:667 in _process_request    256   28.67     0.44
+    3  True      742.0  client.py:667 in _process_request    256   28.49    14.96
+
+reproduced OOM in 3/3 independent trials
+wrote results/expA/expA_summary.json

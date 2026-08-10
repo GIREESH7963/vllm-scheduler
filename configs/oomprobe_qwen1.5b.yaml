@@ -1,0 +1,46 @@
+# Experiment A — OOM reproduction, Qwen2.5-1.5B.
+#
+# Server flags reproduce the paper-v1 serving configuration EXACTLY (taken from the argv of the
+# process that produced the original OOM on 2026-07-07), so the failure being reproduced is the
+# same failure. The only additions are the ramp and telemetry blocks, which the sweep harness
+# did not need.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  # n-gram speculative decoding. This is the code path the paper-v1 OOM died in
+  # (spec_decode/batch_expansion.py:_contract_batch), so it must stay on.
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 4
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+# Same mix as configs/modelval_mixed.yaml — the sweep that produced the original OOM.
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  # The paper-v1 engine died during a λ=4 stage. Start below that so the approach to the
+  # boundary is measured rather than jumped over, and continue past it in case a fresh engine
+  # survives longer than the 34-day-old one did.
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  # The T4 is passively cooled; start each trial from a comparable thermal state so a later
+  # trial is not throttled relative to an earlier one.
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125
