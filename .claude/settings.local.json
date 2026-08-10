@@ -42,7 +42,9 @@
       "Bash(git commit *)",
       "Bash(awk '/\\\\[engine.py:160\\\\]/{print NR\": \"$0}' results/expB/logs/server_3b.log)",
       "Bash(grep -A6 \"workload \\\\`expB\\\\|workload \\\\`modelval\\\\|workload \\\\`phase1_mixed\")",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(grep -c \": OK$\")",
+      "Bash(grep -v \": OK$\")"
     ]
   }
 }

@@ -71,7 +71,12 @@ PY
 
   echo
   echo "-- Artifacts ----------------------------------------------------------------"
-  printf "  paper-v1 snapshot : %s\n" "$([ -d snapshots/paper-v1 ] && echo 'frozen (read-only)' || echo 'MISSING')"
+  for s in snapshots/*/; do
+    [ -d "$s" ] || continue
+    n=$(basename "$s")
+    if [ -w "$s" ]; then state='WRITABLE — not frozen'; else state='frozen (read-only)'; fi
+    printf "  %-17s : %s\n" "$n snapshot" "$state"
+  done
   printf "  statistics report : %s\n" "$([ -f results/stats/STATISTICS.md ] && echo 'results/stats/STATISTICS.md' || echo 'pending')"
   printf "  queueing model    : %s\n" "$([ -f docs/queueing_model.md ] && echo 'docs/queueing_model.md' || echo 'pending')"
   printf "  expB analysis     : %s\n" "$([ -f docs/experiment_b.md ] && echo 'docs/experiment_b.md' || echo 'pending')"
