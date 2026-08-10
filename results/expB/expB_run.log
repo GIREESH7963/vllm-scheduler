@@ -1,0 +1,113 @@
+[expB 03:43:15] starting server for Qwen/Qwen2.5-1.5B-Instruct
+[expB 03:44:15] server healthy for Qwen/Qwen2.5-1.5B-Instruct
+[expB 03:44:15] sweep: Qwen/Qwen2.5-1.5B-Instruct
+  [1.5b] [run] server healthy. sweeping rates=[0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0] x 3 repeats (duration 55s, warmup 15s each).
+  [1.5b] [run] pre-sweep warmup: 15s at λ=0.5 (discarded) ...
+  [1.5b] [run] λ=0.5 rep=0: n=15 fail=0 thru=23.8 tok/s TTFT p50/p99=106/164ms SM=22% acc=0.8122710622710623 lag_p99=7.7ms -> 20260810T034525Z_expB_qwen1.5b_r0.5_rep0.json
+  [1.5b] [run] λ=0.5 rep=1: n=23 fail=0 thru=63.3 tok/s TTFT p50/p99=83/527ms SM=48% acc=0.7343236787100627 lag_p99=6.9ms -> 20260810T034624Z_expB_qwen1.5b_r0.5_rep1.json
+  [1.5b] [run] λ=0.5 rep=2: n=16 fail=0 thru=42.3 tok/s TTFT p50/p99=308/717ms SM=75% acc=0.7285169785169785 lag_p99=3.7ms -> 20260810T034730Z_expB_qwen1.5b_r0.5_rep2.json
+  [1.5b] [run] λ=0.5 SUMMARY: throughput 43.1±19.8 tok/s over 3 repeats
+  [1.5b] [run] λ=1 rep=0: n=35 fail=0 thru=83.7 tok/s TTFT p50/p99=295/967ms SM=79% acc=0.7388873092597859 lag_p99=2.2ms -> 20260810T034839Z_expB_qwen1.5b_r1_rep0.json
+  [1.5b] [run] λ=1 rep=1: n=48 fail=0 thru=133.3 tok/s TTFT p50/p99=312/876ms SM=79% acc=0.706502773104007 lag_p99=2.0ms -> 20260810T034950Z_expB_qwen1.5b_r1_rep1.json
+  [1.5b] [run] λ=1 rep=2: n=39 fail=0 thru=94.8 tok/s TTFT p50/p99=211/919ms SM=79% acc=0.7075026343519494 lag_p99=2.3ms -> 20260810T035059Z_expB_qwen1.5b_r1_rep2.json
+  [1.5b] [run] λ=1 SUMMARY: throughput 103.9±26.0 tok/s over 3 repeats
+  [1.5b] [run] λ=1.5 rep=0: n=67 fail=0 thru=177.6 tok/s TTFT p50/p99=335/909ms SM=80% acc=0.7145797262422006 lag_p99=3.8ms -> 20260810T035218Z_expB_qwen1.5b_r1.5_rep0.json
+  [1.5b] [run] λ=1.5 rep=1: n=64 fail=0 thru=169.0 tok/s TTFT p50/p99=397/1442ms SM=81% acc=0.7088216307478399 lag_p99=2.3ms -> 20260810T035330Z_expB_qwen1.5b_r1.5_rep1.json
+  [1.5b] [run] λ=1.5 rep=2: n=68 fail=0 thru=164.9 tok/s TTFT p50/p99=263/926ms SM=78% acc=0.7079612209256172 lag_p99=3.4ms -> 20260810T035445Z_expB_qwen1.5b_r1.5_rep2.json
+  [1.5b] [run] λ=1.5 SUMMARY: throughput 170.5±6.4 tok/s over 3 repeats
+  [1.5b] [run] λ=2 rep=0: n=91 fail=0 thru=253.9 tok/s TTFT p50/p99=423/1069ms SM=82% acc=0.714397771880356 lag_p99=2.5ms -> 20260810T035609Z_expB_qwen1.5b_r2_rep0.json
+  [1.5b] [run] λ=2 rep=1: n=82 fail=0 thru=231.5 tok/s TTFT p50/p99=522/1294ms SM=83% acc=0.713139261764005 lag_p99=2.2ms -> 20260810T035738Z_expB_qwen1.5b_r2_rep1.json
+  [1.5b] [run] λ=2 rep=2: n=77 fail=0 thru=201.9 tok/s TTFT p50/p99=316/1043ms SM=81% acc=0.7162256339307839 lag_p99=3.1ms -> 20260810T035854Z_expB_qwen1.5b_r2_rep2.json
+  [1.5b] [run] λ=2 SUMMARY: throughput 229.1±26.1 tok/s over 3 repeats
+  [1.5b] [run] λ=3 rep=0: n=132 fail=0 thru=331.2 tok/s TTFT p50/p99=663/1650ms SM=84% acc=0.7223396065713397 lag_p99=17.4ms -> 20260810T040034Z_expB_qwen1.5b_r3_rep0.json
+  [1.5b] [run] λ=3 rep=1: n=121 fail=0 thru=329.4 tok/s TTFT p50/p99=842/1686ms SM=84% acc=0.7165284880197981 lag_p99=14.0ms -> 20260810T040225Z_expB_qwen1.5b_r3_rep1.json
+  [1.5b] [run] λ=3 rep=2: n=125 fail=0 thru=330.4 tok/s TTFT p50/p99=727/2528ms SM=85% acc=0.7175485167767273 lag_p99=19.1ms -> 20260810T040412Z_expB_qwen1.5b_r3_rep2.json
+  [1.5b] [run] λ=3 SUMMARY: throughput 330.3±0.9 tok/s over 3 repeats
+  [1.5b] [run] λ=4 rep=0: n=166 fail=0 thru=437.4 tok/s TTFT p50/p99=799/2604ms SM=85% acc=0.7210065475874046 lag_p99=11.1ms -> 20260810T040616Z_expB_qwen1.5b_r4_rep0.json
+  [1.5b] [run] λ=4 rep=1: n=162 fail=0 thru=471.3 tok/s TTFT p50/p99=990/2183ms SM=85% acc=0.7140494124736366 lag_p99=23.8ms -> 20260810T040831Z_expB_qwen1.5b_r4_rep1.json
+  [1.5b] [run] λ=4 rep=2: n=168 fail=0 thru=31.6 tok/s TTFT p50/p99=2101/4692ms SM=87% acc=0.7074318995651804 lag_p99=7.7ms -> 20260810T040936Z_expB_qwen1.5b_r4_rep2.json
+  [1.5b] [run] λ=4 SUMMARY: throughput 313.4±244.6 tok/s over 3 repeats
+  [1.5b] [run] λ=5 rep=0: n=0 fail=205 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.6ms -> 20260810T041030Z_expB_qwen1.5b_r5_rep0.json
+  [1.5b] [run] λ=5 rep=1: n=0 fail=194 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.4ms -> 20260810T041125Z_expB_qwen1.5b_r5_rep1.json
+  [1.5b] [run] λ=5 rep=2: n=0 fail=217 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.4ms -> 20260810T041220Z_expB_qwen1.5b_r5_rep2.json
+  [1.5b] [run] λ=5 SUMMARY: throughput 0.0±0.0 tok/s over 3 repeats
+  [1.5b] [run] wrote sweep summary expB_qwen1.5b_sweep_summary.json and 3 figures:
+  [1.5b]        results/figures/expB_qwen1.5b_latency_vs_load.png
+  [1.5b]        results/figures/expB_qwen1.5b_throughput_vs_load.png
+  [1.5b]        results/figures/expB_qwen1.5b_utilization_vs_load.png
+[expB 04:12:21] stopping server pid 1894864
+[expB 04:12:21] gpu free (used=5 MiB)
+[expB 04:12:21] starting server for Qwen/Qwen2.5-3B-Instruct
+[expB 04:13:23] server healthy for Qwen/Qwen2.5-3B-Instruct
+[expB 04:13:23] sweep: Qwen/Qwen2.5-3B-Instruct
+  [3b] [run] server healthy. sweeping rates=[0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0] x 3 repeats (duration 55s, warmup 15s each).
+  [3b] [run] pre-sweep warmup: 15s at λ=0.5 (discarded) ...
+  [3b] [run] λ=0.5 rep=0: n=15 fail=0 thru=24.9 tok/s TTFT p50/p99=91/324ms SM=45% acc=0.6507936507936508 lag_p99=6.6ms -> 20260810T041437Z_expB_qwen3b_r0.5_rep0.json
+  [3b] [run] λ=0.5 rep=1: n=23 fail=0 thru=70.5 tok/s TTFT p50/p99=490/1303ms SM=85% acc=0.6267921795800144 lag_p99=2.3ms -> 20260810T041559Z_expB_qwen3b_r0.5_rep1.json
+  [3b] [run] λ=0.5 rep=2: n=16 fail=0 thru=38.3 tok/s TTFT p50/p99=776/1834ms SM=85% acc=0.6060433295324972 lag_p99=1.7ms -> 20260810T041714Z_expB_qwen3b_r0.5_rep2.json
+  [3b] [run] λ=0.5 SUMMARY: throughput 44.6±23.4 tok/s over 3 repeats
+  [3b] [run] λ=1 rep=0: n=35 fail=0 thru=89.1 tok/s TTFT p50/p99=614/2016ms SM=86% acc=0.6087424878104093 lag_p99=2.1ms -> 20260810T041842Z_expB_qwen3b_r1_rep0.json
+  [3b] [run] λ=1 rep=1: n=48 fail=0 thru=147.1 tok/s TTFT p50/p99=703/1931ms SM=87% acc=0.5946277961129446 lag_p99=5.5ms -> 20260810T042016Z_expB_qwen3b_r1_rep1.json
+  [3b] [run] λ=1 rep=2: n=39 fail=0 thru=96.8 tok/s TTFT p50/p99=465/1983ms SM=85% acc=0.5844562078922041 lag_p99=2.4ms -> 20260810T042141Z_expB_qwen3b_r1_rep2.json
+  [3b] [run] λ=1 SUMMARY: throughput 111.0±31.5 tok/s over 3 repeats
+  [3b] [run] λ=1.5 rep=0: n=67 fail=0 thru=179.8 tok/s TTFT p50/p99=883/2216ms SM=88% acc=0.5884666385389669 lag_p99=3.5ms -> 20260810T042324Z_expB_qwen3b_r1.5_rep0.json
+  [3b] [run] λ=1.5 rep=1: n=64 fail=0 thru=186.7 tok/s TTFT p50/p99=1337/2990ms SM=89% acc=0.5840771546742899 lag_p99=3.7ms -> 20260810T042517Z_expB_qwen3b_r1.5_rep1.json
+  [3b] [run] λ=1.5 rep=2: n=68 fail=0 thru=176.7 tok/s TTFT p50/p99=658/2515ms SM=87% acc=0.5786368643822114 lag_p99=2.3ms -> 20260810T042706Z_expB_qwen3b_r1.5_rep2.json
+  [3b] [run] λ=1.5 SUMMARY: throughput 181.1±5.1 tok/s over 3 repeats
+  [3b] [run] λ=2 rep=0: n=91 fail=0 thru=256.7 tok/s TTFT p50/p99=1236/2344ms SM=89% acc=0.5813904234897574 lag_p99=3.4ms -> 20260810T042915Z_expB_qwen3b_r2_rep0.json
+  [3b] [run] λ=2 rep=1: n=82 fail=0 thru=249.0 tok/s TTFT p50/p99=1668/3837ms SM=89% acc=0.5784103114930182 lag_p99=10.2ms -> 20260810T043152Z_expB_qwen3b_r2_rep1.json
+  [3b] [run] λ=2 rep=2: n=77 fail=0 thru=207.8 tok/s TTFT p50/p99=1002/2564ms SM=88% acc=0.5757759423624809 lag_p99=4.6ms -> 20260810T043352Z_expB_qwen3b_r2_rep2.json
+  [3b] [run] λ=2 SUMMARY: throughput 237.9±26.3 tok/s over 3 repeats
+  [3b] [run] λ=3 rep=0: n=132 fail=0 thru=340.6 tok/s TTFT p50/p99=4626/7827ms SM=91% acc=0.5762144328992942 lag_p99=2.6ms -> 20260810T043628Z_expB_qwen3b_r3_rep0.json
+  [3b] [run] λ=3 rep=1: n=121 fail=0 thru=342.2 tok/s TTFT p50/p99=8564/14723ms SM=91% acc=0.5734492135549397 lag_p99=2.9ms -> 20260810T043933Z_expB_qwen3b_r3_rep1.json
+  [3b] [run] λ=3 rep=2: n=125 fail=0 thru=349.9 tok/s TTFT p50/p99=2803/14448ms SM=91% acc=0.5730815213895751 lag_p99=3.1ms -> 20260810T044220Z_expB_qwen3b_r3_rep2.json
+  [3b] [run] λ=3 SUMMARY: throughput 344.3±5.0 tok/s over 3 repeats
+  [3b] [run] λ=4 rep=0: n=166 fail=0 thru=438.9 tok/s TTFT p50/p99=15298/24904ms SM=91% acc=0.5728811534877136 lag_p99=2.5ms -> 20260810T044529Z_expB_qwen3b_r4_rep0.json
+  [3b] [run] λ=4 rep=1: n=162 fail=0 thru=487.6 tok/s TTFT p50/p99=20432/31775ms SM=91% acc=0.5702518807558052 lag_p99=2.7ms -> 20260810T044914Z_expB_qwen3b_r4_rep1.json
+  [3b] [run] λ=4 rep=2: n=168 fail=0 thru=486.1 tok/s TTFT p50/p99=16962/35251ms SM=92% acc=0.5712268027814283 lag_p99=2.4ms -> 20260810T045251Z_expB_qwen3b_r4_rep2.json
+  [3b] [run] λ=4 SUMMARY: throughput 470.8±27.7 tok/s over 3 repeats
+  [3b] [run] λ=5 rep=0: n=184 fail=21 thru=13.8 tok/s TTFT p50/p99=28034/41543ms SM=93% acc=None lag_p99=2.9ms -> 20260810T045421Z_expB_qwen3b_r5_rep0.json
+  [3b] [run] λ=5 rep=1: n=0 fail=194 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.6ms -> 20260810T045516Z_expB_qwen3b_r5_rep1.json
+  [3b] [run] λ=5 rep=2: n=0 fail=217 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.2ms -> 20260810T045611Z_expB_qwen3b_r5_rep2.json
+  [3b] [run] λ=5 SUMMARY: throughput 4.6±8.0 tok/s over 3 repeats
+  [3b] [run] wrote sweep summary expB_qwen3b_sweep_summary.json and 3 figures:
+  [3b]        results/figures/expB_qwen3b_latency_vs_load.png
+  [3b]        results/figures/expB_qwen3b_throughput_vs_load.png
+  [3b]        results/figures/expB_qwen3b_utilization_vs_load.png
+[expB 04:56:12] stopping server pid 1910847
+[expB 04:56:12] gpu free (used=5 MiB)
+[expB 04:56:12] OOM boundary probe: Qwen2.5-3B
+  [oom3b] 
+  [oom3b] [trial 1] cooling / waiting for a free GPU ...
+  [oom3b] [trial 1] GPU used=0.44GiB temp=69.0C -> starting server
+  [oom3b]     stage λ=2: ok=106 fail=0 running=6.0 kv=0.020152883947185507 mem=12.58GiB temp=84.0C
+  [oom3b]     stage λ=3: ok=3 fail=0 running=158.0 kv=0.33217512161223073 mem=14.38GiB temp=86.0C
+  [oom3b] [trial 1] wrote 20260810T045612Z_expA_trial1.json
+  [oom3b] 
+  [oom3b] [trial 2] cooling / waiting for a free GPU ...
+  [oom3b] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [oom3b]     stage λ=2: ok=66 fail=0 running=46.0 kv=0.11593699328237206 mem=14.25GiB temp=84.0C
+  [oom3b]     stage λ=3: ok=9 fail=0 running=192.0 kv=0.4350243224461432 mem=13.97GiB temp=86.0C
+  [oom3b] [trial 2] wrote 20260810T050015Z_expA_trial2.json
+  [oom3b] 
+  [oom3b] [trial 3] cooling / waiting for a free GPU ...
+  [oom3b] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [oom3b]     stage λ=2: ok=62 fail=0 running=50.0 kv=0.12149640954366459 mem=14.48GiB temp=84.0C
+  [oom3b]     stage λ=3: ok=7 fail=0 running=198.0 kv=0.43803567292101 mem=14.08GiB temp=85.0C
+  [oom3b]     stage λ=4: ok=54 fail=0 running=252.0 kv=0.6539263377345379 mem=14.98GiB temp=86.0C
+  [oom3b]     stage λ=5: ok=71 fail=0 running=256.0 kv=0.7589761408385453 mem=14.10GiB temp=86.0C
+  [oom3b]     stage λ=6: ok=66 fail=0 running=256.0 kv=0.7835302293259208 mem=14.68GiB temp=85.0C
+  [oom3b]     stage λ=8: ok=53 fail=0 running=256.0 kv=0.8036831132731064 mem=14.81GiB temp=85.0C
+  [oom3b] [trial 3] wrote 20260810T050427Z_expA_trial3.json
+  [oom3b] 
+  [oom3b] ==============================================================================
+  [oom3b] EXPERIMENT A SUMMARY
+  [oom3b] ==============================================================================
+  [oom3b] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [oom3b]     1  True      742.0 batch_expansion.py:227 in _contrac    256   57.37     0.44
+  [oom3b]     2  True      742.0 batch_expansion.py:227 in _contrac    256   59.56     0.44
+  [oom3b]     3 False        nan                               None    256   80.72    14.81
+  [oom3b] 
+  [oom3b] reproduced OOM in 2/3 independent trials
+  [oom3b] wrote results/expB/oom3b/expA_summary.json
+[expB 05:12:33] EXPERIMENT B COMPLETE
