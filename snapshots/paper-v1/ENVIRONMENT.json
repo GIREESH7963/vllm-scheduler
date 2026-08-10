@@ -1,0 +1,103 @@
+{
+  "captured_at_utc": "2026-08-10T03:11:44Z",
+  "host": {
+    "hostname": "zeronsec-ProLiant-DL360-Gen9",
+    "kernel": "6.8.0-124-generic",
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+    "python": "3.11.15",
+    "python_executable": "/home/abburigireesh/vllm_scheduler/.venv/bin/python",
+    "cpu_model": "Intel(R) Xeon(R) CPU E5-2696 v4 @ 2.20GHz",
+    "cpu_count": 88
+  },
+  "driver": {
+    "proc_driver_version_raw": "NVRM version: NVIDIA UNIX x86_64 Kernel Module  580.159.03  Fri Apr 24 06:16:47 UTC 2026\nGCC version:  gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04.3)",
+    "kernel_module_version": "580.159.03",
+    "userspace_nvml_version": "580.173.02",
+    "mismatch": true,
+    "mismatch_note": "loaded kernel module 580.159.03 != installed userspace 580.173.02; NVML unavailable until modules are reloaded or the host reboots",
+    "nvidia_smi": "Failed to initialize NVML: Driver/library version mismatch\nNVML library version: 580.173"
+  },
+  "nvml": {
+    "available": false,
+    "error": "nvmlInit failed: RM has detected an NVML/RM version mismatch."
+  },
+  "torch_cuda": {
+    "torch_version": "2.6.0+cu124",
+    "torch_cuda_version": "12.4",
+    "cudnn_version": 90100,
+    "cuda_available": true,
+    "device_count": 1,
+    "devices": [
+      {
+        "index": 0,
+        "name": "Tesla T4",
+        "compute_capability": "7.5",
+        "multi_processor_count": 40,
+        "memory_total_bytes": 15636037632,
+        "memory_total_gib": 14.5622,
+        "memory_free_bytes": 3166633984,
+        "memory_free_gib": 2.9492,
+        "memory_in_use_by_others_gib": 11.613
+      }
+    ]
+  },
+  "dcgm": {
+    "dcgmi_path": "/usr/bin/dcgmi",
+    "discovery": "1 GPU found.\n+--------+----------------------------------------------------------------------+\n| GPU ID | Device Information                                                   |\n+--------+----------------------------------------------------------------------+\n| 0      | Name: Tesla T4                                                       |\n|        | PCI Bus ID: 00000000:08:00.0                                         |\n|        | Device UUID: GPU-1037b0f1-a73c-e48d-f3cf-4f1e108c627f                |\n+--------+----------------------------------------------------------------------+\n0 NvSwitches found.\n+-----------+\n| Switch ID |\n+-----------+\n+-----------+\n0 CPUs found.\n+--------+----------------------------------------------------------------------+\n| CPU ID | Device Information                                                   |\n+--------+----------------------------------------------------------------------+\n+--------+----------------------------------------------------------------------+",
+    "available": true,
+    "dmon_probe_sm_dram": "#Entity   SMACT        DRAMA        \nID                                  \nGPU 0     0.000        0.000        \nGPU 0     0.000        0.000        \nGPU 0     0.000        0.000"
+  },
+  "packages": {
+    "vllm": "0.8.5.post1",
+    "torch": "2.6.0+cu124",
+    "transformers": "4.51.3",
+    "numpy": "2.2.6",
+    "pandas": "3.0.3",
+    "matplotlib": "3.11.0",
+    "httpx": "0.28.1",
+    "_pip_freeze": "aiohappyeyeballs==2.7.1\naiohttp==3.14.1\naiosignal==1.4.0\nairportsdata==20260315\nannotated-doc==0.0.4\nannotated-types==0.7.0\nanyio==4.14.1\nastor==0.8.1\nattrs==26.1.0\nblake3==1.0.9\ncachetools==7.1.4\ncertifi==2026.6.17\ncharset-normalizer==3.4.7\nclick==8.4.2\ncloudpickle==3.1.2\ncompressed-tensors==0.9.3\ncontourpy==1.3.3\ncuda-pathfinder==1.5.6\ncupy-cuda12x==14.1.1\ncycler==0.12.1\nDeprecated==1.3.1\ndepyf==0.18.0\ndetect-installer==0.1.0\ndill==0.4.1\ndiskcache==5.6.3\ndistro==1.9.0\ndnspython==2.8.0\neinops==0.8.2\nemail-validator==2.3.0\nfastapi==0.139.0\nfastapi-cli==0.0.28\nfastapi-cloud-cli==0.22.1\nfastar==0.11.0\nfilelock==3.29.5\nfonttools==4.63.0\nfrozenlist==1.8.0\nfsspec==2026.6.0\ngguf==0.19.0\ngoogleapis-common-protos==1.75.0\ngrpcio==1.82.0\nh11==0.16.0\nhf-xet==1.5.1\nhttpcore==1.0.9\nhttptools==0.8.0\nhttpx==0.28.1\nhuggingface_hub==0.36.2\nidna==3.18\nimportlib_metadata==8.0.0\niniconfig==2.3.0\ninteregular==0.3.3\nJinja2==3.1.6\njiter==0.16.0\njsonschema==4.26.0\njsonschema-specifications==2025.9.1\nkiwisolver==1.5.0\nlark==1.2.2\nllguidance==0.7.30\nllvmlite==0.44.0\nlm-format-enforcer==0.10.12\nmarkdown-it-py==4.2.0\nMarkupSafe==3.0.3\nmatplotlib==3.11.0\nmdurl==0.1.2\nmistral_common==1.11.5\nmpmath==1.3.0\nmsgpack==1.2.1\nmsgspec==0.21.1\nmultidict==6.7.1\nnest-asyncio==1.6.0\nnetworkx==3.6.1\nninja==1.13.0\nnumba==0.61.2\nnumpy==2.2.6\nnvidia-cublas-cu12==12.4.5.8\nnvidia-cuda-cupti-cu12==12.4.127\nnvidia-cuda-nvrtc-cu12==12.4.127\nnvidia-cuda-runtime-cu12==12.4.127\nnvidia-cudnn-cu12==9.1.0.70\nnvidia-cufft-cu12==11.2.1.3\nnvidia-curand-cu12==10.3.5.147\nnvidia-cusolver-cu12==11.6.1.9\nnvidia-cusparse-cu12==12.3.1.170\nnvidia-cusparselt-cu12==0.6.2\nnvidia-ml-py==13.610.43\nnvidia-nccl-cu12==2.21.5\nnvidia-nvjitlink-cu12==12.4.127\nnvidia-nvtx-cu12==12.4.127\nopenai==2.44.0\nopencv-python-headless==5.0.0.93\nopentelemetry-api==1.26.0\nopentelemetry-exporter-otlp==1.26.0\nopentelemetry-exporter-otlp-proto-common==1.26.0\nopentelemetry-exporter-otlp-proto-grpc==1.26.0\nopentelemetry-exporter-otlp-proto-http==1.26.0\nopentelemetry-proto==1.26.0\nopentelemetry-sdk==1.26.0\nopentelemetry-semantic-conventions==0.47b0\nopentelemetry-semantic-conventions-ai==0.4.13\noutlines==0.1.11\noutlines_core==0.1.26\npackaging==26.2\npandas==3.0.3\npartial-json-parser==0.2.1.1.post7\npillow==12.3.0\npluggy==1.6.0\nprometheus-fastapi-instrumentator==8.0.2\nprometheus_client==0.25.0\npropcache==0.5.2\nprotobuf==4.25.9\npsutil==7.2.2\npy-cpuinfo==9.0.0\npycountry==26.2.16\npydantic==2.13.4\npydantic-extra-types==2.11.1\npydantic-settings==2.14.2\npydantic_core==2.46.4\nPygments==2.20.0\npyparsing==3.3.2\npytest==9.1.1\npython-dateutil==2.9.0.post0\npython-dotenv==1.2.2\npython-json-logger==4.1.0\npython-multipart==0.0.32\nPyYAML==6.0.3\npyzmq==27.1.0\nray==2.56.0\nreferencing==0.37.0\nregex==2026.6.28\nrequests==2.34.2\nrich==15.0.0\nrich-toolkit==0.20.1\nrignore==0.7.6\nrpds-py==2026.6.3\nsafetensors==0.8.0\nscipy==1.17.1\nsentencepiece==0.2.1\nsentry-sdk==2.64.0\nshellingham==1.5.4\nsix==1.17.0\nsniffio==1.3.1\nstarlette==1.3.1\nsympy==1.13.1\ntiktoken==0.13.0\ntokenizers==0.21.4\ntorch==2.6.0\ntorchaudio==2.6.0\ntorchvision==0.21.0\ntqdm==4.68.3\ntransformers==4.51.3\ntriton==3.2.0\ntyper==0.26.8\ntyping-inspection==0.4.2\ntyping_extensions==4.16.0\nurllib3==2.7.0\nuvicorn==0.50.1\nuvloop==0.22.1\nvllm==0.8.5.post1\nwatchfiles==1.2.0\nwebsockets==16.0\nwrapt==2.2.2\nxformers==0.0.29.post2\nxgrammar==0.1.18\nyarl==1.24.2\nzipp==4.1.0"
+  },
+  "server": {
+    "base_url": "http://localhost:8000",
+    "reachable": true,
+    "models": {
+      "object": "list",
+      "data": [
+        {
+          "id": "Qwen/Qwen2.5-1.5B-Instruct",
+          "object": "model",
+          "created": 1786331513,
+          "owned_by": "vllm",
+          "root": "Qwen/Qwen2.5-1.5B-Instruct",
+          "parent": null,
+          "max_model_len": 32768,
+          "permission": [
+            {
+              "id": "modelperm-ca9ac9427caa423983cd6e80a6f2b4fd",
+              "object": "model_permission",
+              "created": 1786331513,
+              "allow_create_engine": false,
+              "allow_sampling": true,
+              "allow_logprobs": true,
+              "allow_search_indices": false,
+              "allow_view": true,
+              "allow_fine_tuning": false,
+              "organization": "*",
+              "group": null,
+              "is_blocking": false
+            }
+          ]
+        }
+      ]
+    },
+    "server_process_argv": "1864341 /bin/sh -c pgrep -af 'vllm serve' || true\n2395949 /home/abburigireesh/vllm_scheduler/.venv/bin/python .venv/bin/vllm serve Qwen/Qwen2.5-1.5B-Instruct --port 8000 --dtype float16 --gpu-memory-utilization 0.9 --speculative-config {\"method\": \"ngram\", \"num_speculative_tokens\": 4, \"prompt_lookup_min\": 2, \"prompt_lookup_max\": 5}"
+  },
+  "git": {
+    "commit": "89c06c6b69969d1705f30c2a87840e758637ceb3",
+    "commit_short": "89c06c6",
+    "branch": "master",
+    "describe": "89c06c6",
+    "dirty": true,
+    "status_porcelain": "M .claude/settings.local.json\n M tools/freeze_snapshot.py\n?? snapshots/"
+  }
+}

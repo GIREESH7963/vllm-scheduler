@@ -1,0 +1,22 @@
+{
+  "rate": 4.0,
+  "seed": 12345,
+  "predictor_mae_tokens": 19.112512033650646,
+  "variants": {
+    "srpt-oracle": {
+      "slo_attainment": 0.3763440860215054,
+      "total_latency_ms_p99": 17953.344757503055,
+      "queue_wait_ms_p50": 557.8543421230187
+    },
+    "srpt-prediction": {
+      "slo_attainment": 0.44086021505376344,
+      "total_latency_ms_p99": 17251.543214482237,
+      "queue_wait_ms_p50": 476.7765501234891
+    },
+    "srpt-prompt-proxy": {
+      "slo_attainment": 0.46236559139784944,
+      "total_latency_ms_p99": 18774.583233515696,
+      "queue_wait_ms_p50": 501.02173452433976
+    }
+  }
+}

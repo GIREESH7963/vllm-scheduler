@@ -1,0 +1,27 @@
+# Phase 1 — spec-decode-heavy mix: coding class dominates so n-gram prompt-lookup lands often.
+# Expect a markedly higher acceptance_rate than the other mixes.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  # Coding class -> high n-gram acceptance may lift effective capacity; bracket the knee.
+  duration_s: 75
+  warmup_s: 25
+  repeats: 3
+  seed: 12345
+  arrival_rates: [0.5, 1.0, 1.5, 2.0]
+  save_raw: true
+  mix:
+    coding: 0.8        # spec-decode class
+    short: 0.2
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 50
