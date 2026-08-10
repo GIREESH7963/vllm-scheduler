@@ -239,9 +239,13 @@ def build(name: str, force: bool, supersedes: str | None = None) -> Path:
         "commit_short": _git("rev-parse", "--short", "HEAD"),
         "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
         "describe": _git("describe", "--tags", "--always"),
-        # A dirty tree at freeze time means the snapshot does not correspond to any commit.
-        "dirty": bool(_git("status", "--porcelain")),
-        "status_porcelain": _git("status", "--porcelain"),
+        # A dirty tree at freeze time means the snapshot does not correspond to any commit and
+        # cannot be restored by checkout. `snapshots/` is excluded from that judgement: this tool
+        # has by now written its own output there, and a snapshot must not report itself dirty
+        # for existing. Every other path still counts.
+        "dirty": bool(_git("status", "--porcelain", "--", ".", ":(exclude)snapshots")),
+        "status_porcelain": _git("status", "--porcelain", "--", ".", ":(exclude)snapshots"),
+        "dirty_check_excludes": ["snapshots/"],
     }
     (dest / "ENVIRONMENT.json").write_text(json.dumps(env, indent=2) + "\n")
 
