@@ -26,8 +26,12 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 
 # Source trees copied verbatim into the snapshot so it stands alone without the git history.
-CODE_DIRS = ("common", "configs", "phase0-setup", "phase1-harness", "phase2-policies", "tools")
-CODE_FILES = ("requirements.txt",)
+CODE_DIRS = ("common", "configs", "phase0-setup", "phase1-harness", "phase2-policies",
+             "phase3-limits", "tools")
+CODE_FILES = ("requirements.txt", "status.sh")
+# Prose that interprets the results — the derivations and analyses a reader needs in order to
+# know what the numbers in results/ mean. Frozen alongside them so the two cannot drift.
+DOC_DIRS = ("docs",)
 # Logs are compressed: server.log is ~45 MB of vLLM stdout and holds the only record of the
 # OOM event, so it must be preserved, but not at full size.
 LOG_FILES = (
@@ -91,7 +95,7 @@ def _git(*args: str) -> str | None:
     return (r.stdout or "").strip() if r.returncode == 0 else None
 
 
-def _readme(name: str, env: dict, dest: Path) -> str:
+def _readme(name: str, env: dict, dest: Path, supersedes: str | None = None) -> str:
     """Generate the provenance document from the captured environment.
 
     The freeze-time environment is not necessarily the measurement-time environment — this box
@@ -106,6 +110,15 @@ def _readme(name: str, env: dict, dest: Path) -> str:
 
     n_results = len(list((dest / "results").glob("*.json"))) if (dest / "results").is_dir() else 0
     n_figs = len(list((dest / "results" / "figures").glob("*.png"))) if (dest / "results" / "figures").is_dir() else 0
+    n_paper = len(list((dest / "results" / "figures" / "paper").glob("*.pdf")))
+    docs = sorted(p.name for d in DOC_DIRS if (dest / d).is_dir()
+                  for p in (dest / d).glob("*.md"))
+    doc_row = (f"| `docs/` | {', '.join(f'`{d}`' for d in docs)} |\n" if docs else "")
+    sup = ""
+    if supersedes:
+        sup = (f"\nSupersedes **`{supersedes}`**, which remains frozen and valid for the results "
+               f"it contains.\nWhere the two disagree, this snapshot is the corrected one — see "
+               f"`docs/experiment_b.md` §2.\n")
 
     warn = ""
     if drv.get("mismatch"):
@@ -127,14 +140,14 @@ Frozen at **{env.get('captured_at_utc')}** from commit
 This directory is **read-only by design**. It is a physical copy, not a reference: later sweeps
 write into the live `results/` tree and regenerate summaries and figures in place, so a git tag
 alone would not protect this baseline.
-{warn}
+{sup}{warn}
 ## Contents
 
 | Path | What it holds |
 |---|---|
-| `code/` | Harness, policies, configs and `requirements.txt` as of the commit above |
-| `results/` | {n_results} per-run JSON files, raw traces, sweep/policy summaries |
-| `results/figures/` | {n_figs} generated plots |
+| `code/` | Harness, policies, probes, configs and `requirements.txt` as of the commit above |
+{doc_row}| `results/` | {n_results} per-run JSON files, raw traces, sweep/policy summaries |
+| `results/figures/` | {n_figs} generated plots, {n_paper} of them manuscript PDFs |
 | `logs/` | gzipped stdout from the server and every sweep driver |
 | `ENVIRONMENT.json` | Full machine-readable environment capture |
 | `MANIFEST.sha256` | SHA-256 of every file above |
@@ -174,7 +187,7 @@ uv pip install -r requirements.txt
 """
 
 
-def build(name: str, force: bool) -> Path:
+def build(name: str, force: bool, supersedes: str | None = None) -> Path:
     dest = REPO / "snapshots" / name
     if dest.exists():
         if not force:
@@ -193,6 +206,12 @@ def build(name: str, force: bool) -> Path:
     for f in CODE_FILES:
         if (REPO / f).is_file():
             shutil.copy2(REPO / f, code_dst / f)
+
+    # --- interpretive documents ----------------------------------------------------------
+    for d in DOC_DIRS:
+        src = REPO / d
+        if src.is_dir():
+            shutil.copytree(src, dest / d, ignore=EXCLUDE)
 
     # --- results: per-run JSON, raw traces, summaries, figures ---------------------------
     res_src = REPO / "results"
@@ -227,7 +246,7 @@ def build(name: str, force: bool) -> Path:
     (dest / "ENVIRONMENT.json").write_text(json.dumps(env, indent=2) + "\n")
 
     # --- provenance README ----------------------------------------------------------------
-    (dest / "README.md").write_text(_readme(name, env, dest))
+    (dest / "README.md").write_text(_readme(name, env, dest, supersedes))
 
     # --- checksums over everything written so far ----------------------------------------
     manifest_path = dest / "MANIFEST.sha256"
@@ -248,9 +267,10 @@ def main() -> None:
     ap.add_argument("name", help="snapshot name, e.g. paper-v1")
     ap.add_argument("--force", action="store_true", help="replace an existing snapshot")
     ap.add_argument("--no-freeze", action="store_true", help="skip dropping write permission")
+    ap.add_argument("--supersedes", help="name of the snapshot this one replaces, e.g. paper-v1")
     args = ap.parse_args()
 
-    dest, env, count, total_bytes = build(args.name, args.force)
+    dest, env, count, total_bytes = build(args.name, args.force, args.supersedes)
     if not args.no_freeze:
         _freeze_tree(dest)
 
