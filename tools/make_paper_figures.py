@@ -508,6 +508,99 @@ def fig_model_vs_measured(model_fit, out: Path):
 
 # ======================================================================================
 
+# ======================================================================================
+# fig 10 — model-size comparison (Experiment B)
+# ======================================================================================
+
+def fig_model_size(runs, expB, out: Path):
+    """What moves with model size (KV per sequence) beside what does not (the fatal allocation).
+
+    The whole result of Experiment B is the contrast between these two panels, so they share an
+    x-axis and are drawn at the same scale.
+    """
+    if not expB:
+        print("  fig10: skipped, run tools/analyze_expB.py first")
+        return []
+
+    fig, (axL, axR) = plt.subplots(1, 2, figsize=(10.8, 4.6))
+    labels = {"1.5b": "Qwen2.5-1.5B", "3b": "Qwen2.5-3B"}
+    NMAX = 290
+
+    # ---- left: KV occupancy per sequence, the quantity that moves ---------------------
+    for tag in ("1.5b", "3b"):
+        arm = expB["arms"][tag]
+        pts = [(r["num_running_mean"], r["kv_occupancy"] * 100) for r in runs
+               if r.get("config") == f"expB_qwen{tag}"
+               and (r.get("n_requests_failed") or 0) == 0
+               and ((r.get("output_len") or {}).get("actual_over_requested") or 1) >= 0.4]
+        if not pts:
+            continue
+        N = np.array([p[0] for p in pts]); KV = np.array([p[1] for p in pts])
+        c = ps.MODEL_COLOR[tag]
+        axL.scatter(N, KV, s=34, color=c, marker=ps.MODEL_MARKER[tag], alpha=0.85,
+                    edgecolor="white", linewidth=0.6, zorder=4,
+                    label=f"{labels[tag]}  ({arm['kv_per_seq_pct']:.3f}%/seq)")
+        xs = np.linspace(0, NMAX, 100)
+        axL.plot(xs, xs * arm["kv_per_seq_pct"], color=c, lw=1.3, alpha=0.75, zorder=3)
+
+    axL.axhline(100, color=ps.INK, lw=1.1, ls=(0, (4, 2)), zorder=2)
+    axL.text(NMAX - 5, 103, "KV pool exhausted", fontsize=7.4, color=ps.INK_2, ha="right")
+    axL.axvline(256, color=ps.MUTED, lw=1.0, ls=":", zorder=2)
+    axL.text(250, 60, "max_num_seqs = 256", fontsize=7.4, color=ps.MUTED,
+             rotation=90, va="center", ha="right")
+
+    for e in expB["oom"]["events"]:
+        n, kv = e.get("n_at_failing_step"), (e.get("telemetry") or {}).get("peak_kv_occupancy")
+        if n and kv:
+            axL.scatter([n], [kv * 100], s=115, marker="X", color=ps.STATUS_BAD,
+                        edgecolor="white", linewidth=1.2, zorder=6)
+    axL.scatter([], [], s=115, marker="X", color=ps.STATUS_BAD, edgecolor="white",
+                linewidth=1.2, label="engine death (OOM)")
+
+    axL.set_xlim(0, NMAX); axL.set_ylim(0, 118)
+    axL.set_xlabel("Concurrent sequences,  N")
+    axL.set_ylabel("KV cache occupancy  (%)")
+    axL.set_title("a.  KV cost per sequence moves with model size", loc="left")
+    axL.legend(loc="upper left", fontsize=7.6)
+    ratio = expB["contrasts"]["kv_per_seq_ratio_3b_over_1.5b"]
+    ci = expB["contrasts"]["kv_per_seq_ratio_ci95"]
+    axL.text(0.985, 0.035, f"3B costs {ratio:.2f}× the KV per sequence\n"
+                           f"95% CI [{ci[0]:.2f}, {ci[1]:.2f}]",
+             transform=axL.transAxes, fontsize=7.6, color=ps.INK_2, ha="right", linespacing=1.5)
+
+    # ---- right: the fatal allocation, the quantity that does not ----------------------
+    per_seq = expB["oom"]["scorer_mib_per_seq"]
+    xs = np.linspace(0, NMAX, 100)
+    axR.plot(xs, xs * per_seq, color=ps.INK, lw=1.5, zorder=3,
+             label=f"$N\\,(k{{+}}1)\\,V\\times$4 B  =  {per_seq:.3f} MiB/seq")
+
+    for tag in ("1.5b", "3b"):
+        ev = [e for e in expB["oom"]["events"] if e["arm"] == tag and e.get("n_at_failing_step")]
+        if not ev:
+            continue
+        axR.scatter([e["n_at_failing_step"] for e in ev],
+                    [e["failed_alloc_mib"] for e in ev],
+                    s=90, marker=ps.MODEL_MARKER[tag], color=ps.MODEL_COLOR[tag],
+                    edgecolor="white", linewidth=1.0, zorder=5, label=labels[tag])
+
+    axR.axvline(256, color=ps.MUTED, lw=1.0, ls=":", zorder=2)
+    ps.annotate(axR, "both models fail at the\nsame 742 MiB at N = 256",
+                (256, 742), (150, 900), color=ps.STATUS_BAD)
+    ps.annotate(axR, "1.5B sweep died earlier,\nasked for less: 638 MiB at N = 220",
+                (220, 638), (18, 300), color=ps.INK_2)
+
+    axR.set_xlim(0, NMAX); axR.set_ylim(0, 1000)
+    axR.set_xlabel("Concurrent sequences,  N")
+    axR.set_ylabel("Failing allocation  (MiB)")
+    axR.set_title("b.  The allocation that kills it does not", loc="left")
+    axR.legend(loc="upper left", fontsize=7.6)
+    axR.text(0.985, 0.035, "7 engine deaths, 2 model sizes,\npredicted to within 0.1%",
+             transform=axR.transAxes, fontsize=7.6, color=ps.INK_2, ha="right", linespacing=1.5)
+
+    fig.tight_layout()
+    return ps.save(fig, out, "fig10_model_size_comparison")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--results-dir", default="results")
@@ -521,9 +614,11 @@ def main() -> None:
     stats = load_json(rd / "stats" / "policy_stats.json")
     model_fit = load_json(rd / "model" / "queueing_model_fit.json")
     expA = load_json(rd / "expA" / "expA_summary_corrected.json")
+    expB = load_json(rd / "expB" / "expB_analysis.json")
 
     print(f"runs={len(runs)}  stats={'y' if stats else 'n'}  "
-          f"model={'y' if model_fit else 'n'}  expA={'y' if expA else 'n'}")
+          f"model={'y' if model_fit else 'n'}  expA={'y' if expA else 'n'}  "
+          f"expB={'y' if expB else 'n'}")
 
     made = []
     made += fig_architecture(out)
@@ -535,6 +630,7 @@ def main() -> None:
     made += fig_perclass_heatmap(stats, out)
     made += fig_model_vs_measured(model_fit, out)
     made += fig_regime_diagram(expA, out)
+    made += fig_model_size(runs, expB, out)
 
     print(f"\nwrote {len(made)} files to {out}:")
     for p in sorted({p.stem for p in made}):

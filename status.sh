@@ -74,6 +74,7 @@ PY
   printf "  paper-v1 snapshot : %s\n" "$([ -d snapshots/paper-v1 ] && echo 'frozen (read-only)' || echo 'MISSING')"
   printf "  statistics report : %s\n" "$([ -f results/stats/STATISTICS.md ] && echo 'results/stats/STATISTICS.md' || echo 'pending')"
   printf "  queueing model    : %s\n" "$([ -f docs/queueing_model.md ] && echo 'docs/queueing_model.md' || echo 'pending')"
+  printf "  expB analysis     : %s\n" "$([ -f docs/experiment_b.md ] && echo 'docs/experiment_b.md' || echo 'pending')"
   printf "  paper figures     : %s PDFs in results/figures/paper\n" "$(ls results/figures/paper/*.pdf 2>/dev/null | wc -l)"
   printf "  git HEAD          : %s\n" "$(git log --oneline -1 2>/dev/null || echo 'n/a')"
   echo

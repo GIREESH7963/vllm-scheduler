@@ -1,60 +1,118 @@
 {
   "pooled": {
-    "n_points": 75,
-    "r0_tok_s_per_seq": 47.32311587687254,
+    "n_points": 109,
+    "r0_tok_s_per_seq": 39.974719320698554,
     "r0_ci95": [
-      39.20695008929388,
-      55.34745158733544
+      32.90628654758383,
+      53.27381315545212
     ],
-    "mu_max_tok_s": 274.24490205200385,
+    "mu_max_tok_s": 273.67307287053876,
     "mu_max_ci95": [
-      229.47959626827534,
-      317.88883885443227
+      239.45254163795153,
+      307.37682222002826
     ],
-    "N_star": 5.795157334220064,
+    "N_star": 6.846153707171454,
     "N_star_ci95": [
-      4.2592131744851525,
-      7.422728072743356
+      4.572770089987088,
+      8.639420774070361
     ],
-    "r_squared": 0.21619386390524598,
-    "rmse_tok_s": 103.44846413784715,
-    "mean_abs_pct_err": 59.08878535889804,
-    "n_below_knee": 33,
-    "n_above_knee": 42,
-    "saturated_slope_tok_s_per_seq": 0.10327523147397336,
+    "r_squared": 0.22924382113604147,
+    "rmse_tok_s": 108.20028474182051,
+    "mean_abs_pct_err": 58.067235646920466,
+    "n_below_knee": 41,
+    "n_above_knee": 68,
+    "saturated_slope_tok_s_per_seq": 1.6524344562049924,
     "N_range": [
       0.3561643835616438,
-      140.82022471910113
+      129.24806201550388
     ],
     "bootstrap_success": 2000
   },
   "per_workload": {
-    "modelval_mixed": {
+    "expB_qwen1.5b": {
+      "n_points": 17,
+      "r0_tok_s_per_seq": 8.519448842176804,
+      "r0_ci95": [
+        6.362419872586107,
+        12.208947967504056
+      ],
+      "mu_max_tok_s": 355.18333333333334,
+      "mu_max_ci95": [
+        281.5412053586156,
+        436.5090624999999
+      ],
+      "N_star": 41.6908816418904,
+      "N_star_ci95": [
+        28.04141059841932,
+        62.56435229278357
+      ],
+      "r_squared": 0.8126974770804027,
+      "rmse_tok_s": 56.5284911445178,
+      "mean_abs_pct_err": 32.38757566258178,
+      "n_below_knee": 11,
+      "n_above_knee": 6,
+      "saturated_slope_tok_s_per_seq": 3.0599244661234897,
+      "N_range": [
+        0.3698630136986301,
+        117.0
+      ],
+      "bootstrap_success": 2000
+    },
+    "expB_qwen3b": {
       "n_points": 18,
+      "r0_tok_s_per_seq": 4.05642336675898,
+      "r0_ci95": [
+        3.846710687750067,
+        4.588071955531933
+      ],
+      "mu_max_tok_s": 470.84166666666664,
+      "mu_max_ci95": [
+        438.90000019689154,
+        487.575
+      ],
+      "N_star": 116.07310778383122,
+      "N_star_ci95": [
+        100.9778368711416,
+        126.20922870455506
+      ],
+      "r_squared": 0.950362617299852,
+      "rmse_tok_s": 32.039686412922904,
+      "mean_abs_pct_err": 22.758190058295856,
+      "n_below_knee": 15,
+      "n_above_knee": 3,
+      "saturated_slope_tok_s_per_seq": 1.73208978906735,
+      "N_range": [
+        0.9041095890410958,
+        129.24806201550388
+      ],
+      "bootstrap_success": 2000
+    },
+    "modelval_mixed": {
+      "n_points": 17,
       "r0_tok_s_per_seq": 8.65456371937507,
       "r0_ci95": [
-        6.94811807197427,
-        12.779631761938205
+        6.60995501111285,
+        12.306742567627719
       ],
-      "mu_max_tok_s": 309.2857142857143,
+      "mu_max_tok_s": 355.66249999999997,
       "mu_max_ci95": [
-        199.35150893512449,
-        416.21047619047596
+        282.95000000263536,
+        435.28
       ],
-      "N_star": 35.73671929797141,
+      "N_star": 41.09537020378905,
       "N_star_ci95": [
-        16.136591298339166,
-        57.13823269991682
+        28.26088617630305,
+        61.03562931806129
       ],
-      "r_squared": 0.5583387141864325,
-      "rmse_tok_s": 88.45980351070365,
-      "mean_abs_pct_err": 77.26997049500976,
+      "r_squared": 0.8253657736301165,
+      "rmse_tok_s": 54.51313950341146,
+      "mean_abs_pct_err": 29.135449611869763,
       "n_below_knee": 11,
-      "n_above_knee": 7,
-      "saturated_slope_tok_s_per_seq": -0.7984832846223522,
+      "n_above_knee": 6,
+      "saturated_slope_tok_s_per_seq": 3.0092896081188134,
       "N_range": [
         0.3561643835616438,
-        140.82022471910113
+        116.78508771929825
       ],
       "bootstrap_success": 2000
     },
@@ -187,8 +245,10 @@
       "kv_occupancy": 0.0022591979213010815,
       "acceptance_rate": 0.5477563103770645,
       "sm_active_pct": 49.3523076923077,
+      "output_ratio": 0.9482758620689655,
       "n_failed": 0,
       "n_measured": 22,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -202,8 +262,10 @@
       "kv_occupancy": 0.014659957241474696,
       "acceptance_rate": 0.6195251267865376,
       "sm_active_pct": 78.70136986301371,
+      "output_ratio": 0.8567082445999391,
       "n_failed": 0,
       "n_measured": 30,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -217,8 +279,10 @@
       "kv_occupancy": 0.009927415299855325,
       "acceptance_rate": 0.615916221487323,
       "sm_active_pct": 79.21797752808988,
+      "output_ratio": 0.8214594750504759,
       "n_failed": 0,
       "n_measured": 25,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -232,8 +296,10 @@
       "kv_occupancy": 0.02933959537396018,
       "acceptance_rate": 0.640771149449179,
       "sm_active_pct": 81.50333333333336,
+      "output_ratio": 0.8686217008797654,
       "n_failed": 0,
       "n_measured": 51,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -247,8 +313,10 @@
       "kv_occupancy": 0.04121153417054064,
       "acceptance_rate": 0.6571774088116094,
       "sm_active_pct": 82.36037735849055,
+      "output_ratio": 0.8260070198896875,
       "n_failed": 0,
       "n_measured": 63,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -262,8 +330,10 @@
       "kv_occupancy": 0.024314995574094576,
       "acceptance_rate": 0.6540846035280014,
       "sm_active_pct": 81.4103448275862,
+      "output_ratio": 0.8285664151605545,
       "n_failed": 0,
       "n_measured": 47,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -277,8 +347,10 @@
       "kv_occupancy": 0.001611129463381735,
       "acceptance_rate": 0.6676300139571576,
       "sm_active_pct": 55.36408450704224,
+      "output_ratio": 0.8839031339031339,
       "n_failed": 0,
       "n_measured": 26,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -292,8 +364,10 @@
       "kv_occupancy": 0.004122506107583886,
       "acceptance_rate": 0.6681473356331848,
       "sm_active_pct": 79.24916666666667,
+      "output_ratio": 0.786410395235517,
       "n_failed": 0,
       "n_measured": 29,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -307,8 +381,10 @@
       "kv_occupancy": 0.0027524634571145226,
       "acceptance_rate": 0.6727856281233845,
       "sm_active_pct": 76.23162393162394,
+      "output_ratio": 0.8486238532110092,
       "n_failed": 0,
       "n_measured": 22,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -322,8 +398,10 @@
       "kv_occupancy": 0.012866492476698724,
       "acceptance_rate": 0.678105550910997,
       "sm_active_pct": 79.4375,
+      "output_ratio": 0.8476357267950964,
       "n_failed": 0,
       "n_measured": 67,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -337,8 +415,10 @@
       "kv_occupancy": 0.01193078108532849,
       "acceptance_rate": 0.6868653337885858,
       "sm_active_pct": 79.2828125,
+      "output_ratio": 0.8023456790123457,
       "n_failed": 0,
       "n_measured": 55,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -352,8 +432,10 @@
       "kv_occupancy": 0.012086524787690525,
       "acceptance_rate": 0.6932676493080654,
       "sm_active_pct": 79.20214285714286,
+      "output_ratio": 0.8373287671232876,
       "n_failed": 0,
       "n_measured": 68,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -367,8 +449,10 @@
       "kv_occupancy": 0.07441722937189445,
       "acceptance_rate": 0.7066595586374061,
       "sm_active_pct": 84.50108695652175,
+      "output_ratio": 0.8465628803895189,
       "n_failed": 0,
       "n_measured": 135,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -382,8 +466,10 @@
       "kv_occupancy": 0.05894556437322183,
       "acceptance_rate": 0.7117291093786349,
       "sm_active_pct": 83.30634920634921,
+      "output_ratio": 0.840490427009724,
       "n_failed": 0,
       "n_measured": 116,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -397,8 +483,10 @@
       "kv_occupancy": 0.051861912122286795,
       "acceptance_rate": 0.7128235469264967,
       "sm_active_pct": 82.95355191256832,
+      "output_ratio": 0.8492073321773594,
       "n_failed": 0,
       "n_measured": 120,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -412,8 +500,10 @@
       "kv_occupancy": 0.004776513363749192,
       "acceptance_rate": 0.7276336923658352,
       "sm_active_pct": 64.3157894736842,
+      "output_ratio": 0.8578431372549019,
       "n_failed": 0,
       "n_measured": 35,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -427,8 +517,10 @@
       "kv_occupancy": 0.004445941633905772,
       "acceptance_rate": 0.7276273747306368,
       "sm_active_pct": 72.69193548387098,
+      "output_ratio": 0.7642843308154174,
       "n_failed": 0,
       "n_measured": 36,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -442,8 +534,10 @@
       "kv_occupancy": 0.00612948329136908,
       "acceptance_rate": 0.727764598540146,
       "sm_active_pct": 74.50493827160494,
+      "output_ratio": 0.8959431583772633,
       "n_failed": 0,
       "n_measured": 34,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -457,8 +551,10 @@
       "kv_occupancy": 0.023011317683224525,
       "acceptance_rate": 0.7281006674082313,
       "sm_active_pct": 75.94666666666667,
+      "output_ratio": 0.8575626779318578,
       "n_failed": 0,
       "n_measured": 93,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -472,8 +568,10 @@
       "kv_occupancy": 0.011150097651749541,
       "acceptance_rate": 0.7282020875166119,
       "sm_active_pct": 75.34285714285714,
+      "output_ratio": 0.8355996569888522,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -487,8 +585,10 @@
       "kv_occupancy": 0.015298777826115542,
       "acceptance_rate": 0.7287409012090995,
       "sm_active_pct": 75.08266666666667,
+      "output_ratio": 0.8523622047244095,
       "n_failed": 0,
       "n_measured": 77,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -502,8 +602,10 @@
       "kv_occupancy": 0.005591390331020097,
       "acceptance_rate": 0.728029442515457,
       "sm_active_pct": 70.62083333333332,
+      "output_ratio": 0.8578431372549019,
       "n_failed": 0,
       "n_measured": 35,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -517,8 +619,10 @@
       "kv_occupancy": 0.004582270194809769,
       "acceptance_rate": 0.7280408443997672,
       "sm_active_pct": 75.24098360655738,
+      "output_ratio": 0.7602169281425528,
       "n_failed": 0,
       "n_measured": 36,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -532,8 +636,10 @@
       "kv_occupancy": 0.006098635051385588,
       "acceptance_rate": 0.7281923458739477,
       "sm_active_pct": 76.23170731707317,
+      "output_ratio": 0.8902131560852624,
       "n_failed": 0,
       "n_measured": 34,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -547,8 +653,10 @@
       "kv_occupancy": 0.007316246972233129,
       "acceptance_rate": 0.7278187956671854,
       "sm_active_pct": 75.84615384615387,
+      "output_ratio": 0.8285847011458656,
       "n_failed": 36,
       "n_measured": 57,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -562,8 +670,10 @@
       "kv_occupancy": 0.00607464995542503,
       "acceptance_rate": 0.7276061992344319,
       "sm_active_pct": 75.84523809523812,
+      "output_ratio": 0.8268243348374047,
       "n_failed": 14,
       "n_measured": 45,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -577,8 +687,10 @@
       "kv_occupancy": 0.0063288169555989204,
       "acceptance_rate": 0.7275932715905107,
       "sm_active_pct": 76.1275,
+      "output_ratio": 0.9088515959197104,
       "n_failed": 23,
       "n_measured": 54,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -592,8 +704,10 @@
       "kv_occupancy": 0.005616342714126925,
       "acceptance_rate": 0.7274162753942526,
       "sm_active_pct": 72.08333333333336,
+      "output_ratio": 0.8578431372549019,
       "n_failed": 0,
       "n_measured": 35,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -607,8 +721,10 @@
       "kv_occupancy": 0.005203945804876576,
       "acceptance_rate": 0.7273849830711013,
       "sm_active_pct": 69.83800000000002,
+      "output_ratio": 0.7637032732907224,
       "n_failed": 0,
       "n_measured": 36,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -622,8 +738,10 @@
       "kv_occupancy": 0.006011233160008662,
       "acceptance_rate": 0.7275419883172085,
       "sm_active_pct": 74.36951219512194,
+      "output_ratio": 0.8867751547100619,
       "n_failed": 0,
       "n_measured": 34,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -637,8 +755,10 @@
       "kv_occupancy": 0.006503483421948414,
       "acceptance_rate": 0.7269119400107799,
       "sm_active_pct": 71.85070422535212,
+      "output_ratio": 0.8332134120017268,
       "n_failed": 26,
       "n_measured": 67,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -652,8 +772,10 @@
       "kv_occupancy": 0.00724961231018182,
       "acceptance_rate": 0.725402464771065,
       "sm_active_pct": 72.78513513513514,
+      "output_ratio": 0.7936433380303742,
       "n_failed": 14,
       "n_measured": 45,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -667,8 +789,10 @@
       "kv_occupancy": 0.0069199497477125385,
       "acceptance_rate": 0.7240608262907949,
       "sm_active_pct": 71.6945205479452,
+      "output_ratio": 0.8232796486090777,
       "n_failed": 16,
       "n_measured": 61,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -682,8 +806,10 @@
       "kv_occupancy": 0.00519167234778962,
       "acceptance_rate": 0.7233049803084571,
       "sm_active_pct": 70.85192307692307,
+      "output_ratio": 0.8578431372549019,
       "n_failed": 0,
       "n_measured": 35,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -697,8 +823,10 @@
       "kv_occupancy": 0.00455171273635175,
       "acceptance_rate": 0.7233447043044373,
       "sm_active_pct": 72.44193548387095,
+      "output_ratio": 0.7646717024985473,
       "n_failed": 0,
       "n_measured": 36,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -712,8 +840,10 @@
       "kv_occupancy": 0.0059915656068468175,
       "acceptance_rate": 0.7234956058945862,
       "sm_active_pct": 74.81428571428572,
+      "output_ratio": 0.8867751547100619,
       "n_failed": 0,
       "n_measured": 34,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -727,8 +857,10 @@
       "kv_occupancy": 0.006722615154811307,
       "acceptance_rate": 0.7232031587648592,
       "sm_active_pct": 74.00454545454545,
+      "output_ratio": 0.96906146179402,
       "n_failed": 25,
       "n_measured": 68,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -742,8 +874,10 @@
       "kv_occupancy": 0.00852835065520309,
       "acceptance_rate": 0.7234657062014259,
       "sm_active_pct": 71.57096774193549,
+      "output_ratio": 0.87409200968523,
       "n_failed": 10,
       "n_measured": 49,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -757,8 +891,10 @@
       "kv_occupancy": 0.007651974039422443,
       "acceptance_rate": 0.7234055653452846,
       "sm_active_pct": 73.07733333333334,
+      "output_ratio": 0.9127246057939127,
       "n_failed": 13,
       "n_measured": 64,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -772,8 +908,10 @@
       "kv_occupancy": 0.005513516959565825,
       "acceptance_rate": 0.7232968588774507,
       "sm_active_pct": 70.50185185185187,
+      "output_ratio": 0.8552479815455594,
       "n_failed": 0,
       "n_measured": 35,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -787,8 +925,10 @@
       "kv_occupancy": 0.004789919925053617,
       "acceptance_rate": 0.7233010092388427,
       "sm_active_pct": 72.83709677419354,
+      "output_ratio": 0.7642843308154174,
       "n_failed": 0,
       "n_measured": 36,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -802,8 +942,10 @@
       "kv_occupancy": 0.0058402457946837,
       "acceptance_rate": 0.7234093695770156,
       "sm_active_pct": 73.34444444444445,
+      "output_ratio": 0.8867751547100619,
       "n_failed": 0,
       "n_measured": 34,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -817,8 +959,10 @@
       "kv_occupancy": 0.014998164560281083,
       "acceptance_rate": 0.7236597935182898,
       "sm_active_pct": 73.62625,
+      "output_ratio": 0.8482527022772589,
       "n_failed": 13,
       "n_measured": 80,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -832,8 +976,10 @@
       "kv_occupancy": 0.01165305580849133,
       "acceptance_rate": 0.7236957288526903,
       "sm_active_pct": 72.5157142857143,
+      "output_ratio": 0.8303319857895382,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -847,8 +993,10 @@
       "kv_occupancy": 0.010573713198715268,
       "acceptance_rate": 0.7240628544592171,
       "sm_active_pct": 76.1818181818182,
+      "output_ratio": 0.858495145631068,
       "n_failed": 8,
       "n_measured": 69,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -862,8 +1010,10 @@
       "kv_occupancy": 0.007075997870356627,
       "acceptance_rate": 0.7239821050503761,
       "sm_active_pct": 74.06451612903228,
+      "output_ratio": 0.8325925925925926,
       "n_failed": 30,
       "n_measured": 63,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -877,8 +1027,10 @@
       "kv_occupancy": 0.006874629382364455,
       "acceptance_rate": 0.7238743817173753,
       "sm_active_pct": 74.11617647058824,
+      "output_ratio": 0.9640119250425895,
       "n_failed": 26,
       "n_measured": 67,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -892,8 +1044,10 @@
       "kv_occupancy": 0.006576784226372563,
       "acceptance_rate": 0.7237876618709275,
       "sm_active_pct": 70.52388059701492,
+      "output_ratio": 0.8071871842978785,
       "n_failed": 25,
       "n_measured": 68,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -907,8 +1061,10 @@
       "kv_occupancy": 0.0031392348295934385,
       "acceptance_rate": 0.7232639856456403,
       "sm_active_pct": 69.76557377049181,
+      "output_ratio": 0.7984481086323957,
       "n_failed": 0,
       "n_measured": 72,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -922,8 +1078,10 @@
       "kv_occupancy": 0.003046660768448694,
       "acceptance_rate": 0.722921482386714,
       "sm_active_pct": 71.26923076923077,
+      "output_ratio": 0.8789949305708618,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -937,8 +1095,10 @@
       "kv_occupancy": 0.004848788004695493,
       "acceptance_rate": 0.7224193322390808,
       "sm_active_pct": 69.36341463414634,
+      "output_ratio": 0.8644501278772379,
       "n_failed": 0,
       "n_measured": 74,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -952,8 +1112,10 @@
       "kv_occupancy": 0.00638173650077788,
       "acceptance_rate": 0.7220109679755807,
       "sm_active_pct": 74.29367088607594,
+      "output_ratio": 0.8320686652568727,
       "n_failed": 0,
       "n_measured": 109,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -967,8 +1129,10 @@
       "kv_occupancy": 0.008923060787343135,
       "acceptance_rate": 0.7216925843618206,
       "sm_active_pct": 73.07101449275363,
+      "output_ratio": 0.8264231286418646,
       "n_failed": 0,
       "n_measured": 108,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -982,8 +1146,10 @@
       "kv_occupancy": 0.006535381425654051,
       "acceptance_rate": 0.7208095180959445,
       "sm_active_pct": 73.44931506849315,
+      "output_ratio": 0.8169132683748346,
       "n_failed": 0,
       "n_measured": 106,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -997,8 +1163,10 @@
       "kv_occupancy": 0.0031614512709483606,
       "acceptance_rate": 0.7207826505236219,
       "sm_active_pct": 68.50847457627117,
+      "output_ratio": 0.7984481086323957,
       "n_failed": 0,
       "n_measured": 72,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1012,8 +1180,10 @@
       "kv_occupancy": 0.0036818751596494185,
       "acceptance_rate": 0.7204665252145135,
       "sm_active_pct": 70.36307692307692,
+      "output_ratio": 0.9001542869737712,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1027,8 +1197,10 @@
       "kv_occupancy": 0.005048083526241791,
       "acceptance_rate": 0.7199256135147035,
       "sm_active_pct": 70.67727272727272,
+      "output_ratio": 0.8670076726342711,
       "n_failed": 0,
       "n_measured": 74,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1042,8 +1214,10 @@
       "kv_occupancy": 0.005013506953828941,
       "acceptance_rate": 0.7195096603847708,
       "sm_active_pct": 73.54146341463415,
+      "output_ratio": 0.8330638139072024,
       "n_failed": 0,
       "n_measured": 109,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1057,8 +1231,10 @@
       "kv_occupancy": 0.00573052400853955,
       "acceptance_rate": 0.7192793121900019,
       "sm_active_pct": 70.10684931506849,
+      "output_ratio": 0.8237869822485208,
       "n_failed": 7,
       "n_measured": 101,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1072,8 +1248,10 @@
       "kv_occupancy": 0.006209507101006383,
       "acceptance_rate": 0.7185778594978443,
       "sm_active_pct": 68.97285714285714,
+      "output_ratio": 0.8385351120060408,
       "n_failed": 1,
       "n_measured": 105,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1087,8 +1265,10 @@
       "kv_occupancy": 0.0030063519324558165,
       "acceptance_rate": 0.7186304518949707,
       "sm_active_pct": 73.98823529411766,
+      "output_ratio": 0.794568380213385,
       "n_failed": 0,
       "n_measured": 72,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1102,8 +1282,10 @@
       "kv_occupancy": 0.003425234122066396,
       "acceptance_rate": 0.7183859689843761,
       "sm_active_pct": 69.425,
+      "output_ratio": 0.8950848578355741,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1117,8 +1299,10 @@
       "kv_occupancy": 0.005323483848839147,
       "acceptance_rate": 0.7179252904100949,
       "sm_active_pct": 64.65128205128204,
+      "output_ratio": 0.8670076726342711,
       "n_failed": 0,
       "n_measured": 74,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1132,8 +1316,10 @@
       "kv_occupancy": 0.00538075587617688,
       "acceptance_rate": 0.7175622518638392,
       "sm_active_pct": 69.41199999999999,
+      "output_ratio": 0.8330638139072024,
       "n_failed": 0,
       "n_measured": 109,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1147,8 +1333,10 @@
       "kv_occupancy": 0.004409751546426448,
       "acceptance_rate": 0.7172084244945063,
       "sm_active_pct": 73.84714285714286,
+      "output_ratio": 0.8494117647058823,
       "n_failed": 8,
       "n_measured": 100,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1162,8 +1350,10 @@
       "kv_occupancy": 0.005102444148234658,
       "acceptance_rate": 0.7163698766887556,
       "sm_active_pct": 74.2211267605634,
+      "output_ratio": 0.8127090301003345,
       "n_failed": 4,
       "n_measured": 102,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1177,8 +1367,10 @@
       "kv_occupancy": 0.002960465939482926,
       "acceptance_rate": 0.7160857757290678,
       "sm_active_pct": 73.40000000000002,
+      "output_ratio": 0.7988360814742967,
       "n_failed": 0,
       "n_measured": 72,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1192,8 +1384,10 @@
       "kv_occupancy": 0.0035883491272849467,
       "acceptance_rate": 0.715872766943952,
       "sm_active_pct": 70.59531249999999,
+      "output_ratio": 0.8977297773859378,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1207,8 +1401,10 @@
       "kv_occupancy": 0.005487673419919477,
       "acceptance_rate": 0.7153567659712639,
       "sm_active_pct": 68.14791666666666,
+      "output_ratio": 0.8670076726342711,
       "n_failed": 0,
       "n_measured": 74,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1222,8 +1418,10 @@
       "kv_occupancy": 0.005067124652577487,
       "acceptance_rate": 0.7150031097646611,
       "sm_active_pct": 71.78214285714284,
+      "output_ratio": 0.8250672818146867,
       "n_failed": 1,
       "n_measured": 108,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1237,8 +1435,10 @@
       "kv_occupancy": 0.006349747408533927,
       "acceptance_rate": 0.7147246620816722,
       "sm_active_pct": 70.12941176470589,
+      "output_ratio": 0.8569258809234508,
       "n_failed": 14,
       "n_measured": 94,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1252,8 +1452,10 @@
       "kv_occupancy": 0.005814223534082988,
       "acceptance_rate": 0.7139354918244069,
       "sm_active_pct": 73.06621621621622,
+      "output_ratio": 0.8372766171658697,
       "n_failed": 1,
       "n_measured": 105,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1267,8 +1469,10 @@
       "kv_occupancy": 0.0027662698620798173,
       "acceptance_rate": 0.7141045067510305,
       "sm_active_pct": 73.68358208955225,
+      "output_ratio": 0.794568380213385,
       "n_failed": 0,
       "n_measured": 72,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1282,8 +1486,10 @@
       "kv_occupancy": 0.003510377782757035,
       "acceptance_rate": 0.7139461827118734,
       "sm_active_pct": 73.71142857142857,
+      "output_ratio": 0.8944236279479832,
       "n_failed": 0,
       "n_measured": 59,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1297,8 +1503,10 @@
       "kv_occupancy": 0.005335195453629619,
       "acceptance_rate": 0.7135464546178832,
       "sm_active_pct": 65.01707317073172,
+      "output_ratio": 0.86740114105843,
       "n_failed": 0,
       "n_measured": 74,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1312,8 +1520,10 @@
       "kv_occupancy": 0.005647978326147085,
       "acceptance_rate": 0.7132885456554313,
       "sm_active_pct": 73.91481481481482,
+      "output_ratio": 0.8379151635775594,
       "n_failed": 0,
       "n_measured": 109,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1327,8 +1537,10 @@
       "kv_occupancy": 0.008462688132571191,
       "acceptance_rate": 0.7131022649132772,
       "sm_active_pct": 72.86764705882352,
+      "output_ratio": 0.8290004482294935,
       "n_failed": 0,
       "n_measured": 108,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1342,8 +1554,10 @@
       "kv_occupancy": 0.006182895765077466,
       "acceptance_rate": 0.7125112039161996,
       "sm_active_pct": 72.17384615384616,
+      "output_ratio": 0.8136653434379887,
       "n_failed": 0,
       "n_measured": 106,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1357,8 +1571,10 @@
       "kv_occupancy": 0.5718221405612718,
       "acceptance_rate": 0.7125699616663054,
       "sm_active_pct": 96.57470511140235,
+      "output_ratio": 1.0,
       "n_failed": 30,
       "n_measured": 28,
+      "degenerate": false,
       "healthy": false
     },
     {
@@ -1372,8 +1588,10 @@
       "kv_occupancy": 0.000313928437247001,
       "acceptance_rate": 0.7121116723839299,
       "sm_active_pct": 20.82857142857143,
+      "output_ratio": 0.9519038076152304,
       "n_failed": 0,
       "n_measured": 15,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1387,8 +1605,10 @@
       "kv_occupancy": 0.006281582943764183,
       "acceptance_rate": 0.7119811912677865,
       "sm_active_pct": 80.17128712871286,
+      "output_ratio": 0.7596412556053812,
       "n_failed": 0,
       "n_measured": 23,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1402,8 +1622,10 @@
       "kv_occupancy": 0.0035178369423179683,
       "acceptance_rate": 0.7119264828108648,
       "sm_active_pct": 76.02549019607844,
+      "output_ratio": 0.9436383928571429,
       "n_failed": 0,
       "n_measured": 16,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1417,8 +1639,10 @@
       "kv_occupancy": 0.0069005474047689145,
       "acceptance_rate": 0.7121531707651679,
       "sm_active_pct": 80.30092592592594,
+      "output_ratio": 0.8944414751469802,
       "n_failed": 0,
       "n_measured": 35,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1432,8 +1656,10 @@
       "kv_occupancy": 0.014849331625250655,
       "acceptance_rate": 0.7116339553321087,
       "sm_active_pct": 80.49090909090908,
+      "output_ratio": 0.7856721698113207,
       "n_failed": 0,
       "n_measured": 48,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1447,8 +1673,10 @@
       "kv_occupancy": 0.007827610565963237,
       "acceptance_rate": 0.7116300169565651,
       "sm_active_pct": 79.41214953271027,
+      "output_ratio": 0.8935666982024598,
       "n_failed": 0,
       "n_measured": 39,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1462,8 +1690,10 @@
       "kv_occupancy": 0.01633259641259298,
       "acceptance_rate": 0.7118938822589947,
       "sm_active_pct": 81.12301587301587,
+      "output_ratio": 0.876940133037694,
       "n_failed": 0,
       "n_measured": 67,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1477,8 +1707,10 @@
       "kv_occupancy": 0.03202928077718742,
       "acceptance_rate": 0.7116005779036969,
       "sm_active_pct": 82.25089285714287,
+      "output_ratio": 0.7684078752702856,
       "n_failed": 0,
       "n_measured": 64,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1492,8 +1724,10 @@
       "kv_occupancy": 0.016915746587729607,
       "acceptance_rate": 0.711565000347046,
       "sm_active_pct": 79.51525423728813,
+      "output_ratio": 0.8365955297386034,
       "n_failed": 0,
       "n_measured": 68,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1507,8 +1741,10 @@
       "kv_occupancy": 0.033531902424261587,
       "acceptance_rate": 0.711976484176174,
       "sm_active_pct": 82.3058394160584,
+      "output_ratio": 0.8407079646017699,
       "n_failed": 0,
       "n_measured": 91,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1522,8 +1758,10 @@
       "kv_occupancy": 0.053025797691027984,
       "acceptance_rate": 0.7118925020472607,
       "sm_active_pct": 84.26917808219179,
+      "output_ratio": 0.7795959258640841,
       "n_failed": 0,
       "n_measured": 82,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1537,8 +1775,10 @@
       "kv_occupancy": 0.030188462588675254,
       "acceptance_rate": 0.7123209297842222,
       "sm_active_pct": 82.19,
+      "output_ratio": 0.8700333799935394,
       "n_failed": 0,
       "n_measured": 77,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1552,8 +1792,10 @@
       "kv_occupancy": 0.0679215586832894,
       "acceptance_rate": 0.7131610647838571,
       "sm_active_pct": 85.23272727272729,
+      "output_ratio": 0.8622196139801773,
       "n_failed": 0,
       "n_measured": 132,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1567,8 +1809,10 @@
       "kv_occupancy": 0.09685057294137053,
       "acceptance_rate": 0.712557730328657,
       "sm_active_pct": 86.33529411764707,
+      "output_ratio": 0.8162789270149162,
       "n_failed": 0,
       "n_measured": 121,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1582,8 +1826,10 @@
       "kv_occupancy": 0.07778666702440463,
       "acceptance_rate": 0.7127928746119264,
       "sm_active_pct": 86.09106145251397,
+      "output_ratio": 0.8172003208094268,
       "n_failed": 0,
       "n_measured": 125,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1597,8 +1843,10 @@
       "kv_occupancy": 0.11329459510967231,
       "acceptance_rate": 0.7133039514508603,
       "sm_active_pct": 86.54766355140187,
+      "output_ratio": 0.872927072927073,
       "n_failed": 0,
       "n_measured": 166,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1612,8 +1860,10 @@
       "kv_occupancy": 0.12744460790131495,
       "acceptance_rate": 0.7123698277582281,
       "sm_active_pct": 86.03025210084034,
+      "output_ratio": 0.8189628854289328,
       "n_failed": 0,
       "n_measured": 162,
+      "degenerate": false,
       "healthy": true
     },
     {
@@ -1627,14 +1877,645 @@
       "kv_occupancy": 0.1386573066115308,
       "acceptance_rate": 0.7109059681450401,
       "sm_active_pct": 87.2929292929293,
+      "output_ratio": 0.05492122499557444,
       "n_failed": 0,
       "n_measured": 168,
+      "degenerate": true,
+      "healthy": false
+    },
+    {
+      "file": "20260810T034525Z_expB_qwen1.5b_r0.5_rep0.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 0.5,
+      "N": 0.3698630136986301,
+      "X": 23.75,
+      "tpot_p50_ms": 19.723724902552718,
+      "kv_occupancy": 0.00035272050958415764,
+      "acceptance_rate": 0.8122710622710623,
+      "sm_active_pct": 21.636363636363637,
+      "output_ratio": 0.9519038076152304,
+      "n_failed": 0,
+      "n_measured": 15,
+      "degenerate": false,
       "healthy": true
+    },
+    {
+      "file": "20260810T034624Z_expB_qwen1.5b_r0.5_rep1.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 0.5,
+      "N": 1.2926829268292683,
+      "X": 63.275,
+      "tpot_p50_ms": 19.592575294276077,
+      "kv_occupancy": 0.0015514901596129147,
+      "acceptance_rate": 0.7343236787100627,
+      "sm_active_pct": 48.062790697674416,
+      "output_ratio": 0.7566517189835575,
+      "n_failed": 0,
+      "n_measured": 23,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T034730Z_expB_qwen1.5b_r0.5_rep2.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 0.5,
+      "N": 2.479591836734694,
+      "X": 42.275,
+      "tpot_p50_ms": 76.69154344503546,
+      "kv_occupancy": 0.0035338903509382204,
+      "acceptance_rate": 0.7285169785169785,
+      "sm_active_pct": 75.30098039215687,
+      "output_ratio": 0.9436383928571429,
+      "n_failed": 0,
+      "n_measured": 16,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T034839Z_expB_qwen1.5b_r1_rep0.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 1.0,
+      "N": 5.6826923076923075,
+      "X": 83.675,
+      "tpot_p50_ms": 90.00859423266614,
+      "kv_occupancy": 0.006982234557094278,
+      "acceptance_rate": 0.7388873092597859,
+      "sm_active_pct": 79.27592592592592,
+      "output_ratio": 0.8944414751469802,
+      "n_failed": 0,
+      "n_measured": 35,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T034950Z_expB_qwen1.5b_r1_rep1.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 1.0,
+      "N": 12.60377358490566,
+      "X": 133.275,
+      "tpot_p50_ms": 124.40790697762912,
+      "kv_occupancy": 0.015061489704222103,
+      "acceptance_rate": 0.706502773104007,
+      "sm_active_pct": 79.4890909090909,
+      "output_ratio": 0.7858195754716981,
+      "n_failed": 0,
+      "n_measured": 48,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035059Z_expB_qwen1.5b_r1_rep2.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 1.0,
+      "N": 6.466666666666667,
+      "X": 94.75,
+      "tpot_p50_ms": 96.80092377413817,
+      "kv_occupancy": 0.0077842621657189795,
+      "acceptance_rate": 0.7075026343519494,
+      "sm_active_pct": 78.50733944954128,
+      "output_ratio": 0.8964049195837275,
+      "n_failed": 0,
+      "n_measured": 39,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035218Z_expB_qwen1.5b_r1.5_rep0.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 1.5,
+      "N": 13.991803278688524,
+      "X": 177.575,
+      "tpot_p50_ms": 140.63954325176255,
+      "kv_occupancy": 0.016426110870875307,
+      "acceptance_rate": 0.7145797262422006,
+      "sm_active_pct": 80.151968503937,
+      "output_ratio": 0.8749692042374969,
+      "n_failed": 0,
+      "n_measured": 67,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035330Z_expB_qwen1.5b_r1.5_rep1.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 1.5,
+      "N": 27.38532110091743,
+      "X": 168.975,
+      "tpot_p50_ms": 195.82760523252068,
+      "kv_occupancy": 0.0329205237762813,
+      "acceptance_rate": 0.7088216307478399,
+      "sm_active_pct": 81.18672566371681,
+      "output_ratio": 0.7692045066575623,
+      "n_failed": 0,
+      "n_measured": 64,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035445Z_expB_qwen1.5b_r1.5_rep2.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 1.5,
+      "N": 14.166666666666666,
+      "X": 164.95,
+      "tpot_p50_ms": 135.28725847629227,
+      "kv_occupancy": 0.0171795317650674,
+      "acceptance_rate": 0.7079612209256172,
+      "sm_active_pct": 78.11101694915254,
+      "output_ratio": 0.8331860083343856,
+      "n_failed": 0,
+      "n_measured": 68,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035609Z_expB_qwen1.5b_r2_rep0.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 2.0,
+      "N": 30.28030303030303,
+      "X": 253.9,
+      "tpot_p50_ms": 226.87533472736294,
+      "kv_occupancy": 0.03424485560412982,
+      "acceptance_rate": 0.714397771880356,
+      "sm_active_pct": 81.61376811594204,
+      "output_ratio": 0.8559629161399073,
+      "n_failed": 0,
+      "n_measured": 91,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035738Z_expB_qwen1.5b_r2_rep1.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 2.0,
+      "N": 44.84615384615385,
+      "X": 231.5,
+      "tpot_p50_ms": 309.6795615470778,
+      "kv_occupancy": 0.05363407896314708,
+      "acceptance_rate": 0.713139261764005,
+      "sm_active_pct": 83.05472972972973,
+      "output_ratio": 0.7730839873100684,
+      "n_failed": 0,
+      "n_measured": 82,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T035854Z_expB_qwen1.5b_r2_rep2.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 2.0,
+      "N": 25.837606837606838,
+      "X": 201.95,
+      "tpot_p50_ms": 216.69361020849888,
+      "kv_occupancy": 0.030636828109165418,
+      "acceptance_rate": 0.7162256339307839,
+      "sm_active_pct": 81.1139344262295,
+      "output_ratio": 0.8698180251965113,
+      "n_failed": 0,
+      "n_measured": 77,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T040034Z_expB_qwen1.5b_r3_rep0.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 3.0,
+      "N": 65.93827160493827,
+      "X": 331.175,
+      "tpot_p50_ms": 468.79426891976584,
+      "kv_occupancy": 0.06899019739231602,
+      "acceptance_rate": 0.7223396065713397,
+      "sm_active_pct": 83.53550295857988,
+      "output_ratio": 0.8637845592070944,
+      "n_failed": 0,
+      "n_measured": 132,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T040225Z_expB_qwen1.5b_r3_rep1.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 3.0,
+      "N": 86.95604395604396,
+      "X": 329.4,
+      "tpot_p50_ms": 475.31725576737466,
+      "kv_occupancy": 0.09751601903786077,
+      "acceptance_rate": 0.7165284880197981,
+      "sm_active_pct": 84.46526315789475,
+      "output_ratio": 0.8087901295193666,
+      "n_failed": 0,
+      "n_measured": 121,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T040412Z_expB_qwen1.5b_r3_rep2.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 3.0,
+      "N": 66.48571428571428,
+      "X": 330.4,
+      "tpot_p50_ms": 454.0842684675698,
+      "kv_occupancy": 0.07651850797479828,
+      "acceptance_rate": 0.7175485167767273,
+      "sm_active_pct": 85.23351648351648,
+      "output_ratio": 0.8153494971929175,
+      "n_failed": 0,
+      "n_measured": 125,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T040616Z_expB_qwen1.5b_r4_rep0.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 4.0,
+      "N": 105.23923444976077,
+      "X": 437.35,
+      "tpot_p50_ms": 602.9999587316435,
+      "kv_occupancy": 0.1125650213616077,
+      "acceptance_rate": 0.7210065475874046,
+      "sm_active_pct": 85.18479262672811,
+      "output_ratio": 0.8738261738261738,
+      "n_failed": 0,
+      "n_measured": 166,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T040831Z_expB_qwen1.5b_r4_rep1.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 4.0,
+      "N": 117.0,
+      "X": 471.275,
+      "tpot_p50_ms": 602.4379344376894,
+      "kv_occupancy": 0.12793323991635983,
+      "acceptance_rate": 0.7140494124736366,
+      "sm_active_pct": 84.67447698744769,
+      "output_ratio": 0.822146626542806,
+      "n_failed": 0,
+      "n_measured": 162,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T040936Z_expB_qwen1.5b_r4_rep2.json",
+      "config": "expB_qwen1.5b",
+      "policy": null,
+      "rate": 4.0,
+      "N": 139.8426966292135,
+      "X": 31.65,
+      "tpot_p50_ms": 3463.7905835406855,
+      "kv_occupancy": 0.13795200280943068,
+      "acceptance_rate": 0.7074318995651804,
+      "sm_active_pct": 86.95454545454547,
+      "output_ratio": 0.05602761550716941,
+      "n_failed": 0,
+      "n_measured": 168,
+      "degenerate": true,
+      "healthy": false
+    },
+    {
+      "file": "20260810T041437Z_expB_qwen3b_r0.5_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 0.5,
+      "N": 0.9041095890410958,
+      "X": 24.95,
+      "tpot_p50_ms": 31.600672456367715,
+      "kv_occupancy": 0.0021990156786962055,
+      "acceptance_rate": 0.6507936507936508,
+      "sm_active_pct": 45.41794871794871,
+      "output_ratio": 1.0,
+      "n_failed": 0,
+      "n_measured": 15,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T041559Z_expB_qwen3b_r0.5_rep1.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 0.5,
+      "N": 8.03875968992248,
+      "X": 70.475,
+      "tpot_p50_ms": 174.0636845179661,
+      "kv_occupancy": 0.021359578949636634,
+      "acceptance_rate": 0.6267921795800144,
+      "sm_active_pct": 85.40597014925372,
+      "output_ratio": 0.8427503736920777,
+      "n_failed": 0,
+      "n_measured": 23,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T041714Z_expB_qwen3b_r0.5_rep2.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 0.5,
+      "N": 5.780701754385965,
+      "X": 38.3,
+      "tpot_p50_ms": 148.6302053115925,
+      "kv_occupancy": 0.01794110594995712,
+      "acceptance_rate": 0.6060433295324972,
+      "sm_active_pct": 85.48151260504203,
+      "output_ratio": 0.8549107142857143,
+      "n_failed": 0,
+      "n_measured": 16,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T041842Z_expB_qwen3b_r1_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 1.0,
+      "N": 11.4,
+      "X": 89.1,
+      "tpot_p50_ms": 196.5891225996801,
+      "kv_occupancy": 0.03077203084152354,
+      "acceptance_rate": 0.6087424878104093,
+      "sm_active_pct": 85.63793103448276,
+      "output_ratio": 0.9524318546231961,
+      "n_failed": 0,
+      "n_measured": 35,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T042016Z_expB_qwen3b_r1_rep1.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 1.0,
+      "N": 25.344370860927153,
+      "X": 147.075,
+      "tpot_p50_ms": 294.9345853137361,
+      "kv_occupancy": 0.06729516910658156,
+      "acceptance_rate": 0.5946277961129446,
+      "sm_active_pct": 86.9375796178344,
+      "output_ratio": 0.8671875,
+      "n_failed": 0,
+      "n_measured": 48,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T042141Z_expB_qwen3b_r1_rep2.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 1.0,
+      "N": 14.634328358208956,
+      "X": 96.75,
+      "tpot_p50_ms": 202.14389065014464,
+      "kv_occupancy": 0.040356763783583806,
+      "acceptance_rate": 0.5844562078922041,
+      "sm_active_pct": 85.03237410071942,
+      "output_ratio": 0.9153263954588458,
+      "n_failed": 0,
+      "n_measured": 39,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T042324Z_expB_qwen3b_r1.5_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 1.5,
+      "N": 31.331360946745562,
+      "X": 179.825,
+      "tpot_p50_ms": 361.06413171821555,
+      "kv_occupancy": 0.08035796280838245,
+      "acceptance_rate": 0.5884666385389669,
+      "sm_active_pct": 87.52954545454547,
+      "output_ratio": 0.8860556787386056,
+      "n_failed": 0,
+      "n_measured": 67,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T042517Z_expB_qwen3b_r1.5_rep1.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 1.5,
+      "N": 46.75401069518717,
+      "X": 186.65,
+      "tpot_p50_ms": 473.7842393580324,
+      "kv_occupancy": 0.12382088472510744,
+      "acceptance_rate": 0.5840771546742899,
+      "sm_active_pct": 88.99641025641026,
+      "output_ratio": 0.8496642767725049,
+      "n_failed": 0,
+      "n_measured": 64,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T042706Z_expB_qwen3b_r1.5_rep2.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 1.5,
+      "N": 32.37222222222222,
+      "X": 176.7,
+      "tpot_p50_ms": 372.65301493203475,
+      "kv_occupancy": 0.08649718168481198,
+      "acceptance_rate": 0.5786368643822114,
+      "sm_active_pct": 87.33155080213903,
+      "output_ratio": 0.892536936481879,
+      "n_failed": 0,
+      "n_measured": 68,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T042915Z_expB_qwen3b_r2_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 2.0,
+      "N": 53.09132420091324,
+      "X": 256.675,
+      "tpot_p50_ms": 534.597006901389,
+      "kv_occupancy": 0.12602083934915903,
+      "acceptance_rate": 0.5813904234897574,
+      "sm_active_pct": 88.9324561403509,
+      "output_ratio": 0.8653181626632954,
+      "n_failed": 0,
+      "n_measured": 91,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T043152Z_expB_qwen3b_r2_rep1.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 2.0,
+      "N": 61.231617647058826,
+      "X": 249.025,
+      "tpot_p50_ms": 610.1609671342676,
+      "kv_occupancy": 0.15985961792639225,
+      "acceptance_rate": 0.5784103114930182,
+      "sm_active_pct": 89.37031802120141,
+      "output_ratio": 0.8316079479044916,
+      "n_failed": 0,
+      "n_measured": 82,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T043352Z_expB_qwen3b_r2_rep2.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 2.0,
+      "N": 49.585,
+      "X": 207.85,
+      "tpot_p50_ms": 608.1516049171407,
+      "kv_occupancy": 0.12682823720176048,
+      "acceptance_rate": 0.5757759423624809,
+      "sm_active_pct": 88.25721153846153,
+      "output_ratio": 0.8952298912458275,
+      "n_failed": 0,
+      "n_measured": 77,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T043628Z_expB_qwen3b_r3_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 3.0,
+      "N": 86.66789667896678,
+      "X": 340.65,
+      "tpot_p50_ms": 835.0446523513176,
+      "kv_occupancy": 0.2002689102638073,
+      "acceptance_rate": 0.5762144328992942,
+      "sm_active_pct": 90.57872340425533,
+      "output_ratio": 0.8884976525821596,
+      "n_failed": 0,
+      "n_measured": 132,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T043933Z_expB_qwen3b_r3_rep1.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 3.0,
+      "N": 92.11692307692307,
+      "X": 342.25,
+      "tpot_p50_ms": 744.2112779941689,
+      "kv_occupancy": 0.2331337645444664,
+      "acceptance_rate": 0.5734492135549397,
+      "sm_active_pct": 90.56301775147928,
+      "output_ratio": 0.8403412927383218,
+      "n_failed": 0,
+      "n_measured": 121,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T044220Z_expB_qwen3b_r3_rep2.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 3.0,
+      "N": 97.11418685121107,
+      "X": 349.925,
+      "tpot_p50_ms": 763.4638259264309,
+      "kv_occupancy": 0.24343967239841202,
+      "acceptance_rate": 0.5730815213895751,
+      "sm_active_pct": 90.62491694352158,
+      "output_ratio": 0.8635326053427108,
+      "n_failed": 0,
+      "n_measured": 125,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T044529Z_expB_qwen3b_r4_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 4.0,
+      "N": 118.15060240963855,
+      "X": 438.9,
+      "tpot_p50_ms": 945.8069442183755,
+      "kv_occupancy": 0.28174651350363233,
+      "acceptance_rate": 0.5728811534877136,
+      "sm_active_pct": 91.21965317919076,
+      "output_ratio": 0.8769230769230769,
+      "n_failed": 0,
+      "n_measured": 166,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T044914Z_expB_qwen3b_r4_rep1.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 4.0,
+      "N": 117.28109452736318,
+      "X": 487.575,
+      "tpot_p50_ms": 937.3217051624407,
+      "kv_occupancy": 0.29497117147641455,
+      "acceptance_rate": 0.5702518807558052,
+      "sm_active_pct": 91.14019138755981,
+      "output_ratio": 0.850582232107811,
+      "n_failed": 0,
+      "n_measured": 162,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T045251Z_expB_qwen3b_r4_rep2.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 4.0,
+      "N": 129.24806201550388,
+      "X": 486.05,
+      "tpot_p50_ms": 994.4009377346786,
+      "kv_occupancy": 0.33574821973580804,
+      "acceptance_rate": 0.5712268027814283,
+      "sm_active_pct": 91.7727047146402,
+      "output_ratio": 0.8604177730571783,
+      "n_failed": 0,
+      "n_measured": 168,
+      "degenerate": false,
+      "healthy": true
+    },
+    {
+      "file": "20260810T045421Z_expB_qwen3b_r5_rep0.json",
+      "config": "expB_qwen3b",
+      "policy": null,
+      "rate": 5.0,
+      "N": 134.4402985074627,
+      "X": 13.8,
+      "tpot_p50_ms": 5389.2811527475715,
+      "kv_occupancy": 0.2537192425641078,
+      "acceptance_rate": null,
+      "sm_active_pct": 92.65608108108108,
+      "output_ratio": 0.02401461759331767,
+      "n_failed": 21,
+      "n_measured": 184,
+      "degenerate": true,
+      "healthy": false
     }
   ],
   "notes": {
     "model": "mu(N) = min(N * r0, mu_max)",
-    "excluded_unhealthy": 22,
+    "excluded_unhealthy": 25,
     "fit_method": "non-linear least squares (Trust Region Reflective), bootstrap over runs, 2000 resamples"
   }
 }

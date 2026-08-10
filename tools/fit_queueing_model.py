@@ -35,13 +35,29 @@ def mu_model(N, r0, mu_max):
     return np.minimum(np.asarray(N, dtype=float) * r0, mu_max)
 
 
+# A run whose generations completed this fraction of their requested length (or less) is treated
+# as an engine-death artefact rather than an observation. The separation is bimodal and not a
+# tuned threshold: across all 111 runs with zero failed requests, every healthy run lands in
+# [0.75, 1.00] and the only two exceptions are 0.056 and 0.024 — both runs during which the
+# engine OOM'd mid-window (see docs/experiment_b.md §2). Their streams end cleanly on a
+# speculative-chunk boundary with success=True and no error, so the failed-request count does not
+# catch them.
+DEGENERATE_OUTPUT_RATIO = 0.4
+
+
 def load_points(results_dir: Path) -> list[dict]:
     """Collect (N, X) observations from every healthy run.
 
-    Runs whose engine died are excluded: a run that OOM'd mid-window reports a throughput
-    averaged over a period when the engine was partly dead, which is not a point on the service
-    curve at all. Including them drags the saturated asymptote down and would make the model look
-    like it saturates far earlier than it does.
+    Two kinds of run are excluded, both for the same reason — they are not points on the service
+    curve:
+
+    * **Failed requests.** A run that OOM'd mid-window reports a throughput averaged over a period
+      when the engine was partly dead. Including these drags the saturated asymptote down and
+      makes the model look like it saturates far earlier than it does.
+    * **Silent output truncation.** When the engine dies mid-window, in-flight requests receive a
+      *clean* truncated stream — success=True, no error, but ~5 tokens instead of ~134. These runs
+      report a plausible-looking N with a throughput an order of magnitude too low, and are far
+      more dangerous than the obvious failures because nothing in the run record flags them.
     """
     pts = []
     for p in sorted(results_dir.glob("*.json")):
@@ -57,7 +73,9 @@ def load_points(results_dir: Path) -> list[dict]:
         nmeas = d.get("n_requests_measured") or 0
         if not isinstance(N, (int, float)) or N != N or not isinstance(X, (int, float)):
             continue
-        healthy = nmeas > 0 and nfail == 0
+        ratio = (d.get("output_len") or {}).get("actual_over_requested")
+        degenerate = ratio is not None and ratio < DEGENERATE_OUTPUT_RATIO
+        healthy = nmeas > 0 and nfail == 0 and not degenerate
         pts.append({
             "file": p.name,
             "config": d.get("config"),
@@ -69,8 +87,10 @@ def load_points(results_dir: Path) -> list[dict]:
             "kv_occupancy": d.get("kv_occupancy"),
             "acceptance_rate": d.get("acceptance_rate"),
             "sm_active_pct": d.get("sm_active_pct"),
+            "output_ratio": ratio,
             "n_failed": nfail,
             "n_measured": nmeas,
+            "degenerate": degenerate,
             "healthy": healthy,
         })
     return pts
@@ -161,8 +181,14 @@ def main() -> None:
 
     pts = load_points(results_dir)
     healthy = [p for p in pts if p["healthy"]]
+    n_failed = sum(1 for p in pts if p["n_failed"])
+    degen = [p for p in pts if p["degenerate"]]
     print(f"observations: {len(pts)} total, {len(healthy)} healthy "
-          f"({len(pts) - len(healthy)} excluded for failed requests)")
+          f"({n_failed} excluded for failed requests, "
+          f"{len(degen)} for silent output truncation)")
+    for p in degen:
+        print(f"  truncated: {p['file']}  N={p['N']:.1f} X={p['X']:.1f} tok/s "
+              f"actual/requested={p['output_ratio']:.3f}")
 
     by_cfg: dict[str, list[dict]] = defaultdict(list)
     for p in healthy:

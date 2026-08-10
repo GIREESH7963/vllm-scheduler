@@ -120,16 +120,35 @@ From `tools/fit_queueing_model.py` over `results/` (95% bootstrap CIs):
 | Workload | n | N range | r₀ (tok/s/seq) | μ_max (tok/s) | N\* | R² | plateau slope |
 |---|---|---|---|---|---|---|---|
 | `phase1_mixed` | 9 | 1.4 – 60.6 | **12.60** [11.93, 14.86] | **247.5** [240.3, 253.0] | **19.7** [16.7, 20.8] | **0.983** | −0.61 |
-| `phase2_mixed` | 19 | 3.6 – 18.2 | 50.57 [45.46, 54.35] | 451.9 [398.7, 549.3] | 8.9 [7.7, 11.8] | 0.862 | +16.7 |
-| `modelval_mixed` | 18 | 0.4 – 140.8 | 8.65 [6.95, 12.78] | 309.3 [199.4, 416.2] | 35.7 [16.1, 57.1] | 0.558 | −0.80 |
-| `phase2_chat` | 23 | 3.6 – 11.8 | 58.23 [56.05, 61.01] | 349.2 [308.5, 387.8] | 6.0 [5.3, 6.7] | 0.479 | +30.5 |
-| `phase1_validation` | 6 | 1.2 – 32.6 | 63.27 [—] | 141.2 [112.6, 170.6] | 2.2 [1.8, 2.7] | 0.372 | +3.44 |
-| *pooled* | 75 | 0.4 – 140.8 | — | — | 5.8 [4.3, 7.4] | **0.216** | +0.10 |
+| `expB_qwen3b` | 18 | 0.9 – 129.2 | 4.06 [3.85, 4.59] | *470.8* [438.9, 487.6] | *116.1* [101.0, 126.2] | 0.950 | +1.73 |
+| `phase2_mixed` | 19 | 3.6 – 18.2 | 50.57 [45.46, 54.35] | *451.9* [398.7, 549.3] | *8.9* [7.7, 11.8] | 0.862 | +16.7 |
+| `modelval_mixed` | 17 | 0.4 – 116.8 | 8.65 [6.61, 12.31] | *355.7* [283.0, 435.3] | *41.1* [28.3, 61.0] | 0.825 | +3.01 |
+| `expB_qwen1.5b` | 17 | 0.4 – 117.0 | 8.52 [6.36, 12.21] | *355.2* [281.5, 436.5] | *41.7* [28.0, 62.6] | 0.813 | +3.06 |
+| `phase2_chat` | 23 | 3.6 – 11.8 | 58.23 [56.05, 61.01] | *349.2* [308.5, 387.8] | *6.0* [5.3, 6.7] | 0.479 | +30.5 |
+| `phase1_validation` | 6 | 1.2 – 32.6 | 63.27 [—] | *141.2* [112.6, 170.6] | *2.2* [1.8, 2.7] | 0.372 | +3.44 |
+| *pooled* | 109 | 0.4 – 129.2 | — | — | 6.9 [4.6, 8.6] | **0.229** | +1.65 |
+
+*Italicised* μ_max and N\* are extrapolations, not measurements — see §5.1. Only `phase1_mixed`
+has a plateau flat enough to identify them.
 
 **`phase1_mixed` is the reference fit.** It is the only workload that both spans the knee
 generously (N from 1.4 to 60.6, 6 points below and 3 above) and has a genuinely flat plateau
 (slope −0.61 tok/s/seq, indistinguishable from zero at this noise level). R² = 0.983 and mean
 absolute percentage error 12.7%.
+
+**Two corrections to the numbers previously reported in this table.** Both follow from a run
+exclusion added after Experiment B (`docs/experiment_b.md` §2). When a vLLM engine dies mid-run,
+requests already streaming receive a *cleanly terminated* response — `success=True`, no error,
+but a handful of tokens instead of the requested hundred. Such a run reports a plausible
+concurrency with a throughput an order of magnitude too low, and the failed-request filter of
+§3.3 does not catch it. Three runs across the campaign carry this signature; the discriminator
+is bimodal rather than tuned, since every healthy run completes 75–100% of its requested output
+and these complete 2–6%.
+
+- `modelval_mixed` previously read R² = 0.558 with MAPE 77.3%, and its N range extended to 140.8.
+  That endpoint was one such run. Removing it gives R² = 0.825, MAPE 29.1%.
+- The *pooled* row previously read n = 75; it now covers 109 observations including both
+  Experiment B arms. Its R² remains near 0.2, which is the point of §5.2.
 
 ## 5. Where the model breaks down
 
@@ -143,6 +162,21 @@ failures are informative.
 the knee. The fitted μ_max for them is an extrapolation constrained by the functional form, not
 a measurement, and the fitted N\* (6.0, 8.9) is an artefact of the N range rather than a
 property of the system. **Do not quote μ_max or N\* for the Phase-2 workloads.**
+
+Experiment B was designed partly to fix this: it sweeps λ up to the point of failure and reaches
+N ≈ 117 and 129, an order of magnitude past the Phase-2 range. It does not fix it. Fitting the
+local slope in the lowest and highest third of each arm's N range:
+
+| Arm | slope, low third | slope, high third | ratio |
+|---|---|---|---|
+| `expB_qwen1.5b` | 9.69 | 3.06 | 0.32 |
+| `expB_qwen3b` | 5.12 | 3.99 | 0.78 |
+
+A saturated system would show a high-third slope near zero. Both are still climbing when the
+sweep ends, the 3B arm having barely bent at all. **No workload in this campaign except
+`phase1_mixed` reaches its plateau**, and the reason Experiment B does not is the subject of
+§5.3: the engine runs out of memory before it runs out of throughput. On this device, under
+speculative decoding, μ_max is not merely unmeasured — it is unreachable.
 
 ### 5.2 r₀ is not workload-invariant, so the pooled fit is meaningless
 
@@ -167,6 +201,23 @@ memory-augmented model would need a second constraint of the form
 $$M_{\text{weights}} + M_{\text{KV}}(N, L) + \underbrace{c \cdot N (k{+}1) V}_{\text{spec-decode scorer}} \le M_{\text{device}}$$
 
 whose third term — not the second — is what binds on this hardware.
+
+**Experiment B measures c.** Across seven independent engine deaths spanning two model sizes,
+two experiments and two distinct allocation sizes, the failing allocation is predicted to within
+0.1% by taking c = 4 bytes — the scorer materialises its probability tensor in fp32:
+
+$$M_{\text{scorer}} = N \cdot (k{+}1) \cdot V \cdot 4\ \text{bytes} = N \times 2.898\ \text{MiB}$$
+
+with k+1 = 5 and V = 151,936. At vLLM's default `max_num_seqs` = 256 that is 742 MiB, which is
+exactly the allocation Experiment A observed. The 1.5B sweep died at N = 220 and asked for
+638 MiB, which is the same law evaluated at a different concurrency — the part that makes this a
+test of the model rather than a fit to it.
+
+Two consequences follow, and they are the reason this term deserves its own constraint rather
+than a footnote. First, the allocation is **independent of model size**: both checkpoints share
+V = 151,936 and the same k, so the wall sits at the same N for a 1.5B and a 3B model. Second, it
+is **linear in N and invisible to μ(N)** — the service-rate model sees N = 256 and predicts
+μ = μ_max, with no term that fails. The full analysis is in `docs/experiment_b.md`.
 
 ### 5.4 Jensen bias from fitting on run-averaged N
 
