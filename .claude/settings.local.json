@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nvidia-smi)",
+      "Bash(nvidia-smi --query-gpu=name,memory.total,driver_version,compute_cap --format=csv)",
+      "Bash(.venv/bin/python -c \"import vllm, torch; print\\('vllm', vllm.__version__\\); print\\('torch', torch.__version__\\); print\\('cuda', torch.version.cuda\\)\")",
+      "Bash(.venv/bin/python -c ' *)",
+      "Read(//proc/driver/nvidia/**)",
+      "Read(//usr/lib/x86_64-linux-gnu/**)",
+      "Bash(curl -s -m 5 http://127.0.0.1:8000/v1/models)",
+      "Bash(ps -o etime= -p 2395949)",
+      "Bash(dcgmi discovery *)",
+      "Bash(timeout 8 dcgmi dmon -e 1002,1005 -c 3)",
+      "Bash(echo \"=== EXIT: $? ===\")",
+      "Bash(.venv/bin/python *)",
+      "Read(//home/abburigireesh/.cache/huggingface/hub/**)",
+      "Bash(sudo -n true)",
+      "Bash(ip -4 addr show)",
+      "Bash(nvcc --version)"
+    ]
+  }
+}

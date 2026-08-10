@@ -1,0 +1,213 @@
+===== PHASE 2 START 2026-07-06T11:20:40Z =====
+----- [1/3] mixed policy matrix 11:20:40Z -----
+[p2] policies=['nocap', 'fcfs', 'srpt', 'edf', 'adaptive'] rates=[2.0, 4.0] x 3 repeats (cap=8).
+[p2] nocap λ=2 rep=0: SLO=1.00 totlat_p99=6596ms qwait_p99=3ms TPOT_p50=23ms n=35
+[thermal] GPU 83C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=2 rep=1: SLO=1.00 totlat_p99=12903ms qwait_p99=4ms TPOT_p50=25ms n=36
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=2 rep=2: SLO=0.97 totlat_p99=23834ms qwait_p99=35ms TPOT_p50=28ms n=34
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=4 rep=0: SLO=0.80 totlat_p99=22165ms qwait_p99=7ms TPOT_p50=74ms n=93
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=4 rep=1: SLO=0.97 totlat_p99=16706ms qwait_p99=4ms TPOT_p50=36ms n=59
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=4 rep=2: SLO=0.96 totlat_p99=22786ms qwait_p99=3ms TPOT_p50=50ms n=77
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=2 rep=0: SLO=0.83 totlat_p99=9910ms qwait_p99=1960ms TPOT_p50=27ms n=35
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=2 rep=1: SLO=1.00 totlat_p99=13525ms qwait_p99=491ms TPOT_p50=23ms n=36
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=2 rep=2: SLO=0.82 totlat_p99=24443ms qwait_p99=2295ms TPOT_p50=29ms n=34
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=4 rep=0: SLO=0.11 totlat_p99=23296ms qwait_p99=5986ms TPOT_p50=28ms n=57
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=4 rep=1: SLO=0.00 totlat_p99=23564ms qwait_p99=5889ms TPOT_p50=31ms n=45
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=4 rep=2: SLO=0.26 totlat_p99=24041ms qwait_p99=5946ms TPOT_p50=29ms n=54
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=2 rep=0: SLO=0.83 totlat_p99=12849ms qwait_p99=3681ms TPOT_p50=29ms n=35
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=2 rep=1: SLO=1.00 totlat_p99=9383ms qwait_p99=658ms TPOT_p50=26ms n=36
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=2 rep=2: SLO=0.94 totlat_p99=23964ms qwait_p99=1298ms TPOT_p50=27ms n=34
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=4 rep=0: SLO=0.41 totlat_p99=20078ms qwait_p99=5306ms TPOT_p50=29ms n=67
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=4 rep=1: SLO=0.42 totlat_p99=19065ms qwait_p99=4711ms TPOT_p50=30ms n=45
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=4 rep=2: SLO=0.45 totlat_p99=19200ms qwait_p99=5722ms TPOT_p50=28ms n=61
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=2 rep=0: SLO=0.89 totlat_p99=11156ms qwait_p99=2001ms TPOT_p50=27ms n=35
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=2 rep=1: SLO=1.00 totlat_p99=13197ms qwait_p99=553ms TPOT_p50=25ms n=36
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=2 rep=2: SLO=0.79 totlat_p99=24926ms qwait_p99=2734ms TPOT_p50=31ms n=34
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=4 rep=0: SLO=0.42 totlat_p99=12385ms qwait_p99=5382ms TPOT_p50=30ms n=68
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=4 rep=1: SLO=0.54 totlat_p99=15750ms qwait_p99=5105ms TPOT_p50=34ms n=49
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=4 rep=2: SLO=0.57 totlat_p99=18897ms qwait_p99=5137ms TPOT_p50=32ms n=64
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=2 rep=0: SLO=1.00 totlat_p99=13589ms qwait_p99=3ms TPOT_p50=30ms n=35
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=2 rep=1: SLO=1.00 totlat_p99=13441ms qwait_p99=3ms TPOT_p50=26ms n=36
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=2 rep=2: SLO=0.97 totlat_p99=19127ms qwait_p99=2ms TPOT_p50=27ms n=34
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=4 rep=0: SLO=0.54 totlat_p99=25962ms qwait_p99=5960ms TPOT_p50=48ms n=80
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=4 rep=1: SLO=0.78 totlat_p99=16713ms qwait_p99=2714ms TPOT_p50=44ms n=59
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=4 rep=2: SLO=0.39 totlat_p99=20682ms qwait_p99=5790ms TPOT_p50=37ms n=69
+[p2] wrote phase2_mixed_policy_summary.json and 6 figures:
+     results/figures/phase2_mixed_slo_attainment.png
+     results/figures/phase2_mixed_total_latency_p99.png
+     results/figures/phase2_mixed_queue_wait_p99.png
+     results/figures/phase2_mixed_tpot_p50.png
+     results/figures/phase2_mixed_byclass_slo.png
+     results/figures/phase2_mixed_byclass_totlat_p99.png
+----- [2/3] predictor experiment 13:06:05Z -----
+[p2-pred] profiling run at λ=4 (FCFS) to learn actual lengths + train predictor ...
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2-pred] predictor MAE = 19.1 tokens over 86 requests
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2-pred] srpt-oracle: SLO=0.38 totlat_p99=17953ms qwait_p50=558ms
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2-pred] srpt-prediction: SLO=0.44 totlat_p99=17252ms qwait_p50=477ms
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2-pred] srpt-prompt-proxy: SLO=0.46 totlat_p99=18775ms qwait_p50=501ms
+[p2-pred] wrote phase2_mixed_predictor_experiment.json
+----- [3/3] chat policy matrix 13:20:42Z -----
+[p2] policies=['nocap', 'fcfs', 'srpt', 'edf', 'adaptive'] rates=[4.0, 6.0] x 3 repeats (cap=12).
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=4 rep=0: SLO=1.00 totlat_p99=13305ms qwait_p99=4ms TPOT_p50=30ms n=72
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=4 rep=1: SLO=1.00 totlat_p99=15873ms qwait_p99=3ms TPOT_p50=24ms n=59
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=4 rep=2: SLO=1.00 totlat_p99=9579ms qwait_p99=4ms TPOT_p50=29ms n=74
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=6 rep=0: SLO=0.83 totlat_p99=20204ms qwait_p99=4ms TPOT_p50=37ms n=109
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=6 rep=1: SLO=0.94 totlat_p99=20129ms qwait_p99=5ms TPOT_p50=58ms n=108
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] nocap λ=6 rep=2: SLO=0.89 totlat_p99=17716ms qwait_p99=5ms TPOT_p50=35ms n=106
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=4 rep=0: SLO=0.99 totlat_p99=12304ms qwait_p99=2ms TPOT_p50=28ms n=72
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=4 rep=1: SLO=0.97 totlat_p99=17180ms qwait_p99=1039ms TPOT_p50=24ms n=59
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=4 rep=2: SLO=0.93 totlat_p99=11439ms qwait_p99=1524ms TPOT_p50=28ms n=74
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=6 rep=0: SLO=0.78 totlat_p99=17789ms qwait_p99=2898ms TPOT_p50=35ms n=109
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=6 rep=1: SLO=0.57 totlat_p99=19065ms qwait_p99=5687ms TPOT_p50=38ms n=101
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] fcfs λ=6 rep=2: SLO=0.05 totlat_p99=18571ms qwait_p99=5421ms TPOT_p50=38ms n=105
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=4 rep=0: SLO=0.99 totlat_p99=15584ms qwait_p99=2ms TPOT_p50=26ms n=72
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=4 rep=1: SLO=1.00 totlat_p99=13941ms qwait_p99=2ms TPOT_p50=26ms n=59
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=4 rep=2: SLO=1.00 totlat_p99=8831ms qwait_p99=172ms TPOT_p50=31ms n=74
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=6 rep=0: SLO=0.78 totlat_p99=17881ms qwait_p99=4575ms TPOT_p50=36ms n=109
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=6 rep=1: SLO=0.82 totlat_p99=13296ms qwait_p99=4905ms TPOT_p50=34ms n=100
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] srpt λ=6 rep=2: SLO=0.77 totlat_p99=12696ms qwait_p99=4741ms TPOT_p50=34ms n=102
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=4 rep=0: SLO=1.00 totlat_p99=16539ms qwait_p99=3ms TPOT_p50=26ms n=72
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=4 rep=1: SLO=0.97 totlat_p99=16699ms qwait_p99=1283ms TPOT_p50=26ms n=59
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=4 rep=2: SLO=0.95 totlat_p99=13102ms qwait_p99=1526ms TPOT_p50=32ms n=74
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=6 rep=0: SLO=0.72 totlat_p99=21437ms qwait_p99=3988ms TPOT_p50=38ms n=108
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=6 rep=1: SLO=0.67 totlat_p99=14480ms qwait_p99=5572ms TPOT_p50=33ms n=94
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] edf λ=6 rep=2: SLO=0.83 totlat_p99=20492ms qwait_p99=5205ms TPOT_p50=33ms n=105
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=4 rep=0: SLO=1.00 totlat_p99=14862ms qwait_p99=3ms TPOT_p50=25ms n=72
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=4 rep=1: SLO=1.00 totlat_p99=19575ms qwait_p99=3ms TPOT_p50=22ms n=59
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=4 rep=2: SLO=1.00 totlat_p99=9295ms qwait_p99=4ms TPOT_p50=32ms n=74
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=6 rep=0: SLO=0.91 totlat_p99=19708ms qwait_p99=2140ms TPOT_p50=36ms n=109
+[thermal] GPU 85C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=6 rep=1: SLO=0.85 totlat_p99=19800ms qwait_p99=1196ms TPOT_p50=53ms n=108
+[thermal] GPU 84C > 77C — cooling down before measuring ...
+[thermal] resumed at 77C
+[p2] adaptive λ=6 rep=2: SLO=0.93 totlat_p99=14059ms qwait_p99=1366ms TPOT_p50=35ms n=106
+[p2] wrote phase2_chat_policy_summary.json and 6 figures:
+     results/figures/phase2_chat_slo_attainment.png
+     results/figures/phase2_chat_total_latency_p99.png
+     results/figures/phase2_chat_queue_wait_p99.png
+     results/figures/phase2_chat_tpot_p50.png
+     results/figures/phase2_chat_byclass_slo.png
+     results/figures/phase2_chat_byclass_totlat_p99.png
+===== PHASE 2 DONE 2026-07-06T15:08:28Z =====

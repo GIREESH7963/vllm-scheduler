@@ -1,0 +1,24 @@
+{
+  "config": "phase0_qwen1.5b",
+  "timestamp_utc": "2026-07-06T08:40:14+00:00",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "n_requests_measured": 20,
+  "n_requests_failed": 0,
+  "throughput_tok_s": 59.6846773085705,
+  "ttft_ms": {
+    "p50": 55.27076602447778,
+    "p99": 88.85173910995941
+  },
+  "tpot_ms": {
+    "p50": 16.204306397412438,
+    "p99": 16.416661010464722
+  },
+  "kv_occupancy": 0.0005387787824605051,
+  "sm_active_pct": 70.97631578947367,
+  "dram_active_pct": 66.97763157894737,
+  "mean_power_w": 67.6207397260274,
+  "energy_j_per_tok": 1.1329664961817143,
+  "slo_attainment": 1.0,
+  "acceptance_rate": 0.4579343365253078,
+  "notes": []
+}

@@ -1,0 +1,18 @@
+# Virtualenv (rebuild from requirements.txt)
+.venv/
+
+# Python bytecode / test caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Raw server stdout. ~45 MB and regenerated on every serve; the copy that matters is the
+# compressed one inside snapshots/<name>/logs/, which is committed.
+server.log
+
+# Scratch
+*.tmp
+.ipynb_checkpoints/
+
+# Claude Code local settings scratch files
+.claude/*.tmp.*

@@ -1,0 +1,26 @@
+# Phase 1 — RAG/summarization mix: long prompts, moderate outputs, lower rate (prefill-heavy).
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  # Long prompts are prefill-heavy -> lowest capacity; longer window to stabilise low-λ stats.
+  duration_s: 90
+  warmup_s: 30
+  repeats: 3
+  seed: 12345
+  arrival_rates: [0.5, 0.75, 1.0, 1.5]
+  save_raw: true
+  mix:
+    long: 0.8
+    short: 0.2
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+
+slo:
+  ttft_ms: 1500      # long prompts -> higher prefill/TTFT; looser TTFT SLO
+  tpot_ms: 50

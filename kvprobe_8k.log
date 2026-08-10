@@ -1,0 +1,3 @@
+[run] server healthy. sweeping rates=[1.0] x 2 repeats (duration 80s, warmup 25s each).
+[run] pre-sweep warmup: 15s at λ=1 (discarded) ...
+[run] λ=1 rep=0: n=28 fail=30 thru=48.9 tok/s TTFT p50/p99=134934/296719ms SM=97% acc=0.7125699616663054 lag_p99=5.9ms -> 20260706T171112Z_kvsweep_ctx8k_r1_rep0.json

@@ -1,0 +1,13 @@
+[run] server healthy. sweeping rates=[1.0, 2.0] x 3 repeats (duration 40s, warmup 12s each).
+[run] λ=1 rep=0: n=22 fail=0 thru=78.6 tok/s TTFT p50/p99=96/229ms SM=49% acc=0.5477563103770645 lag_p99=4.4ms -> 20260706T090715Z_phase1_validation_r1_rep0.json
+[run] λ=1 rep=1: n=30 fail=0 thru=100.6 tok/s TTFT p50/p99=267/816ms SM=79% acc=0.6195251267865376 lag_p99=2.9ms -> 20260706T090803Z_phase1_validation_r1_rep1.json
+[run] λ=1 rep=2: n=25 fail=0 thru=101.7 tok/s TTFT p50/p99=244/752ms SM=79% acc=0.615916221487323 lag_p99=2.4ms -> 20260706T090900Z_phase1_validation_r1_rep2.json
+[run] λ=1 SUMMARY: throughput 93.6±13.0 tok/s over 3 repeats
+[run] λ=2 rep=0: n=51 fail=0 thru=158.7 tok/s TTFT p50/p99=348/1692ms SM=82% acc=0.640771149449179 lag_p99=3.3ms -> 20260706T090957Z_phase1_validation_r2_rep0.json
+[run] λ=2 rep=1: n=63 fail=0 thru=176.5 tok/s TTFT p50/p99=448/1517ms SM=82% acc=0.6571774088116094 lag_p99=9.0ms -> 20260706T091102Z_phase1_validation_r2_rep1.json
+[run] λ=2 rep=2: n=47 fail=0 thru=168.6 tok/s TTFT p50/p99=394/1097ms SM=81% acc=0.6540846035280014 lag_p99=2.9ms -> 20260706T091158Z_phase1_validation_r2_rep2.json
+[run] λ=2 SUMMARY: throughput 167.9±8.9 tok/s over 3 repeats
+[run] wrote sweep summary phase1_validation_sweep_summary.json and 3 figures:
+       results/figures/phase1_validation_latency_vs_load.png
+       results/figures/phase1_validation_throughput_vs_load.png
+       results/figures/phase1_validation_utilization_vs_load.png

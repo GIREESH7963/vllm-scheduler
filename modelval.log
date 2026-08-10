@@ -1,0 +1,34 @@
+[run] server healthy. sweeping rates=[0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0] x 3 repeats (duration 55s, warmup 15s each).
+[run] pre-sweep warmup: 15s at λ=0.5 (discarded) ...
+[run] λ=0.5 rep=0: n=15 fail=0 thru=23.8 tok/s TTFT p50/p99=81/176ms SM=21% acc=0.7121116723839299 lag_p99=7.2ms -> 20260707T011835Z_modelval_mixed_r0.5_rep0.json
+[run] λ=0.5 rep=1: n=23 fail=0 thru=63.5 tok/s TTFT p50/p99=264/636ms SM=80% acc=0.7119811912677865 lag_p99=3.3ms -> 20260707T011940Z_modelval_mixed_r0.5_rep1.json
+[run] λ=0.5 rep=2: n=16 fail=0 thru=42.3 tok/s TTFT p50/p99=375/760ms SM=76% acc=0.7119264828108648 lag_p99=3.8ms -> 20260707T012046Z_modelval_mixed_r0.5_rep2.json
+[run] λ=0.5 SUMMARY: throughput 43.2±19.9 tok/s over 3 repeats
+[run] λ=1 rep=0: n=35 fail=0 thru=83.7 tok/s TTFT p50/p99=278/942ms SM=80% acc=0.7121531707651679 lag_p99=2.3ms -> 20260707T012156Z_modelval_mixed_r1_rep0.json
+[run] λ=1 rep=1: n=48 fail=0 thru=133.2 tok/s TTFT p50/p99=295/876ms SM=80% acc=0.7116339553321087 lag_p99=3.4ms -> 20260707T012306Z_modelval_mixed_r1_rep1.json
+[run] λ=1 rep=2: n=39 fail=0 thru=94.5 tok/s TTFT p50/p99=227/927ms SM=79% acc=0.7116300169565651 lag_p99=2.5ms -> 20260707T012414Z_modelval_mixed_r1_rep2.json
+[run] λ=1 SUMMARY: throughput 103.8±26.1 tok/s over 3 repeats
+[run] λ=1.5 rep=0: n=67 fail=0 thru=178.0 tok/s TTFT p50/p99=295/1021ms SM=81% acc=0.7118938822589947 lag_p99=2.1ms -> 20260707T012533Z_modelval_mixed_r1.5_rep0.json
+[run] λ=1.5 rep=1: n=64 fail=0 thru=168.8 tok/s TTFT p50/p99=397/1449ms SM=82% acc=0.7116005779036969 lag_p99=4.3ms -> 20260707T012644Z_modelval_mixed_r1.5_rep1.json
+[run] λ=1.5 rep=2: n=68 fail=0 thru=165.6 tok/s TTFT p50/p99=277/949ms SM=80% acc=0.711565000347046 lag_p99=2.0ms -> 20260707T012758Z_modelval_mixed_r1.5_rep2.json
+[run] λ=1.5 SUMMARY: throughput 170.8±6.4 tok/s over 3 repeats
+[run] λ=2 rep=0: n=91 fail=0 thru=249.4 tok/s TTFT p50/p99=430/1056ms SM=82% acc=0.711976484176174 lag_p99=3.9ms -> 20260707T012922Z_modelval_mixed_r2_rep0.json
+[run] λ=2 rep=1: n=82 fail=0 thru=233.4 tok/s TTFT p50/p99=552/1296ms SM=84% acc=0.7118925020472607 lag_p99=2.7ms -> 20260707T013050Z_modelval_mixed_r2_rep1.json
+[run] λ=2 rep=2: n=77 fail=0 thru=202.0 tok/s TTFT p50/p99=313/1168ms SM=82% acc=0.7123209297842222 lag_p99=4.3ms -> 20260707T013206Z_modelval_mixed_r2_rep2.json
+[run] λ=2 SUMMARY: throughput 228.3±24.1 tok/s over 3 repeats
+[run] λ=3 rep=0: n=132 fail=0 thru=330.6 tok/s TTFT p50/p99=639/2014ms SM=85% acc=0.7131610647838571 lag_p99=2.3ms -> 20260707T013343Z_modelval_mixed_r3_rep0.json
+[run] λ=3 rep=1: n=121 fail=0 thru=332.4 tok/s TTFT p50/p99=745/1870ms SM=86% acc=0.712557730328657 lag_p99=31.5ms -> 20260707T013532Z_modelval_mixed_r3_rep1.json
+[run] λ=3 rep=2: n=125 fail=0 thru=331.1 tok/s TTFT p50/p99=702/2553ms SM=86% acc=0.7127928746119264 lag_p99=10.3ms -> 20260707T013717Z_modelval_mixed_r3_rep2.json
+[run] λ=3 SUMMARY: throughput 331.4±1.0 tok/s over 3 repeats
+[run] λ=4 rep=0: n=166 fail=0 thru=436.9 tok/s TTFT p50/p99=758/2695ms SM=87% acc=0.7133039514508603 lag_p99=7.7ms -> 20260707T013920Z_modelval_mixed_r4_rep0.json
+[run] λ=4 rep=1: n=162 fail=0 thru=469.4 tok/s TTFT p50/p99=924/1922ms SM=86% acc=0.7123698277582281 lag_p99=32.7ms -> 20260707T014134Z_modelval_mixed_r4_rep1.json
+[run] λ=4 rep=2: n=168 fail=0 thru=31.0 tok/s TTFT p50/p99=1917/4964ms SM=87% acc=0.7109059681450401 lag_p99=2.2ms -> 20260707T014238Z_modelval_mixed_r4_rep2.json
+[run] λ=4 SUMMARY: throughput 312.5±244.3 tok/s over 3 repeats
+[run] λ=5 rep=0: n=0 fail=205 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.6ms -> 20260707T014333Z_modelval_mixed_r5_rep0.json
+[run] λ=5 rep=1: n=0 fail=194 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.7ms -> 20260707T014428Z_modelval_mixed_r5_rep1.json
+[run] λ=5 rep=2: n=0 fail=217 thru=0.0 tok/s TTFT p50/p99=nan/nanms SM=0% acc=None lag_p99=2.4ms -> 20260707T014523Z_modelval_mixed_r5_rep2.json
+[run] λ=5 SUMMARY: throughput 0.0±0.0 tok/s over 3 repeats
+[run] wrote sweep summary modelval_mixed_sweep_summary.json and 3 figures:
+       results/figures/modelval_mixed_latency_vs_load.png
+       results/figures/modelval_mixed_throughput_vs_load.png
+       results/figures/modelval_mixed_utilization_vs_load.png

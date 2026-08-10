@@ -1,0 +1,28 @@
+# Phase 1 — fast fixed-workload stability check (DoD task 6): same workload, >=3 repeats,
+# confirm reports are stable/comparable and figures render. Shorter window than the real mixes.
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+
+workload:
+  duration_s: 40
+  warmup_s: 12
+  repeats: 3
+  seed: 20260706
+  arrival_rates: [1, 2]      # two points so load-sweep plots have a slope
+  save_raw: true             # exercise the raw-dump path too
+  mix:
+    short: 0.5
+    long: 0.2
+    reasoning: 0.15
+    coding: 0.15
+
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 50

@@ -1,0 +1,36 @@
+# Phase 0 baseline: single-stream measurement of Qwen2.5-1.5B-Instruct on the T4
+# with n-gram speculative decoding. One config = one experiment; no magic numbers in scripts.
+
+model: Qwen/Qwen2.5-1.5B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  # For reference/reproducibility — how the server is launched (see phase0-setup/CLAUDE.md):
+  #   vllm serve Qwen/Qwen2.5-1.5B-Instruct --dtype float16 --port 8000 \
+  #     --speculative-config '{"method":"ngram","num_speculative_tokens":4,
+  #                            "prompt_lookup_min":2,"prompt_lookup_max":5}'
+  dtype: float16
+
+# Client-side load for the smoke run (single stream = concurrency 1).
+workload:
+  concurrency: 1
+  warmup_requests: 8        # discarded before measuring (root rule: warm up first)
+  measure_requests: 20
+  max_tokens: 128
+  temperature: 0.0          # greedy -> reproducible; also good for n-gram lookup
+  prompt: |
+    Summarize the following text in a few sentences, then list three key takeaways.
+    Text: Large language model inference is dominated by memory bandwidth during the
+    decode phase. Speculative decoding proposes multiple candidate tokens per step and
+    verifies them in parallel, trading compute for reduced sequential steps. Admission
+    and ordering policies in front of the serving engine shape tail latency under load.
+
+# Telemetry sampling during the measured window.
+telemetry:
+  interval_s: 0.5
+  gpu_index: 0
+
+# SLO thresholds for slo_attainment (fraction of measured requests meeting both).
+slo:
+  ttft_ms: 500
+  tpot_ms: 50

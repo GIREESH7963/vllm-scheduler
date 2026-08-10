@@ -1,0 +1,18 @@
+[run] server healthy. sweeping rates=[0.5, 1.0, 2.0] x 3 repeats (duration 75s, warmup 20s each).
+[run] pre-sweep warmup: 15s at λ=0.5 (discarded) ...
+[run] λ=0.5 rep=0: n=26 fail=0 thru=45.1 tok/s TTFT p50/p99=112/644ms SM=55% acc=0.6676300139571576 lag_p99=4.4ms -> 20260706T094621Z_phase1_mixed_r0.5_rep0.json
+[run] λ=0.5 rep=1: n=29 fail=0 thru=52.8 tok/s TTFT p50/p99=225/1001ms SM=79% acc=0.6681473356331848 lag_p99=2.3ms -> 20260706T094741Z_phase1_mixed_r0.5_rep1.json
+[run] λ=0.5 rep=2: n=22 fail=0 thru=37.0 tok/s TTFT p50/p99=202/529ms SM=76% acc=0.6727856281233845 lag_p99=2.2ms -> 20260706T094900Z_phase1_mixed_r0.5_rep2.json
+[run] λ=0.5 SUMMARY: throughput 45.0±7.9 tok/s over 3 repeats
+[run] λ=1 rep=0: n=67 fail=0 thru=114.4 tok/s TTFT p50/p99=357/957ms SM=79% acc=0.678105550910997 lag_p99=2.6ms -> 20260706T095028Z_phase1_mixed_r1_rep0.json
+[run] λ=1 rep=1: n=55 fail=0 thru=118.2 tok/s TTFT p50/p99=283/1074ms SM=79% acc=0.6868653337885858 lag_p99=2.3ms -> 20260706T095153Z_phase1_mixed_r1_rep1.json
+[run] λ=1 rep=2: n=68 fail=0 thru=133.4 tok/s TTFT p50/p99=265/899ms SM=79% acc=0.6932676493080654 lag_p99=2.3ms -> 20260706T095323Z_phase1_mixed_r1_rep2.json
+[run] λ=1 SUMMARY: throughput 122.0±10.0 tok/s over 3 repeats
+[run] λ=2 rep=0: n=135 fail=0 thru=240.3 tok/s TTFT p50/p99=568/1582ms SM=85% acc=0.7066595586374061 lag_p99=13.3ms -> 20260706T095516Z_phase1_mixed_r2_rep0.json
+[run] λ=2 rep=1: n=116 fail=0 thru=253.0 tok/s TTFT p50/p99=486/1305ms SM=83% acc=0.7117291093786349 lag_p99=7.9ms -> 20260706T095710Z_phase1_mixed_r2_rep1.json
+[run] λ=2 rep=2: n=120 fail=0 thru=249.3 tok/s TTFT p50/p99=422/1057ms SM=83% acc=0.7128235469264967 lag_p99=2.3ms -> 20260706T095902Z_phase1_mixed_r2_rep2.json
+[run] λ=2 SUMMARY: throughput 247.5±6.6 tok/s over 3 repeats
+[run] wrote sweep summary phase1_mixed_sweep_summary.json and 3 figures:
+       results/figures/phase1_mixed_latency_vs_load.png
+       results/figures/phase1_mixed_throughput_vs_load.png
+       results/figures/phase1_mixed_utilization_vs_load.png
