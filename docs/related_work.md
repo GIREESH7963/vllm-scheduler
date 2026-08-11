@@ -132,9 +132,21 @@ Worth a short paragraph in §2, because it pre-empts the three likeliest misread
 
 ## 6. Verified bibliography
 
-*Checked August 2026. "Verified" means title, authors, venue and year were read off the linked
-source. It does **not** mean the papers' contents have been read closely — do that before citing
-any specific claim.*
+*Checked August 2026.*
+
+> **Update — the reading pass has been done.** Seven of the ten were obtained in full and the
+> cited passages read directly; §2 of `docs/paper_draft.md` now quotes them and §14 there records
+> read status per entry (**[R]** read / **[M]** metadata only). The three not obtained are Orca
+> (USENIX PDF returns HTTP 403) and the two paywalled LPS papers, Zhang & Zwart 2008 and
+> Zhang/Dai/Zwart 2009; each is cited only for a claim that a read source corroborates. Full
+> author lists were recovered from the papers for PagedAttention, Sarathi-Serve and Llumnix, so
+> only Orca still carries a † in §14.
+>
+> **A caution that earned its place.** The fetch tool's summarising model misreported the
+> PagedAttention memory breakdown — it gave parameters as "approximately 30-40%" and supplied a
+> quotation that does not appear in the paper. The paper says 65%, and the figure confirms 26 GB
+> of 40 GB. Every number and quotation in §2 was therefore taken from the PDF text directly. Do
+> not cite from a search summary or a fetch summary.
 
 **Serving systems**
 
