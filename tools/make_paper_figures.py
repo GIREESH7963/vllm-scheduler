@@ -244,7 +244,8 @@ def fig_memory_vs_concurrency(expA, out: Path):
     ax.set_xlabel("Concurrent sequences,  N")
     ax.set_ylabel("GPU memory in use  (GiB, NVML)")
     ax.set_title("Memory climbs with concurrency until the allocator has no room left", loc="left")
-    ax.legend(loc="lower right", title="Experiment A", title_fontsize=8)
+    # Lower-right collides with the vertical max_num_seqs label at the right edge.
+    ax.legend(loc="lower left", title="Experiment A", title_fontsize=8)
     return ps.save(fig, out, "fig04_memory_vs_concurrency")
 
 
@@ -358,7 +359,7 @@ def fig_bottleneck(out: Path):
     axR.set_title("What the device actually holds\nat the moment of failure", loc="left",
                   fontsize=9.6, linespacing=1.5)
 
-    fig.suptitle("The binding resource is activation memory, not KV cache",
+    fig.suptitle("The binding allocation sits outside the paged KV allocator",
                  x=0.008, ha="left", fontsize=10.5, fontweight="bold", y=1.005)
     return ps.save(fig, out, "fig05_bottleneck")
 
@@ -367,7 +368,7 @@ def fig_bottleneck(out: Path):
 # fig 6 — aggregate SLO with CIs
 # ======================================================================================
 
-def fig_aggregate_slo(stats, out: Path):
+def fig_aggregate_slo(stats, contrasts, out: Path):
     if not stats:
         print("  fig06 skipped — no stats"); return []
     groups = sorted({(s["config"], s["rate"]) for s in stats})
@@ -399,12 +400,18 @@ def fig_aggregate_slo(stats, out: Path):
         ax.grid(axis="x", visible=False)
 
     axes[0].set_ylabel("SLO attainment  (fraction of requests)")
-    fig.suptitle("Aggregate SLO attainment by policy — error bars are 95% t-intervals on n=3",
+    # Both of these strings predate Experiment D and were wrong on the figure while the paper
+    # said otherwise: not every panel is n=3 (the phase2_mixed_n10 cell is n=10), and the
+    # surviving-contrast count is now 9 of 207, not one. Derive the count rather than restate it.
+    n_survive = sum(1 for c in (contrasts or []) if c.get("significant_05_holm"))
+    n_total = len(contrasts or [])
+    fig.suptitle("Aggregate SLO attainment by policy — error bars are 95% t-intervals",
                  x=0.008, ha="left", fontsize=10.5, fontweight="bold", y=1.01)
+    tail = (f"{n_survive} of the {n_total} contrasts in this family survive Holm correction"
+            if n_total else "See STATISTICS.md for which contrasts survive Holm correction")
     fig.text(0.008, -0.06,
-             "Intervals are wide because n=3 (t = 4.303). Only one contrast in the whole family "
-             "survives Holm correction, and it is degenerate\n(nocap has no queue by "
-             "construction). Differences below should be read as observed, not established.",
+             "Most cells are n=3 (t = 4.303), so intervals are wide; the phase2_mixed_n10 cell is "
+             f"n=10.\n{tail} — differences that do not are observed, not established.",
              fontsize=7.6, color=ps.MUTED, ha="left", linespacing=1.5)
     return ps.save(fig, out, "fig06_aggregate_slo")
 
@@ -707,6 +714,7 @@ def main() -> None:
 
     runs = load_runs(rd)
     stats = load_json(rd / "stats" / "policy_stats.json")
+    contrasts = load_json(rd / "stats" / "policy_contrasts.json")
     model_fit = load_json(rd / "model" / "queueing_model_fit.json")
     expA = load_json(rd / "expA" / "expA_summary_corrected.json")
     expB = load_json(rd / "expB" / "expB_analysis.json")
@@ -722,7 +730,7 @@ def main() -> None:
     made += fig_kv_vs_concurrency(expA, runs, out)
     made += fig_memory_vs_concurrency(expA, out)
     made += fig_bottleneck(out)
-    made += fig_aggregate_slo(stats, out)
+    made += fig_aggregate_slo(stats, contrasts, out)
     made += fig_perclass_heatmap(stats, out)
     made += fig_model_vs_measured(model_fit, out)
     made += fig_regime_diagram(expA, out)
