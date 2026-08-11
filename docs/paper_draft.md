@@ -719,7 +719,8 @@ not be reported as one**. Consequently "the allocation is model-size independent
 demonstrated on two models that agree on precisely the parameter which would have made it
 size-*dependent*. Measuring V requires a model from a different family, which changes layer
 count, KV cost per token and activation profile simultaneously — so a disagreement could not be
-attributed to V. §14 gives the concrete blocked experiment.
+attributed to V. The arm that would settle it was scoped and **deliberately not run** (§14.4);
+this limitation is therefore permanent for this paper rather than pending.
 
 **10.4 Thermal throttling.** This is a measurement of ours, not an appeal to a general
 phenomenon: NVML reported the throttle flag set, at 85–89 °C, through nearly the whole campaign
@@ -865,16 +866,31 @@ anyone checked whether the uncovered part is the part that binds?
    HotInfra first is reasonable. Not OSDI/SOSP/NSDI/ASPLOS — single GPU, no system built, narrow
    mechanism.
 
-**Would most raise the ceiling, cheapest first:**
+**Closed by decision — not pending, not queued:**
 
-4. **A different-vocabulary model** closes §10.3, the last untested term of the law. The intended
-   arm is `meta-llama/Llama-3.2-1B-Instruct` (V = 128,256, predicting 2.446 MiB/seq and 656.7 MiB
-   at N = 256 against Qwen's 741.9). **Currently blocked**: the repo is gated, `hf_hub_download`
-   returns `GatedRepoError` 401, and there is no HF token on the machine. Accepting the licence
-   and exporting `HF_TOKEN` unblocks it. Llama-3.2-1B is the right choice because the V test needs
-   a model that *reaches* high concurrency — a cached alternative with a larger vocabulary
+4. **The different-vocabulary arm will not be run.** It would close §10.3, the one untested term
+   of the law, by measuring a model with a different `V`. The arm was scoped:
+   `meta-llama/Llama-3.2-1B-Instruct`, V = 128,256, predicting 2.446 MiB/seq and 656.7 MiB at
+   N = 256 against Qwen's 741.9 — a 12.5% separation the campaign's ±0.5% agreement would resolve
+   easily. It is not blocked by anything technical: the model is gated, and accepting the licence
+   plus an `HF_TOKEN` would unblock it. **The decision is to submit on the current experiments
+   instead**, taken 2026-08-11.
+
+   The consequence is carried openly rather than left implicit. `V` remains **read from the
+   allocation site, not measured** (§10.3), the law is described throughout as tested on two of
+   its three axes, and "the allocation is model-size independent" rests on two checkpoints that
+   share the one parameter which would have made it size-*dependent*. A referee will raise this;
+   the abstract, §7.3, §10.3 and §11 all state it before they can. What must not happen is the
+   claim quietly widening — if any future edit describes the law as fully tested, this item is
+   the reason that is wrong.
+
+   For the record, should the decision be revisited: Llama-3.2-1B is the right choice because the
+   V test needs a model that *reaches* high concurrency. The cached larger-vocabulary alternative
    (Phi-4-mini, V = 200,064) costs 128 KiB/token, plateaus near N ≈ 61, goes KV-bound and never
-   reaches the scorer at all.
+   reaches the scorer at all, so it cannot test the law however convenient it is to run.
+
+**Would most raise the ceiling, if the scope is ever widened:**
+
 5. **A second GPU class** kills the T4-specific objection (§10.1).
 6. **A current vLLM version** kills the stale-bug objection and answers §10.2 directly.
 
