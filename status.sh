@@ -75,6 +75,11 @@ PY
     c=$(ls results/expCD/regime_${tag}/*trial*.json 2>/dev/null | wc -l)
     printf "  %-8s : %d / 3 trials\n" "$tag" "$c"
   done
+  # Both arms completed and neither died, which looks like a clean null but is not one: the
+  # cap of 1024 shrank KV to 1.63 GiB and the engine went KV-bound before reaching the scorer.
+  # Say so here, because "3 / 3 trials" on its own reads as a result.
+  echo "  NOTE: superseded — cap=1024 shrank KV to 1.63 GiB, both arms went KV-bound near"
+  echo "        N~125 without dying, so this never tested scorer-vs-cap. See experiment F."
 
   echo
   echo "-- Experiment D: powered policy comparison (n=10) ----------------------------"
@@ -86,6 +91,41 @@ PY
     echo "  >> C AND D COMPLETE"
   fi
   grep -E "^\[expCD" results/expCD/expCD_run.log 2>/dev/null | tail -2 | sed 's/^/    /'
+
+  echo
+  echo "-- Experiment F: C and E re-run at a cap that preserves KV --------------------"
+  if [ -f results/expF/calibration.json ]; then
+    echo "  cap calibration : done"
+    .venv/bin/python - <<'PYCAL' 2>/dev/null
+import json
+d = json.load(open("results/expF/calibration.json"))
+for p in d["points"]:
+    if p.get("error"):
+        print(f"    cap {p['max_num_seqs']:>4} k={p['num_speculative_tokens']}: {p['error']}")
+    else:
+        print(f"    cap {p['max_num_seqs']:>4} k={p['num_speculative_tokens']}: "
+              f"activation {p['activation']:.2f} GiB, KV {p['kv']:.2f} GiB, "
+              f"est KV-bound N~{p['est_kv_bound_n']}")
+r = d.get("recommendation", {})
+print(f"    C re-run cap: {r.get('cap') or 'none qualifies — ' + r.get('note', '')[:60]}")
+PYCAL
+  else
+    echo "  cap calibration : running or pending"
+  fi
+  for tag in k7_cap256 k2_cap256; do
+    c=$(ls results/expF/${tag}/*trial*.json 2>/dev/null | wc -l)
+    d=$(grep -l '"died": true' results/expF/${tag}/*trial*.json 2>/dev/null | wc -l)
+    printf "  %-10s : %d / 3 trials, %d died\n" "$tag" "$c" "$d"
+  done
+  for dir in results/expF/regime_spec_*/; do
+    [ -d "$dir" ] || continue
+    c=$(ls "$dir"/*trial*.json 2>/dev/null | wc -l)
+    printf "  %-10s : %d / 3 trials\n" "$(basename "$dir")" "$c"
+  done
+  if grep -q "EXPERIMENT F COMPLETE" results/expF/expF_run.log 2>/dev/null; then
+    echo "  >> EXPERIMENT F COMPLETE — read results/expF/expF_analysis.json"
+  fi
+  grep -E "^\[expF" results/expF/expF_run.log 2>/dev/null | tail -3 | sed 's/^/    /'
 
   echo
   echo "-- Artifacts ----------------------------------------------------------------"
