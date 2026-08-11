@@ -1,0 +1,4 @@
+[expF-header 2026-08-11T04:08:57Z] waiting for run_expF.sh to exit (poll 30s, give up after 6h)
+[expF-header 2026-08-11T05:15:40Z] driver gone after 3990s
+[expF-header 2026-08-11T05:15:40Z] patched /home/abburigireesh/vllm_scheduler/phase3-limits/run_expF.sh: corrected the N ~ 129 units error in the F-2 header
+[expF-header 2026-08-11T05:15:40Z] campaign log tail: [expF 05:15:18] read next: results/expF/expF_analysis.json, results/expF/calibration.json, then fold into docs/experiment_b.md

@@ -17,9 +17,22 @@
 #
 #   1. calibration  — measure the cap/KV trade-off directly (~50 min, no workload). Produces the
 #                     figure for the regime result and picks C's cap from data.
-#   2. F-2  k=7 at the default cap — THE decisive arm. Boundary at N ~ 129, cap at 256, KV
-#                     ceiling at N ~ 365. A death at 129 can only be the scorer, which measures
-#                     the (k+1) term and breaks C's confound in one run.
+#   2. F-2  k=7 at the default cap — THE decisive arm, and it landed: 3/3 deaths at 4.640,
+#                     4.645 and 4.642 MiB/seq against 4.637 predicted (+0.1%), with the ratio to
+#                     the k=4 reference 1.602 observed vs 1.600 predicted (8/5). Cap 256, KV
+#                     ceiling at N ~ 363. It measures the law's (k+1) term and breaks C's
+#                     scorer/cap confound in one run.
+#
+#                     The confound breaks on KV OCCUPANCY at death, not concurrency at death:
+#                     the three trials died at 43.6%, 43.6% and 63.3% occupancy, leaving a third
+#                     or more of the KV pool free, so neither the cap nor exhaustion accounts for
+#                     them. Concurrency does not carry the argument on its own — the deaths came
+#                     at N = 186, 187 and 256, and that last one is the cap itself.
+#
+#                     An earlier draft of this header read "Boundary at N ~ 129 ... a death at
+#                     129 can only be the scorer". That was a units error: 129 came off the rate
+#                     column of docs/experiment_b.md, which is a request rate in req/s, not a
+#                     concurrency. Do not reintroduce it.
 #   3. F-1  k=2 at the default cap — predicted null; the arm that can falsify the law cheaply.
 #   4. F-3  C re-run at the calibrated cap, if one qualifies. Corroboration: the k=7 arm already
 #                     separates scorer from cap, so this is skipped without loss if the window

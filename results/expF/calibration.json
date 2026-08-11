@@ -1,0 +1,108 @@
+{
+  "points": [
+    {
+      "max_num_seqs": 128,
+      "num_speculative_tokens": 4,
+      "log": "results/expF/logs/calib_cap128_k4.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 2.52,
+      "kv": 4.74,
+      "max_concurrency_x": 4.22,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 363
+    },
+    {
+      "max_num_seqs": 256,
+      "num_speculative_tokens": 4,
+      "log": "results/expF/logs/calib_cap256_k4.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 2.52,
+      "kv": 4.74,
+      "max_concurrency_x": 4.22,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 363
+    },
+    {
+      "max_num_seqs": 384,
+      "num_speculative_tokens": 4,
+      "log": "results/expF/logs/calib_cap384_k4.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 2.52,
+      "kv": 4.74,
+      "max_concurrency_x": 4.22,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 363
+    },
+    {
+      "max_num_seqs": 512,
+      "num_speculative_tokens": 4,
+      "log": "results/expF/logs/calib_cap512_k4.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 2.89,
+      "kv": 4.38,
+      "max_concurrency_x": 3.89,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 336
+    },
+    {
+      "max_num_seqs": 768,
+      "num_speculative_tokens": 4,
+      "log": "results/expF/logs/calib_cap768_k4.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 4.26,
+      "kv": 3.0,
+      "max_concurrency_x": 2.67,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 230
+    },
+    {
+      "max_num_seqs": 1024,
+      "num_speculative_tokens": 4,
+      "log": "results/expF/logs/calib_cap1024_k4.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 5.64,
+      "kv": 1.63,
+      "max_concurrency_x": 1.44,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 125
+    },
+    {
+      "max_num_seqs": 256,
+      "num_speculative_tokens": 2,
+      "log": "results/expF/logs/calib_cap256_k2.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 2.52,
+      "kv": 4.74,
+      "max_concurrency_x": 4.22,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 363
+    },
+    {
+      "max_num_seqs": 256,
+      "num_speculative_tokens": 7,
+      "log": "results/expF/logs/calib_cap256_k7.log",
+      "weights": 5.79,
+      "non_torch": 0.05,
+      "activation": 2.52,
+      "kv": 4.74,
+      "max_concurrency_x": 4.22,
+      "ctx_tokens": 32768,
+      "est_kv_bound_n": 363
+    }
+  ],
+  "recommendation": {
+    "required_kv_gib": 4.006,
+    "rule": "cap > 256 so the cap cannot explain a death at N=256, and KV large enough for an estimated 1.20x256 = 307 concurrent sequences",
+    "cap": 512,
+    "kv_gib": 4.38,
+    "est_kv_bound_n": 336
+  },
+  "seqs_per_kv_gib": 76.68711656441718
+}

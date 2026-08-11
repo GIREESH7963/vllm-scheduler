@@ -11,8 +11,15 @@ The cap therefore cannot be chosen a priori. It has to clear 256 while leaving e
 measures it; this script turns its answer into the two configs.
 
 If no cap qualifies, nothing is written and the driver skips C. That is not a failure: the k=7
-arm at the default cap already separates the scorer from the cap, by dying at N ~ 129 where the
-cap cannot reach, so C's re-run is corroboration rather than the load-bearing evidence.
+arm at the default cap already separates the scorer from the cap, so C's re-run is corroboration
+rather than the load-bearing evidence. It separates them by KV occupancy, not by concurrency —
+k=7 died at N = 186, 187 and 256 against a cap of 256, with KV at 43.6%, 43.6% and 63.3% and an
+estimated KV ceiling of N ~ 363. Two of three deaths sit below the cap, and all three leave more
+than a third of the KV pool free, so neither the cap nor occupancy can account for them.
+
+(An earlier draft of this file claimed the k=7 arm dies at "N ~ 129". It does not, and never did:
+129 was read off the rate column of docs/experiment_b.md, which is a request rate in req/s, not a
+concurrency. The measured numbers above replace it.)
 
 Usage:
     python tools/make_regime_configs.py --calibration results/expF/calibration.json
@@ -33,8 +40,11 @@ _TEMPLATE = """\
 # The cap is {cap} rather than 1024 because `max_num_seqs` is not free. vLLM sizes its memory
 # profiling pass at the cap and reserves the activation peak, leaving KV the remainder:
 #
-#     cap  256 -> activation 2.52 GiB, KV 4.74 GiB, scorer-bound (dies at N=256, KV ~28%)
+#     cap  256 -> activation 2.52 GiB, KV 4.74 GiB, scorer-bound (dies at N=256, KV ~57-60%)
 #     cap 1024 -> activation 5.64 GiB, KV 1.63 GiB, KV-bound   (survives at N ~ 125, KV ~99%)
+#
+# The 57-60% is this model at this cap (results/expB/oom3b). The ~28% quoted here previously is
+# the 1.5B figure from results/expA and does not describe a 3B run.
 #
 # The first C attempt used 1024 and so measured the second row, not the question. At {cap} the
 # measured KV pool is {kv} GiB, whose estimated KV-bound ceiling is N ~ {est_n} — above the
@@ -42,8 +52,13 @@ _TEMPLATE = """\
 # cap itself sits above 256 and cannot explain a death there.
 #
 # Predictions:
-#   spec on  — dies near N ~ 256 at ~742 MiB, with the cap unreached and KV occupancy low
+#   spec on  — dies near N ~ 256 at ~742 MiB, with the cap unreached and a third or more of the
+#              KV pool still free, so neither the cap nor occupancy can account for the failure
 #   spec off — no scorer tensor exists, so no OOM; runs to the cap or the KV ceiling
+#
+# The discriminating measurement is KV occupancy at death, not the concurrency at death. The
+# latter moves with whatever headroom the workload's context lengths happen to leave: experiment
+# F's k=7 arm died at N = 186, 187 and 256 across three trials of one config.
 #
 # The spec-off arm is the mechanism control. If the engine dies with speculative decoding
 # disabled, the failure is not the scorer and the diagnosis is wrong.

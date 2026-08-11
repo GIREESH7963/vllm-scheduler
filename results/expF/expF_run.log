@@ -1,0 +1,232 @@
+[expF 03:29:02] EXPERIMENT F START
+[expF 03:29:02] step 1/4: cap calibration
+  [F:calib] [calib] cap=128 k=4 ...
+  [F:calib] [calib]   activation=2.52GiB kv=4.74GiB conc=4.22x est_kv_bound_N~363
+  [F:calib] [calib] cap=256 k=4 ...
+  [F:calib] [calib]   activation=2.52GiB kv=4.74GiB conc=4.22x est_kv_bound_N~363
+  [F:calib] [calib] cap=384 k=4 ...
+  [F:calib] [calib]   activation=2.52GiB kv=4.74GiB conc=4.22x est_kv_bound_N~363
+  [F:calib] [calib] cap=512 k=4 ...
+  [F:calib] [calib]   activation=2.89GiB kv=4.38GiB conc=3.89x est_kv_bound_N~336
+  [F:calib] [calib] cap=768 k=4 ...
+  [F:calib] [calib]   activation=4.26GiB kv=3.0GiB conc=2.67x est_kv_bound_N~230
+  [F:calib] [calib] cap=1024 k=4 ...
+  [F:calib] [calib]   activation=5.64GiB kv=1.63GiB conc=1.44x est_kv_bound_N~125
+  [F:calib] [calib] cap=256 k=2 ...
+  [F:calib] [calib]   activation=2.52GiB kv=4.74GiB conc=4.22x est_kv_bound_N~363
+  [F:calib] [calib] cap=256 k=7 ...
+  [F:calib] [calib]   activation=2.52GiB kv=4.74GiB conc=4.22x est_kv_bound_N~363
+  [F:calib] 
+  [F:calib] ==============================================================================
+  [F:calib] CAP CALIBRATION
+  [F:calib] ==============================================================================
+  [F:calib]    cap   k  weights   activ      KV    conc  est N_kv
+  [F:calib]    128   4     5.79    2.52    4.74   4.22x       363
+  [F:calib]    256   4     5.79    2.52    4.74   4.22x       363
+  [F:calib]    384   4     5.79    2.52    4.74   4.22x       363
+  [F:calib]    512   4     5.79    2.89    4.38   3.89x       336
+  [F:calib]    768   4     5.79    4.26    3.00   2.67x       230
+  [F:calib]   1024   4     5.79    5.64    1.63   1.44x       125
+  [F:calib]    256   2     5.79    2.52    4.74   4.22x       363
+  [F:calib]    256   7     5.79    2.52    4.74   4.22x       363
+  [F:calib] 
+  [F:calib] k-independence check at cap=256: the activation peak must be identical across k,
+  [F:calib] because vLLM's profiling pass does not run the speculative scorer. If it is, the
+  [F:calib] scorer tensor is provably outside the reservation that bounds vLLM's memory use.
+  [F:calib] 
+  [F:calib] C re-run cap: 512   (cap > 256 so the cap cannot explain a death at N=256, and KV large enough for an estimated 1.20x256 = 307 concurrent sequences)
+  [F:calib] wrote results/expF/calibration.json
+[expF 03:34:38] calibration done (rc=0)
+[expF 03:34:38] step 2/4: k=7 at the default cap — the decisive arm
+[expF 03:34:38] arm [k7_cap256]: configs/scorer_k7_qwen3b_cap256.yaml (3 trials)
+  [F:k7_cap256] 
+  [F:k7_cap256] [trial 1] cooling / waiting for a free GPU ...
+  [F:k7_cap256] [trial 1] GPU used=0.44GiB temp=70.0C -> starting server
+  [F:k7_cap256]     stage λ=1: ok=46 fail=0 running=14.0 kv=0.03405142460041699 mem=12.80GiB temp=84.0C
+  [F:k7_cap256]     stage λ=1.5: ok=35 fail=0 running=75.0 kv=0.1755848969191568 mem=14.44GiB temp=86.0C
+  [F:k7_cap256]     stage λ=2: ok=20 fail=0 running=179.0 kv=0.4232105628908964 mem=14.83GiB temp=87.0C
+  [F:k7_cap256] [trial 1] wrote 20260811T033438Z_expA_trial1.json
+  [F:k7_cap256] 
+  [F:k7_cap256] [trial 2] cooling / waiting for a free GPU ...
+  [F:k7_cap256] [trial 2] GPU used=0.44GiB temp=76.0C -> starting server
+  [F:k7_cap256]     stage λ=1: ok=42 fail=0 running=18.0 kv=0.04783414408153808 mem=13.23GiB temp=84.0C
+  [F:k7_cap256]     stage λ=1.5: ok=35 fail=0 running=79.0 kv=0.17720639332870047 mem=14.34GiB temp=85.0C
+  [F:k7_cap256]     stage λ=2: ok=203 fail=0 running=186.0 kv=0.435835070650915 mem=0.44GiB temp=85.0C
+  [F:k7_cap256] [trial 2] wrote 20260811T033940Z_expA_trial2.json
+  [F:k7_cap256] 
+  [F:k7_cap256] [trial 3] cooling / waiting for a free GPU ...
+  [F:k7_cap256] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [F:k7_cap256]     stage λ=1: ok=40 fail=0 running=20.0 kv=0.05269863331016911 mem=13.83GiB temp=84.0C
+  [F:k7_cap256]     stage λ=1.5: ok=35 fail=0 running=81.0 kv=0.18149177669678018 mem=14.72GiB temp=85.0C
+  [F:k7_cap256]     stage λ=2: ok=205 fail=0 running=nan kv=nan mem=0.44GiB temp=85.0C
+  [F:k7_cap256] [trial 3] wrote 20260811T034430Z_expA_trial3.json
+  [F:k7_cap256] 
+  [F:k7_cap256] ==============================================================================
+  [F:k7_cap256] EXPERIMENT A SUMMARY
+  [F:k7_cap256] ==============================================================================
+  [F:k7_cap256] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [F:k7_cap256]     1  True     1187.8 batch_expansion.py:227 in _contrac    256   63.33     0.44
+  [F:k7_cap256]     2  True      864.0 batch_expansion.py:227 in _contrac    186   43.58     0.44
+  [F:k7_cap256]     3  True      868.0 batch_expansion.py:227 in _contrac    188   43.56    14.97
+  [F:k7_cap256] 
+  [F:k7_cap256] reproduced OOM in 3/3 independent trials
+  [F:k7_cap256] wrote results/expF/k7_cap256/expA_summary.json
+[expF 03:49:27] arm [k7_cap256] done (rc=0)
+[expF 03:49:27] step 3/4: k=2 at the default cap — predicted null
+[expF 03:49:57] arm [k2_cap256]: configs/scorer_k2_qwen3b_cap256.yaml (3 trials)
+  [F:k2_cap256] 
+  [F:k2_cap256] [trial 1] cooling / waiting for a free GPU ...
+  [F:k2_cap256] [trial 1] GPU used=0.44GiB temp=76.0C -> starting server
+  [F:k2_cap256]     stage λ=2: ok=81 fail=0 running=31.0 kv=0.09520500347463512 mem=12.61GiB temp=84.0C
+  [F:k2_cap256]     stage λ=3: ok=4 fail=0 running=188.0 kv=0.4387305999536716 mem=14.37GiB temp=86.0C
+  [F:k2_cap256]     stage λ=4: ok=44 fail=0 running=256.0 kv=0.6813759555246699 mem=14.88GiB temp=86.0C
+  [F:k2_cap256]     stage λ=5: ok=80 fail=0 running=256.0 kv=0.7722955756312254 mem=14.94GiB temp=86.0C
+  [F:k2_cap256]     stage λ=6: ok=66 fail=0 running=255.0 kv=0.7881630762103312 mem=14.94GiB temp=86.0C
+  [F:k2_cap256]     stage λ=8: ok=59 fail=0 running=256.0 kv=0.8083159601575168 mem=14.94GiB temp=85.0C
+  [F:k2_cap256]     stage λ=10: ok=65 fail=0 running=253.0 kv=0.7959230947417189 mem=14.94GiB temp=85.0C
+  [F:k2_cap256]     stage λ=12: ok=282 fail=147 running=252.0 kv=0.7008339124391939 mem=14.79GiB temp=85.0C
+  [F:k2_cap256] [trial 1] wrote 20260811T034957Z_expA_trial1.json
+  [F:k2_cap256] 
+  [F:k2_cap256] [trial 2] cooling / waiting for a free GPU ...
+  [F:k2_cap256] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [F:k2_cap256]     stage λ=2: ok=81 fail=0 running=31.0 kv=0.09833217512161219 mem=12.79GiB temp=84.0C
+  [F:k2_cap256]     stage λ=3: ok=4 fail=0 running=188.0 kv=0.440699559879546 mem=14.75GiB temp=85.0C
+  [F:k2_cap256]     stage λ=4: ok=44 fail=0 running=256.0 kv=0.6796386379430159 mem=14.90GiB temp=85.0C
+  [F:k2_cap256]     stage λ=5: ok=82 fail=0 running=253.0 kv=0.7766967801714153 mem=14.97GiB temp=85.0C
+  [F:k2_cap256]     stage λ=6: ok=66 fail=0 running=254.0 kv=0.7839935140143618 mem=14.97GiB temp=85.0C
+  [F:k2_cap256]     stage λ=8: ok=62 fail=0 running=256.0 kv=0.8033356497567755 mem=14.97GiB temp=84.0C
+  [F:k2_cap256]     stage λ=10: ok=64 fail=0 running=256.0 kv=0.8076210331248552 mem=14.97GiB temp=84.0C
+  [F:k2_cap256]     stage λ=12: ok=301 fail=0 running=253.0 kv=0.8014825110030114 mem=14.97GiB temp=85.0C
+  [F:k2_cap256] [trial 2] wrote 20260811T040512Z_expA_trial2.json
+  [F:k2_cap256] 
+  [F:k2_cap256] [trial 3] cooling / waiting for a free GPU ...
+  [F:k2_cap256] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [F:k2_cap256]     stage λ=2: ok=65 fail=0 running=47.0 kv=0.1285615010423905 mem=12.88GiB temp=84.0C
+  [F:k2_cap256]     stage λ=3: ok=10 fail=0 running=192.0 kv=0.4329395413481585 mem=14.62GiB temp=86.0C
+  [F:k2_cap256]     stage λ=4: ok=55 fail=0 running=256.0 kv=0.6833449154505444 mem=14.99GiB temp=86.0C
+  [F:k2_cap256]     stage λ=5: ok=80 fail=0 running=253.0 kv=0.7711373639101228 mem=14.99GiB temp=85.0C
+  [F:k2_cap256]     stage λ=6: ok=65 fail=0 running=256.0 kv=0.780982163539495 mem=14.99GiB temp=85.0C
+  [F:k2_cap256]     stage λ=8: ok=61 fail=0 running=256.0 kv=0.8006717627982395 mem=14.99GiB temp=85.0C
+  [F:k2_cap256]     stage λ=10: ok=62 fail=0 running=256.0 kv=0.8028723650683345 mem=14.99GiB temp=85.0C
+  [F:k2_cap256]     stage λ=12: ok=281 fail=333 running=256.0 kv=0.7772758860319666 mem=14.63GiB temp=84.0C
+  [F:k2_cap256] [trial 3] wrote 20260811T042105Z_expA_trial3.json
+  [F:k2_cap256] 
+  [F:k2_cap256] ==============================================================================
+  [F:k2_cap256] EXPERIMENT A SUMMARY
+  [F:k2_cap256] ==============================================================================
+  [F:k2_cap256] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [F:k2_cap256]     1 False        nan                               None    256   82.90    14.79
+  [F:k2_cap256]     2 False        nan                               None    256   82.72    14.97
+  [F:k2_cap256]     3 False        nan                               None    256   83.14    14.63
+  [F:k2_cap256] 
+  [F:k2_cap256] reproduced OOM in 0/3 independent trials
+  [F:k2_cap256] wrote results/expF/k2_cap256/expA_summary.json
+[expF 04:34:30] arm [k2_cap256] done (rc=0)
+[expF 04:34:30] step 4/4: experiment C re-run
+  [F:cfg] [regime-cfg] wrote configs/regime_qwen3b_spec_on_cap512.yaml
+  [F:cfg] [regime-cfg] wrote configs/regime_qwen3b_spec_off_cap512.yaml
+  [F:cfg] [regime-cfg] cap=512 (2 configs)
+[expF 04:35:01] arm [regime_spec_on_cap512]: configs/regime_qwen3b_spec_on_cap512.yaml (3 trials)
+  [F:regime_spec_on_cap512] 
+  [F:regime_spec_on_cap512] [trial 1] cooling / waiting for a free GPU ...
+  [F:regime_spec_on_cap512] [trial 1] GPU used=0.44GiB temp=76.0C -> starting server
+  [F:regime_spec_on_cap512]     stage λ=2: ok=48 fail=0 running=64.0 kv=0.16842237271131177 mem=12.66GiB temp=84.0C
+  [F:regime_spec_on_cap512]     stage λ=3: ok=8 fail=0 running=229.0 kv=0.5670930524203661 mem=14.63GiB temp=86.0C
+  [F:regime_spec_on_cap512]     stage λ=4: ok=0 fail=0 running=nan kv=nan mem=0.44GiB temp=86.0C
+  [F:regime_spec_on_cap512] [trial 1] wrote 20260811T043501Z_expA_trial1.json
+  [F:regime_spec_on_cap512] 
+  [F:regime_spec_on_cap512] [trial 2] cooling / waiting for a free GPU ...
+  [F:regime_spec_on_cap512] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [F:regime_spec_on_cap512]     stage λ=2: ok=32 fail=0 running=81.0 kv=0.22360170554301484 mem=13.97GiB temp=84.0C
+  [F:regime_spec_on_cap512]     stage λ=3: ok=5 fail=0 running=230.0 kv=0.5613243039879608 mem=13.63GiB temp=86.0C
+  [F:regime_spec_on_cap512]     stage λ=4: ok=0 fail=0 running=nan kv=nan mem=0.44GiB temp=83.0C
+  [F:regime_spec_on_cap512] [trial 2] wrote 20260811T043957Z_expA_trial2.json
+  [F:regime_spec_on_cap512] 
+  [F:regime_spec_on_cap512] [trial 3] cooling / waiting for a free GPU ...
+  [F:regime_spec_on_cap512] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [F:regime_spec_on_cap512]     stage λ=2: ok=34 fail=0 running=78.0 kv=0.2120642086782042 mem=13.93GiB temp=84.0C
+  [F:regime_spec_on_cap512]     stage λ=3: ok=5 fail=0 running=246.0 kv=0.6089791823426135 mem=13.94GiB temp=86.0C
+  [F:regime_spec_on_cap512]     stage λ=4: ok=0 fail=0 running=nan kv=nan mem=0.44GiB temp=83.0C
+  [F:regime_spec_on_cap512] [trial 3] wrote 20260811T044502Z_expA_trial3.json
+  [F:regime_spec_on_cap512] 
+  [F:regime_spec_on_cap512] ==============================================================================
+  [F:regime_spec_on_cap512] EXPERIMENT A SUMMARY
+  [F:regime_spec_on_cap512] ==============================================================================
+  [F:regime_spec_on_cap512] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [F:regime_spec_on_cap512]     1  True     1187.8 batch_expansion.py:227 in _contrac    410   98.66    14.55
+  [F:regime_spec_on_cap512]     2  True     1167.4 batch_expansion.py:227 in _contrac    407   98.92    14.55
+  [F:regime_spec_on_cap512]     3  True     1177.6 batch_expansion.py:227 in _contrac    408   98.96    14.45
+  [F:regime_spec_on_cap512] 
+  [F:regime_spec_on_cap512] reproduced OOM in 3/3 independent trials
+  [F:regime_spec_on_cap512] wrote results/expF/regime_spec_on_cap512/expA_summary.json
+[expF 04:50:09] arm [regime_spec_on_cap512] done (rc=0)
+[expF 04:50:29] arm [regime_spec_off_cap512]: configs/regime_qwen3b_spec_off_cap512.yaml (3 trials)
+  [F:regime_spec_off_cap512] 
+  [F:regime_spec_off_cap512] [trial 1] cooling / waiting for a free GPU ...
+  [F:regime_spec_off_cap512] [trial 1] GPU used=0.44GiB temp=76.0C -> starting server
+  [F:regime_spec_off_cap512]     stage λ=2: ok=44 fail=0 running=68.0 kv=0.19400551793328313 mem=12.73GiB temp=84.0C
+  [F:regime_spec_off_cap512]     stage λ=3: ok=8 fail=0 running=238.0 kv=0.6166290443942815 mem=14.43GiB temp=86.0C
+  [F:regime_spec_off_cap512]     stage λ=4: ok=4 fail=0 running=394.0 kv=0.9967394030599448 mem=13.15GiB temp=86.0C
+  [F:regime_spec_off_cap512]     stage λ=5: ok=131 fail=0 running=283.0 kv=0.9829445698520191 mem=13.82GiB temp=85.0C
+  [F:regime_spec_off_cap512]     stage λ=6: ok=62 fail=0 running=281.0 kv=0.9847002758966642 mem=13.82GiB temp=84.0C
+  [F:regime_spec_off_cap512]     stage λ=8: ok=54 fail=0 running=281.0 kv=0.9885879107098069 mem=13.84GiB temp=84.0C
+  [F:regime_spec_off_cap512] [trial 1] wrote 20260811T045030Z_expA_trial1.json
+  [F:regime_spec_off_cap512] 
+  [F:regime_spec_off_cap512] [trial 2] cooling / waiting for a free GPU ...
+  [F:regime_spec_off_cap512] [trial 2] GPU used=0.44GiB temp=76.0C -> starting server
+  [F:regime_spec_off_cap512]     stage λ=2: ok=45 fail=0 running=67.0 kv=0.19538500125407576 mem=12.73GiB temp=84.0C
+  [F:regime_spec_off_cap512]     stage λ=3: ok=7 fail=0 running=238.0 kv=0.6178831201404564 mem=14.43GiB temp=86.0C
+  [F:regime_spec_off_cap512]     stage λ=4: ok=7 fail=0 running=391.0 kv=0.9947328818660647 mem=14.98GiB temp=86.0C
+  [F:regime_spec_off_cap512]     stage λ=5: ok=131 fail=0 running=280.0 kv=0.9717832957110609 mem=13.47GiB temp=85.0C
+  [F:regime_spec_off_cap512]     stage λ=6: ok=60 fail=0 running=281.0 kv=0.9852019061951341 mem=13.47GiB temp=84.0C
+  [F:regime_spec_off_cap512]     stage λ=8: ok=54 fail=0 running=282.0 kv=0.991597692500627 mem=13.49GiB temp=84.0C
+  [F:regime_spec_off_cap512] [trial 2] wrote 20260811T045830Z_expA_trial2.json
+  [F:regime_spec_off_cap512] 
+  [F:regime_spec_off_cap512] [trial 3] cooling / waiting for a free GPU ...
+  [F:regime_spec_off_cap512] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [F:regime_spec_off_cap512]     stage λ=2: ok=43 fail=0 running=69.0 kv=0.200401304238776 mem=13.03GiB temp=84.0C
+  [F:regime_spec_off_cap512]     stage λ=3: ok=12 fail=0 running=235.0 kv=0.6190117883120141 mem=14.50GiB temp=86.0C
+  [F:regime_spec_off_cap512]     stage λ=4: ok=4 fail=0 running=390.0 kv=0.9946074742914472 mem=14.93GiB temp=86.0C
+  [F:regime_spec_off_cap512]     stage λ=5: ok=131 fail=0 running=285.0 kv=0.9823175319789316 mem=14.99GiB temp=85.0C
+  [F:regime_spec_off_cap512]     stage λ=6: ok=60 fail=0 running=281.0 kv=0.9878354652621019 mem=14.99GiB temp=84.0C
+  [F:regime_spec_off_cap512]     stage λ=8: ok=56 fail=0 running=278.0 kv=0.9857035364936042 mem=14.99GiB temp=84.0C
+  [F:regime_spec_off_cap512] [trial 3] wrote 20260811T050655Z_expA_trial3.json
+  [F:regime_spec_off_cap512] 
+  [F:regime_spec_off_cap512] ==============================================================================
+  [F:regime_spec_off_cap512] EXPERIMENT A SUMMARY
+  [F:regime_spec_off_cap512] ==============================================================================
+  [F:regime_spec_off_cap512] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [F:regime_spec_off_cap512]     1 False        nan                               None    402   99.96    13.84
+  [F:regime_spec_off_cap512]     2 False        nan                               None    401   99.95    13.49
+  [F:regime_spec_off_cap512]     3 False        nan                               None    396   99.91    14.99
+  [F:regime_spec_off_cap512] 
+  [F:regime_spec_off_cap512] reproduced OOM in 0/3 independent trials
+  [F:regime_spec_off_cap512] wrote results/expF/regime_spec_off_cap512/expA_summary.json
+[expF 05:15:18] arm [regime_spec_off_cap512] done (rc=0)
+[expF 05:15:18] analysing
+  ==============================================================================
+  EXPERIMENT F — the (k+1) term of the scorer memory law
+  ==============================================================================
+  arm            k trial  died  alloc MiB      N   MiB/seq  predicted   err %
+  k2_cap256      2     1 False        nan    252       nan      1.739     nan
+  k2_cap256      2     2 False        nan    253       nan      1.739     nan
+  k2_cap256      2     3 False        nan    256       nan      1.739     nan
+  k7_cap256      7     1  True     1187.8    256     4.640      4.637     0.1
+  k7_cap256      7     2  True      864.0    186     4.645      4.637     0.2
+  k7_cap256      7     3  True      868.0    187     4.642      4.637     0.1
+  
+  ------------------------------------------------------------------------------
+  VERDICT
+  ------------------------------------------------------------------------------
+  k=7 died in 3/3 trials at 4.642 MiB/seq vs 4.637 predicted (+0.1%).
+    ratio to k=4: 1.602 observed vs 1.600 predicted (8/5).
+    died at N = [186.0, 187.0, 256.0] against a sequence cap of 256, KV = [0.436, 0.436, 0.633]
+    at an estimated KV ceiling of N ~ 363. Up to 37% of the KV pool was still free at
+    the failing step, so neither the cap nor KV exhaustion explains the death:
+    the boundary is the scorer's.
+  k=2 survived all 3 trials, as predicted (boundary at N ~ 344 lies past the cap of 256).
+    pushed to peak N = 256.0, peak KV = 0.831
+  
+  wrote results/expF/expF_analysis.json
+[expF 05:15:18] EXPERIMENT F COMPLETE
+[expF 05:15:18] read next: results/expF/expF_analysis.json, results/expF/calibration.json, then fold into docs/experiment_b.md
