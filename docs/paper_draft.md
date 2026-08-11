@@ -29,11 +29,10 @@ Two conventions, because they are the difference between a defensible paper and 
 quotation was transcribed from the paper itself rather than from a search result or a fetch
 summary — a summariser misreported one of these papers' central numbers during drafting, which is
 why the rule exists. Eight of the ten references were obtained in full and the cited passages
-read directly (**[R]** in §15); the two paywalled LPS papers (**[M]**) are cited only for claims
-an [R] source corroborates. Five gaps have no verified citation — the batch-size reversal,
-FastServe's metadata, statistics references, thermal non-stationarity, and the
-allocator-fragmentation account in §7.2 — each marked **[CITE]** at the point it is needed and
-tracked in `docs/related_work.md` §7. **The draft is not submittable while any [CITE] remains.**
+read directly (**[R]** in §15); the three not obtained (**[M]** — the two paywalled LPS papers and
+FastServe) are cited only for claims an [R] source corroborates or for a mechanism named in the
+title. **No `[CITE]` gaps remain**; §14 records how the last five were closed, including two that
+were closed by labelling a claim honestly rather than by finding a source for it.
 
 **Format.** Markdown, because this machine has no LaTeX or pandoc toolchain (`pdflatex`,
 `xelatex`, `latexmk`, `tectonic`, `pandoc` all absent) and the rest of `docs/` is Markdown.
@@ -264,18 +263,26 @@ scaling is stated elsewhere it is qualitative — the scorer is "K× more expens
 §7.3–7.4 give an exact expression and test it on two of its three axes.
 
 The batch-size regime matters for the same reason: the premise is that spare compute exists, and
-at high concurrency it does not. **[CITE — peer-reviewed source for the reversal at large batch
-size; `related_work.md` §7 item F.]** Implementation is not incidental either: we measure an
-engine that expands the batch into a padded `[N, k+1, V]` tensor, while vLLM's V1 engine scores a
-flattened one (§10.2).
+at high concurrency it may not. Sadhukhan et al. [11] record the resulting consensus — "the
+conventional wisdom suggests that [speculative decoding's] efficacy is limited to small batch
+sizes" [11, abstract] — and attribute it to verification cost, since "with large batches, LLMs
+become compute bound, making verification significantly costly", so that "the usage of SD in high
+batch size regime is discouraged by existing works" [11, §1]. They then qualify it: past a
+critical sequence length KV loading dominates again and speculation recovers, which is the regime
+their own method targets. Our runs sit below that length, where the discouragement applies — but
+the cost we measure is not the verification *compute* that this literature weighs. It is the
+memory the verification step allocates, which neither the original papers nor their large-batch
+critics account for. Implementation is not incidental either: we measure an engine that expands
+the batch into a padded `[N, k+1, V]` tensor, while vLLM's V1 engine scores a flattened one
+(§10.2).
 
 ### 2.3 Admission control and SLO-aware scheduling
 
 A substantial line of work schedules LLM requests against latency and SLO targets: Sarathi-Serve
 [5] overlaps chunked prefills with ongoing decodes; Llumnix [6] live-migrates requests with their
 GPU memory state across instances; QLM [7] reorders a queue against estimated waiting times;
-FastServe **[CITE — `related_work.md` §7; preemptive MLFQ, cited for head-of-line blocking.
-Metadata unverified.]** preempts instead.
+FastServe [12] preempts at the granularity of a single output token, using a skip-join
+multi-level feedback queue to attack head-of-line blocking.
 
 **These systems do change aggregate throughput** — QLM reports 20–400%, Sarathi-Serve 2.6–3.7×
 serving capacity — **so §9's result is not novel in that respect. What differs is the mechanism.**
@@ -314,9 +321,6 @@ lowers the residency it is meant to raise (§8). At K = 1024 the pool falls to 1
 engine sustains N ≈ 125, against N = 256 at K = 256. Orca's two knobs have been collapsed into
 one, and the sign of the effect inverts over part of the range. We have not found this coupling
 treated in the LPS literature, though our reading is limited to the three papers cited.
-
-**[CITE — statistics references for Holm, Hedges' g and Welch (§9, §10.5), and for thermal
-throttling as non-stationarity (§10.4); `related_work.md` §7 items H and I.]**
 
 ---
 
@@ -528,10 +532,14 @@ reserved-but-unallocated pool happens to be. Reported free memory at failure sit
 not below, the size of the allocation. Nothing about the boundary requires it to be crossed
 deterministically, which is why it must be reported as a rate rather than a threshold.
 
-**[CITE — this fragmentation account is inferred from the shape of our data, not measured and
-not cited. Either support it from the allocator literature or label it explicitly as a
-conjecture; `related_work.md` §7 item K. The empirical claim (the boundary is stochastic, 5/10)
-stands without it — only the explanation is at stake.]**
+**This last paragraph is a conjecture and we label it as one.** The stochasticity is measured —
+5 of 10 trials, with the Wilson interval above — but the allocator-state explanation for it is
+inferred from the shape of the data rather than instrumented. We did not record allocator
+fragmentation at the failing step, and a competing account (variation in the batch's context
+lengths, and so in free memory, at the moment the request is made) would fit the same
+observations. Distinguishing them needs allocator telemetry we do not collect. **The empirical
+claim stands without the explanation**: the boundary is crossed stochastically and must be
+reported as a rate.
 
 ### 7.3 The law on the N axis
 
@@ -653,8 +661,10 @@ sweep above rather than guessed, for exactly this reason.
 
 Phase 2 compares five admission policies (`nocap`, `fcfs`, `srpt`, `edf`, `adaptive`) across
 workloads and arrival rates. Intervals are two-sided 95% t-intervals; effect sizes are Hedges' g
-with the small-sample correction; contrasts are Welch's t, Holm-adjusted across the **whole
-family of 207 comparisons** (`results/stats/STATISTICS.md`).
+[14] with the small-sample correction; contrasts use Welch's unequal-variance t [15], Holm-
+adjusted [13] across the **whole family of 207 comparisons** (`results/stats/STATISTICS.md`).
+Proportions carry Wilson score intervals [16], which do not degenerate at attainment near 0 or 1
+as the normal approximation does — and several cells here sit at both extremes.
 
 **At n = 3 the comparison had almost no resolving power.** Before Experiment D, with every cell
 at n = 3, exactly **1 of 171** contrasts survived Holm — and it was a queue-wait result, not a
@@ -711,10 +721,12 @@ size-*dependent*. Measuring V requires a model from a different family, which ch
 count, KV cost per token and activation profile simultaneously — so a disagreement could not be
 attributed to V. §14 gives the concrete blocked experiment.
 
-**10.4 Thermal throttling.** 85–89 °C with the throttle flag set through nearly the whole
-campaign. Absolute rates are depressed; only paired and ratio comparisons are safe. Repeats
+**10.4 Thermal throttling.** This is a measurement of ours, not an appeal to a general
+phenomenon: NVML reported the throttle flag set, at 85–89 °C, through nearly the whole campaign
+(`thermal_throttled` is recorded per stage in every run record). The consequence is that absolute
+rates are depressed by an unknown factor and only paired and ratio comparisons are safe. Repeats
 within a cell ran back to back, so a thermal excursion is shared within a cell rather than
-averaged out.
+averaged across it, which narrows intervals that should be wide.
 
 **10.5 Statistical scope.** Holm correction assumes the family is the one reported. Adding
 metrics later without re-running the correction reintroduces the multiplicity it removes. Phase 2
@@ -834,9 +846,13 @@ anyone checked whether the uncovered part is the part that binds?
 
 **Blocking:**
 
-1. **Related work and bibliography do not exist** (§2). Scaffolded in `docs/related_work.md`
-   with a verified starter bibliography and five open items; no citations have been written into
-   the draft, and none should be invented.
+1. ~~**Related work and bibliography do not exist** (§2).~~ **Done.** §2 is written and §15 lists
+   16 references, all cited and none orphaned. Eight were read in full and their cited passages
+   transcribed from the papers; three are metadata-only (**[M]**) and cited only where an [R]
+   source corroborates the claim. The remaining risk is not missing citations but *unread* ones:
+   [8], [9] and [12] should be obtained before submission, and any reviewer-facing claim about
+   [11] should be checked against its qualification, since that paper exists to complicate the
+   consensus it records.
 2. ~~**Narrow the abstract** to the scope §10 supports.~~ **Done.** The abstract now names the
    machine, engine version and model family in its first sentence, states that the `V` term is
    read rather than measured, notes that the failing path is absent from vLLM V1, flags the
@@ -922,9 +938,38 @@ listed in `docs/related_work.md` §6.*
     Queues." *Annals of Applied Probability* 21(2):745–799, 2011. DOI 10.1214/10-AAP709.
     *Open access; §1 read directly. All LPS quotations in §2.4 are from this paper.*
 
-**Still to add** — see `docs/related_work.md` §7 for what each is needed for and what has already
-been checked: a peer-reviewed source for speculative decoding's reversal at large batch size (F);
-FastServe's metadata (§2.3); statistics references for Holm, Hedges' g and Welch (H); a
-measurement-literature source on thermal throttling as non-stationarity (I); and support for the
-allocator-fragmentation explanation of the boundary's stochasticity in §7.2, which is currently
-asserted from the shape of the data rather than cited (K).
+11. **[R]** Sadhukhan, R., Chen, J., Chen, Z., Tiwari, V., Lai, R., Shi, J., Yen, I. E.-H.,
+    May, A., Chen, T., Chen, B. "MagicDec: Breaking the Latency-Throughput Tradeoff for Long
+    Context Generation with Speculative Decoding." *ICLR 2025*. OpenReview `CS2JWaziYr`.
+    *Cited in §2.2 for the conventional wisdom it records and for the qualification it adds; note
+    that the paper's purpose is to show the conventional wisdom does not hold in the long-context
+    regime, so it must not be cited as endorsing the reversal unconditionally.*
+
+12. **[M]** Wu, B., Zhong, Y., Zhang, Z., Liu, S., Liu, F., Sun, Y., Huang, G., Liu, X., Jin, X.
+    "FastServe: Iteration-Level Preemptive Scheduling for Large Language Model Inference."
+    *NSDI 2026*, 23rd USENIX Symposium on Networked Systems Design and Implementation. Earlier
+    preprint: "Fast Distributed Inference Serving for Large Language Models", arXiv:2305.05920.
+    *Metadata verified from the USENIX programme and arXiv; full text not obtained. Cited only
+    for the mechanism named in its title.*
+
+**Statistical methods.** Standard references, cited for the procedures used in §7.1, §9 and §10.5.
+
+13. Holm, S. "A Simple Sequentially Rejective Multiple Test Procedure." *Scandinavian Journal of
+    Statistics* 6(2):65–70, 1979.
+
+14. Hedges, L. V. "Distribution Theory for Glass's Estimator of Effect Size and Related
+    Estimators." *Journal of Educational Statistics* 6(2):107–128, 1981.
+    DOI 10.3102/10769986006002107.
+
+15. Welch, B. L. "The Generalization of 'Student's' Problem when Several Different Population
+    Variances are Involved." *Biometrika* 34(1–2):28–35, 1947.
+
+16. Wilson, E. B. "Probable Inference, the Law of Succession, and Statistical Inference."
+    *Journal of the American Statistical Association* 22(158):209–212, 1927.
+
+**No `[CITE]` gaps remain.** Of the five originally open: the batch-size reversal is now [11],
+FastServe is [12], and the statistical procedures are [13]–[16]. Two were closed without a
+citation, deliberately. §10.4's thermal claim is a measurement of ours, recorded per stage in the
+run records, and is stated as such rather than leaning on a general result. §7.2's
+allocator-fragmentation account could not be supported and is now **labelled a conjecture in
+place**, with the competing explanation named and the empirical claim separated from it.

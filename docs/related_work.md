@@ -215,7 +215,22 @@ Worth a short paragraph in §2, because it pre-empts the three likeliest misread
 
 ---
 
-## 7. Open items — do not cite until resolved
+## 7. Open items — ALL RESOLVED
+
+> **Closed.** F is now MagicDec (ICLR 2025), which records the conventional wisdom verbatim and
+> also qualifies it — cite it for both halves, never for the reversal unconditionally. FastServe
+> resolved to a title change: the arXiv preprint "Fast Distributed Inference Serving for LLMs"
+> became "FastServe: Iteration-Level Preemptive Scheduling for LLM Inference" at NSDI '26; cite
+> the NSDI version. H is Holm 1979, Hedges 1981, Welch 1947, plus Wilson 1927 for the score
+> intervals the draft already used uncited. I and K were closed *without* citations, which was
+> the right call: the thermal claim is our own per-stage measurement and now says so, and the
+> allocator-fragmentation account could not be supported and is labelled a conjecture in place
+> with its competing explanation named. G stays ruled out — see below.
+>
+> The original text of each item is kept below, since knowing what was searched for and not found
+> is worth as much as the answer.
+
+### Original items
 
 - **F. Speculative decoding degrades at large batch size.** Needed for §2.2 and to motivate why
   k is the interesting axis. The claim is widely repeated in practitioner writing (one benchmark
