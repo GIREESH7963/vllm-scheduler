@@ -25,6 +25,16 @@ Two conventions, because they are the difference between a defensible paper and 
 - **Numbers are not restated from memory.** Where a figure appears here it exists in a generated
   file; where a figure does *not* exist, this draft says so rather than estimating it.
 
+**Citation status** (applies to §2 and §14). No reference is written from memory, and every
+quotation was transcribed from the paper itself rather than from a search result or a fetch
+summary — a summariser misreported one of these papers' central numbers during drafting, which is
+why the rule exists. Eight of the ten references were obtained in full and the cited passages
+read directly (**[R]** in §14); the two paywalled LPS papers (**[M]**) are cited only for claims
+an [R] source corroborates. Five gaps have no verified citation — the batch-size reversal,
+FastServe's metadata, statistics references, thermal non-stationarity, and the
+allocator-fragmentation account in §7.2 — each marked **[CITE]** at the point it is needed and
+tracked in `docs/related_work.md` §7. **The draft is not submittable while any [CITE] remains.**
+
 **Format.** Markdown, because this machine has no LaTeX or pandoc toolchain (`pdflatex`,
 `xelatex`, `latexmk`, `tectonic`, `pandoc` all absent) and the rest of `docs/` is Markdown.
 Converting to a venue template is mechanical once a venue is chosen; no venue or format was
@@ -192,190 +202,121 @@ persistence in other engines is an open empirical question that nothing here set
 
 ## 2. Background and related work
 
-> **Citation status.** Every reference cited below is listed in §14 and was checked against a
-> primary or near-primary source; none is written from memory, and quotations were transcribed
-> from the papers rather than from search summaries or secondary descriptions.
-> Eight of the ten references were obtained in full and the passages cited below
-> read directly; §14 marks these **[R]** and marks **[M]** the two that were not (the paywalled
-> LPS papers [8, 9]), which are cited only for claims a read source corroborates. Five gaps
-> remain
-> where a citation is needed and none has been verified — the batch-size reversal, FastServe's
-> metadata, statistics references, thermal non-stationarity, and the allocator-fragmentation
-> account in §7.2. They are marked **[CITE]** at the point each is needed (four markers; two of
-> the five share one) and tracked in `docs/related_work.md` §7. **The draft is not submittable
-> while any [CITE] remains.**
-
 ### 2.1 Continuous batching and paged memory
 
-The system we measure is the product of two ideas. Orca [1] introduced **iteration-level
-scheduling**, "a new scheduling mechanism that schedules execution at the granularity of
-iteration (instead of request) where the scheduler invokes the execution engine to run only a
-single iteration of the model on the batch" [1, §1], together with selective batching. This is
-what makes `N`, the number of resident sequences, vary continuously within a run — in vLLM the
-`num_requests_running` gauge, bounded above by `max_num_seqs` (default 256).
+Orca [1] introduced **iteration-level scheduling**, in which the scheduler "invokes the execution
+engine to run only a single iteration of the model on the batch" [1, §1], so requests join and
+leave between iterations. `N`, the number of resident sequences — vLLM's `num_requests_running`
+gauge — therefore varies continuously within a run, bounded by `max_num_seqs` (default 256).
 
-**Orca also introduced the admission-time memory discipline that this paper's failures evade,
-and it is worth stating precisely because it is sound.** Orca's scheduler takes two operator
-knobs: `max_bs`, "the largest possible number of requests within a batch", and `n_slots`, "the
-size of memory region (in terms of slots) allocated to the Attention K/V manager" [1, §4.2].
-Because KV buffers "cannot be reclaimed until the ORCA scheduler notifies that the corresponding
-request has finished processing", a naive scheduler can deadlock "when the scheduler cannot issue
-an iteration for any request in the request pool because there is no space left for storing a new
-Attention key and value" [1, §4.2]. Orca's remedy is to reserve at admission: a request entering
-the initiation phase reserves `max_tokens` slots up front, and is admitted only if the
-reservation fits within `n_slots`. The resulting property is stated as a guarantee:
+Orca also introduced the admission-time memory discipline that this paper's failures evade, and
+it is worth stating precisely because it is sound. Its scheduler takes two operator knobs:
+`max_bs`, the largest number of requests in a batch, and `n_slots`, "the size of memory region
+(in terms of slots) allocated to the Attention K/V manager" [1, §4.2]. Since KV buffers cannot be
+reclaimed until a request finishes, a naive scheduler can deadlock; Orca reserves `max_tokens`
+slots at admission and admits only if they fit, giving a guarantee:
 
-> "Since the number of tokens in a request cannot exceed `max_tokens`, if the reservation is
-> possible, it is guaranteed that the manager can allocate buffers for the newly generated keys
-> and values until the request finishes." [1, §4.2]
+> "if the reservation is possible, it is guaranteed that the manager can allocate buffers for the
+> newly generated keys and values until the request finishes." [1, §4.2]
 
-That guarantee is real, and it is exactly as wide as the allocator it ranges over — the Attention
-K/V manager. An allocation made elsewhere in the engine is neither reserved against at admission
-nor visible to the accounting that makes the guarantee true. §7 reports failures of precisely
-that kind: the KV reservation discipline holds throughout, and the engine dies anyway.
+That guarantee is exactly as wide as the allocator it ranges over. An allocation made elsewhere
+is neither reserved against at admission nor visible to the accounting that makes it true — and
+§7 reports failures of that kind, with the reservation discipline intact throughout.
 
-vLLM [2] introduced **PagedAttention**, storing the KV cache in fixed-size blocks that need not
-occupy contiguous memory, "inspired by the operating system's solution to memory fragmentation
-and sharing: virtual memory with paging" [2, §1]. The gain is large and well documented: in
-existing systems "only 20.4% – 38.2% of the KV cache memory is used to store the actual token
-states", against 96.3% for vLLM [2, Fig. 2], yielding 2–4× throughput over FasterTransformer and
-Orca.
-
-**The premise that makes occupancy a capacity signal is stated explicitly in that work, and it
-is the premise this paper contradicts.** Kwon et al. give the memory layout for a 13B model on a
-40 GB A100 as 26 GB of parameters (65%), "close to 30%" for KV cache, and a remaining "small
-percentage … used for other data, including activations – the ephemeral tensors created when
-evaluating the LLM" [2, §1, Fig. 1]. From this they conclude:
+vLLM [2] added **PagedAttention**, storing the KV cache in non-contiguous fixed-size blocks
+"inspired by the operating system's solution to memory fragmentation and sharing: virtual memory
+with paging" [2, §1], and with it the occupancy gauge operators watch. The premise that makes
+occupancy a capacity signal is stated explicitly there. Kwon et al. give the layout for a 13B
+model on a 40 GB A100 as 65% parameters, close to 30% KV cache, and a small remainder for
+activations, and conclude:
 
 > "Since the model weights are constant and the activations only occupy a small fraction of the
 > GPU memory, the way the KV cache is managed is critical in determining the maximum batch
 > size." [2, §1]
 
-Both halves of that reasoning fail on the system we measure. The activations do *not* occupy a
-fixed small fraction: vLLM's own activation reservation scales with `max_num_seqs`, from 2.52 GiB
-at a cap of 256 to 5.64 GiB at 1024, taken directly out of the KV pool (§8). And the quantity
-that determines the maximum batch size is neither the weights nor the KV cache but a third
-allocation, in the speculative-decoding scorer, that the block manager does not account for and
-no gauge reports (§7). Occupancy is a complete capacity signal exactly when the KV pool is the
-binding resource — an assumption that is reasonable, is rarely stated as an assumption, and §7.1
-shows failing in a way no threshold on the signal can detect.
+Both halves of that reasoning fail on the system we measure. The activation reservation is not a
+fixed small fraction: it scales with `max_num_seqs`, from 2.52 GiB at a cap of 256 to 5.64 GiB at
+1024, taken out of the KV pool (§8). And what determines the maximum batch size is neither the
+weights nor the KV cache but a third allocation, in the speculative-decoding scorer, that the
+block manager does not account for and no gauge reports (§7).
 
 ### 2.2 Speculative decoding and its costs
 
 Speculative decoding was introduced concurrently and independently by Leviathan et al. [3] and
-Chen et al. [4]: a cheap draft proposes γ (or K) tokens, the target model scores them in
-parallel, and a modified rejection-sampling scheme accepts a prefix while leaving the target's
-output distribution unchanged — "without any changes to the outputs" [3, abstract], "preserv[ing]
-the distribution of the target model within hardware numerics" [4, abstract]. Reported speedups
-are 2–3× on T5-XXL [3] and 2–2.5× on Chinchilla 70B [4]. Our runs use vLLM's prompt-lookup n-gram
-drafter, so the proposal comes from the prompt rather than a draft model; this keeps a draft
-model's weights out of the memory budget, which matters here because it means the allocation we
-identify in §7 cannot be attributed to one.
+Chen et al. [4]: a cheap draft proposes γ tokens, the target scores them in parallel, and modified
+rejection sampling accepts a prefix while leaving the target's output distribution unchanged. Our
+runs use vLLM's prompt-lookup n-gram drafter, so no draft model's weights enter the memory budget
+— which matters because the allocation in §7 cannot be attributed to one.
 
-**What both papers account for is bandwidth and arithmetic, not memory capacity — and that is
-precisely the gap this paper falls into.** The method's stated justification is that decoding is
-bandwidth-bound and therefore has compute to spare:
+**What both papers account for is bandwidth and arithmetic, not memory capacity, and that is the
+gap this paper falls into.** The method's stated justification is that decoding is bandwidth-bound
+and therefore has compute to spare:
 
 > "inference from large models is often not bottlenecked on arithmetic operations, but rather on
-> memory bandwidth and communication, so additional computation resources might be available.
-> Therefore we suggest increasing concurrency as a complementary approach" [3, §1]
+> memory bandwidth and communication, so additional computation resources might be available."
+> [3, §1]
 
-Chen et al. reason identically — "Transformer sampling is typically memory bandwidth bound"
-[4, §1] — and where they do discuss the KV cache growing with batch size, it is again as a
-*bandwidth* concern: it "could become a memory bandwidth bottleneck as the batch size increases"
-[4, Related Work]. Neither paper analyses the memory *capacity* consumed by materialising the
-scores for `k+1` positions across a batch. The trade is presented as compute-for-latency, and on
-that accounting it is favourable. The resource we find binding does not appear in it.
+Chen et al. reason identically, and where they discuss the KV cache growing with batch size it is
+again a *bandwidth* concern [4, Related Work]. Neither analyses the memory *capacity* consumed by
+materialising scores for `k+1` positions across a batch. The trade is compute-for-latency and on
+that accounting it is favourable; the resource we find binding does not appear in it. Where the
+scaling is stated elsewhere it is qualitative — the scorer is "K× more expensive" — whereas
+§7.3–7.4 give an exact expression and test it on two of its three axes.
 
-Two things therefore separate our treatment. First, this literature measures the cost as a
-*speedup* — a throughput tax in tokens per second — while we measure it as an *allocation* and
-show it is what terminates the engine. A tax is a tuning problem; a termination is a
-capacity-planning problem. Second, where the scaling is stated at all it is qualitative — the
-scorer is "K× more expensive". §7.3–7.4 give an exact expression and test it on two of its three
-axes.
-
-The batch-size regime matters for the same reason. Leviathan et al.'s premise is that spare
-compute exists; at high concurrency it does not, the weight-read cost is already amortised across
-many resident sequences, and the extra verification positions become overhead. **[CITE — a
-peer-reviewed source for the reversal at large batch size. Partly covered by [3, §1] above by
-implication, but the empirical reversal is reported mainly in practitioner benchmarks;
-`related_work.md` §7 item F.]**
-
-Implementation matters here in a way it usually does not. The engine we measure scores proposals
-by expanding the batch into a padded `[N, k+1, V]` tensor; vLLM's later V1 engine scores on a
-flattened `(num_tokens, V)` tensor instead. §10.2 reports what we can establish about that
-difference and what we cannot.
+The batch-size regime matters for the same reason: the premise is that spare compute exists, and
+at high concurrency it does not. **[CITE — peer-reviewed source for the reversal at large batch
+size; `related_work.md` §7 item F.]** Implementation is not incidental either: we measure an
+engine that expands the batch into a padded `[N, k+1, V]` tensor, while vLLM's V1 engine scores a
+flattened one (§10.2).
 
 ### 2.3 Admission control and SLO-aware scheduling
 
-A substantial line of work schedules LLM requests against latency and SLO targets. Sarathi-Serve
-[5] observes that prefill is compute-bound while decode is memory-bound, and introduces
-chunked-prefills with stall-free scheduling that "adds new requests in a batch without pausing
-ongoing decodes" [5, abstract], reporting 2.6× higher serving capacity for Mistral-7B on one
-A100 and 3.7× for Yi-34B on two. Llumnix [6] reschedules requests across instances by live
-migration of the request together with its GPU memory state, reporting an order-of-magnitude
-tail-latency improvement and 1.5× for high-priority requests. QLM [7] manages the request queue
-directly, estimating waiting times and driving operations such as request pulling, eviction,
-load balancing and model swapping, reporting SLO attainment improved by 40–90% and throughput by
-20–400%. FastServe **[CITE — `related_work.md` §7; preemptive multi-level feedback queue
-scheduling, cited for head-of-line blocking. Metadata not yet verified.]** approaches the same
-problem preemptively.
+A substantial line of work schedules LLM requests against latency and SLO targets: Sarathi-Serve
+[5] overlaps chunked prefills with ongoing decodes; Llumnix [6] live-migrates requests with their
+GPU memory state across instances; QLM [7] reorders a queue against estimated waiting times;
+FastServe **[CITE — `related_work.md` §7; preemptive MLFQ, cited for head-of-line blocking.
+Metadata unverified.]** preempts instead.
 
-**These systems do change aggregate throughput, so our §9 result is not novel in that respect —
-what differs is the mechanism, and it is one they would not detect.** Their instruments are
-utilisation and multiplexing: overlapping prefill with decode [5], defragmenting KV space across
-instances [6], reordering a queue against deadlines [7]. In each, memory enters the design as KV
-space — Llumnix's motivating problem is that "varying request lengths and memory demands
-inevitably result in memory fragmentation across instances" [6, §1], and Agrawal et al. describe
-Orca and vLLM as eagerly scheduling prefills "whenever GPU memory becomes available" [5, §1].
-That is admission keyed on the availability of exactly the resource §7 shows is not binding, and
-it inherits Orca's reservation guarantee (§2.1) along with its scope.
+**These systems do change aggregate throughput** — QLM reports 20–400%, Sarathi-Serve 2.6–3.7×
+serving capacity — **so §9's result is not novel in that respect. What differs is the mechanism.**
+Their instruments are utilisation and multiplexing, and memory enters each design as KV space:
+Llumnix's motivating problem is that "varying request lengths and memory demands inevitably result
+in memory fragmentation across instances" [6, §1], and Agrawal et al. describe Orca and vLLM as
+eagerly scheduling prefills "whenever GPU memory becomes available" [5, §1] — admission keyed on
+exactly the resource §7 shows is not binding, inheriting Orca's guarantee along with its scope.
 
-Our §9 result — an uncapped queue gaining +178 tok/s over FCFS in the same cell where it gains
-+0.888 SLO attainment — we read as a consequence of §7 rather than as a scheduling insight: an
-admission policy that holds concurrency below the unmonitored boundary keeps the engine alive,
-and a live engine outproduces a dead one. The contribution is not that admission affects
-throughput, which these systems already show, but that near such a boundary it does so through a
-channel none of their signals expose.
+We read §9's gain — an uncapped queue adding +178 tok/s over FCFS in the cell where it adds +0.888
+SLO attainment — as a consequence of §7 rather than a scheduling insight: a policy holding
+concurrency below the unmonitored boundary keeps the engine alive, and a live engine outproduces a
+dead one. The contribution is not that admission affects throughput, but that near such a boundary
+it does so through a channel none of these signals expose.
 
 ### 2.4 Queueing models for batch-parallel servers
 
-§4 argues that a continuously-batched engine is not a processor-sharing server but a **limited
-processor sharing** (LPS) one. In the LPS model "the server can serve up to K ≥ 1 jobs
-simultaneously, equally distributing its attention to each of them", with excess jobs waiting in
-a buffer, and "letting K = ∞ makes the system a standard processor sharing (PS) queue"
-[10, §1]. **This is established queueing theory and we claim no part of it.** Zhang and Zwart [8]
-give steady-state heavy-traffic approximations; Zhang, Dai and Zwart give a fluid approximation
-[9] and a diffusion limit [10]. Our use is descriptive — identifying which classical model an LLM
-engine instantiates — and matters mainly because the wrong label (M/G/1-PS) implies a fixed
-aggregate capacity that this system does not have at low concurrency (§4).
+§4 argues that a continuously-batched engine is a **limited processor sharing** (LPS) server
+rather than a processor-sharing one. In LPS "the server can serve up to K ≥ 1 jobs
+simultaneously, equally distributing its attention to each of them", and "letting K = ∞ makes the
+system a standard processor sharing (PS) queue" [10, §1]. This is established theory and we claim
+no part of it: Zhang and Zwart [8] give steady-state heavy-traffic approximations; Zhang, Dai and
+Zwart a fluid approximation [9] and a diffusion limit [10]. Our use is descriptive, and matters
+because the wrong label (M/G/1-PS) implies a fixed aggregate capacity this system lacks at low
+concurrency.
 
-**Where our system departs is in why the limit exists and what setting it costs.** Note first
-that the two knobs are ordinarily independent: Orca exposes `max_bs` and `n_slots` as separate
-operator parameters [1, §4.2], the concurrency limit and the size of the KV region being tuned
-against different objectives — `max_bs` against the latency budget, `n_slots` against available
-memory. The LPS literature likewise justifies the sharing limit by scheduling overhead:
+**Where our system departs is in what setting the limit costs.** That limit is ordinarily
+independent of the memory constraint: Orca exposes `max_bs` and `n_slots` as separate operator
+knobs [1, §4.2], and the LPS literature justifies K by scheduling overhead — "allowing too many
+jobs to time-share at once can lead to significant overhead due to switching" [10, §1] — so K is
+exogenous, entering the analyses only through the scaling.
 
-> "allowing too many jobs to time-share at once can lead to significant overhead due to
-> switching, and hence reduce overall performance. … So in the modeling of many computer and
-> communication systems, a sharing limit is normally imposed, which results in the LPS model."
-> [10, §1]
+In the engine we measure, `max_num_seqs` plays K's role and is *not* free in this sense: it both
+bounds concurrency and sizes the activation reservation deducted from the KV pool, so raising it
+lowers the residency it is meant to raise (§8). At K = 1024 the pool falls to 1.63 GiB and the
+engine sustains N ≈ 125, against N = 256 at K = 256. Orca's two knobs have been collapsed into
+one, and the sign of the effect inverts over part of the range. We have not found this coupling
+treated in the LPS literature, though our reading is limited to the three papers cited.
 
-On that account K is an exogenous control: it is chosen to bound switching cost, and it is
-independent of the resource constraint — the analyses take K large and the queue critically
-loaded, with K entering only through the scaling.
-
-In the engine we measure, `max_num_seqs` plays K's role but is *not* free in this sense. It
-simultaneously bounds concurrency and sizes the activation reservation that is deducted from the
-KV pool, so raising it lowers the residency it is meant to raise (§8): at K = 1024 the pool falls
-to 1.63 GiB and the engine sustains N ≈ 125, against N = 256 at K = 256. Orca's two knobs have
-been collapsed into one, and the sign of its effect is inverted over part of the range. We have
-not found this coupling treated in the LPS literature, though our reading of it is limited to the
-three papers cited here.
-
-**[CITE — statistics references for Holm correction, Hedges' g and Welch's t (§9, §10.5), and
-for thermal throttling as a source of non-stationarity in performance measurement (§10.4).
-`related_work.md` §7 items H and I.]**
+**[CITE — statistics references for Holm, Hedges' g and Welch (§9, §10.5), and for thermal
+throttling as non-stationarity (§10.4); `related_work.md` §7 items H and I.]**
 
 ---
 
