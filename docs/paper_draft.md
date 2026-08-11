@@ -195,10 +195,10 @@ persistence in other engines is an open empirical question that nothing here set
 > **Citation status.** Every reference cited below is listed in §14 and was checked against a
 > primary or near-primary source; none is written from memory, and quotations were transcribed
 > from the papers rather than from search summaries or secondary descriptions.
-> Seven of the ten references were obtained in full and the passages cited below
-> read directly; §14 marks these **[R]** and marks **[M]** the three that were not (Orca, whose
-> USENIX PDF returns 403, and the two paywalled LPS papers), which are cited only for claims a
-> read source corroborates. Five gaps remain
+> Eight of the ten references were obtained in full and the passages cited below
+> read directly; §14 marks these **[R]** and marks **[M]** the two that were not (the paywalled
+> LPS papers [8, 9]), which are cited only for claims a read source corroborates. Five gaps
+> remain
 > where a citation is needed and none has been verified — the batch-size reversal, FastServe's
 > metadata, statistics references, thermal non-stationarity, and the allocator-fragmentation
 > account in §7.2. They are marked **[CITE]** at the point each is needed (four markers; two of
@@ -208,10 +208,31 @@ persistence in other engines is an open empirical question that nothing here set
 ### 2.1 Continuous batching and paged memory
 
 The system we measure is the product of two ideas. Orca [1] introduced **iteration-level
-batching**, in which requests "can dynamically enter or exit a batch at the granularity of
-individual iterations" (as Agrawal et al. [5, §1] describe it), rather than a batch being run to
-completion. This is what makes `N`, the number of resident sequences, vary continuously within a
-run — in vLLM the `num_requests_running` gauge, bounded above by `max_num_seqs` (default 256).
+scheduling**, "a new scheduling mechanism that schedules execution at the granularity of
+iteration (instead of request) where the scheduler invokes the execution engine to run only a
+single iteration of the model on the batch" [1, §1], together with selective batching. This is
+what makes `N`, the number of resident sequences, vary continuously within a run — in vLLM the
+`num_requests_running` gauge, bounded above by `max_num_seqs` (default 256).
+
+**Orca also introduced the admission-time memory discipline that this paper's failures evade,
+and it is worth stating precisely because it is sound.** Orca's scheduler takes two operator
+knobs: `max_bs`, "the largest possible number of requests within a batch", and `n_slots`, "the
+size of memory region (in terms of slots) allocated to the Attention K/V manager" [1, §4.2].
+Because KV buffers "cannot be reclaimed until the ORCA scheduler notifies that the corresponding
+request has finished processing", a naive scheduler can deadlock "when the scheduler cannot issue
+an iteration for any request in the request pool because there is no space left for storing a new
+Attention key and value" [1, §4.2]. Orca's remedy is to reserve at admission: a request entering
+the initiation phase reserves `max_tokens` slots up front, and is admitted only if the
+reservation fits within `n_slots`. The resulting property is stated as a guarantee:
+
+> "Since the number of tokens in a request cannot exceed `max_tokens`, if the reservation is
+> possible, it is guaranteed that the manager can allocate buffers for the newly generated keys
+> and values until the request finishes." [1, §4.2]
+
+That guarantee is real, and it is exactly as wide as the allocator it ranges over — the Attention
+K/V manager. An allocation made elsewhere in the engine is neither reserved against at admission
+nor visible to the accounting that makes the guarantee true. §7 reports failures of precisely
+that kind: the KV reservation discipline holds throughout, and the engine dies anyway.
 
 vLLM [2] introduced **PagedAttention**, storing the KV cache in fixed-size blocks that need not
 occupy contiguous memory, "inspired by the operating system's solution to memory fragmentation
@@ -307,7 +328,8 @@ instances [6], reordering a queue against deadlines [7]. In each, memory enters 
 space — Llumnix's motivating problem is that "varying request lengths and memory demands
 inevitably result in memory fragmentation across instances" [6, §1], and Agrawal et al. describe
 Orca and vLLM as eagerly scheduling prefills "whenever GPU memory becomes available" [5, §1].
-That is admission keyed on the availability of exactly the resource §7 shows is not binding.
+That is admission keyed on the availability of exactly the resource §7 shows is not binding, and
+it inherits Orca's reservation guarantee (§2.1) along with its scope.
 
 Our §9 result — an uncapped queue gaining +178 tok/s over FCFS in the same cell where it gains
 +0.888 SLO attainment — we read as a consequence of §7 rather than as a scheduling insight: an
@@ -328,8 +350,11 @@ give steady-state heavy-traffic approximations; Zhang, Dai and Zwart give a flui
 engine instantiates — and matters mainly because the wrong label (M/G/1-PS) implies a fixed
 aggregate capacity that this system does not have at low concurrency (§4).
 
-**Where our system departs is in why the limit exists and what setting it costs.** The LPS
-literature justifies the sharing limit by scheduling overhead:
+**Where our system departs is in why the limit exists and what setting it costs.** Note first
+that the two knobs are ordinarily independent: Orca exposes `max_bs` and `n_slots` as separate
+operator parameters [1, §4.2], the concurrency limit and the size of the KV region being tuned
+against different objectives — `max_bs` against the latency budget, `n_slots` against available
+memory. The LPS literature likewise justifies the sharing limit by scheduling overhead:
 
 > "allowing too many jobs to time-share at once can lead to significant overhead due to
 > switching, and hence reduce overall performance. … So in the modeling of many computer and
@@ -338,13 +363,15 @@ literature justifies the sharing limit by scheduling overhead:
 
 On that account K is an exogenous control: it is chosen to bound switching cost, and it is
 independent of the resource constraint — the analyses take K large and the queue critically
-loaded, with K entering only through the scaling. In the engine we measure, `max_num_seqs` plays
-K's role but is *not* free in this sense. It simultaneously bounds concurrency and sizes the
-activation reservation that is deducted from the KV pool, so raising it lowers the residency it
-is meant to raise (§8): at K = 1024 the pool falls to 1.63 GiB and the engine sustains N ≈ 125,
-against N = 256 at K = 256. The multiprogramming limit and the resource constraint are entangled
-by the implementation. We have not found this coupling treated in the LPS literature, though our
-reading of it is limited to the three papers cited here.
+loaded, with K entering only through the scaling.
+
+In the engine we measure, `max_num_seqs` plays K's role but is *not* free in this sense. It
+simultaneously bounds concurrency and sizes the activation reservation that is deducted from the
+KV pool, so raising it lowers the residency it is meant to raise (§8): at K = 1024 the pool falls
+to 1.63 GiB and the engine sustains N ≈ 125, against N = 256 at K = 256. Orca's two knobs have
+been collapsed into one, and the sign of its effect is inverted over part of the range. We have
+not found this coupling treated in the LPS literature, though our reading of it is limited to the
+three papers cited here.
 
 **[CITE — statistics references for Holm correction, Hedges' g and Welch's t (§9, §10.5), and
 for thermal throttling as a source of non-stationarity in performance measurement (§10.4).
@@ -836,12 +863,10 @@ quotation or a fine-grained claim. Entries marked † still need their full auth
 proceedings rather than an aggregator. Checked August 2026; sources listed in
 `docs/related_work.md` §6.*
 
-1. **[M]** † Yu, G.-I., Jeong, J. S., Kim, G.-W., et al. "Orca: A Distributed Serving System for
-   Transformer-Based Generative Models." *OSDI 2022*, 16th USENIX Symposium on Operating Systems
-   Design and Implementation. *The USENIX PDF returned HTTP 403 and no other full text was
-   obtained. §2.1's characterisation of iteration-level batching is therefore quoted from
-   Agrawal et al. [5, §1] describing Orca, not from Orca itself, and is attributed that way in
-   the text. Obtain the paper before submission.*
+1. **[R]** Yu, G.-I., Jeong, J. S., Kim, G.-W., Kim, S., Chun, B.-G. "Orca: A Distributed Serving
+   System for Transformer-Based Generative Models." *OSDI 2022*, 16th USENIX Symposium on
+   Operating Systems Design and Implementation, Carlsbad CA, 11–13 July 2022, pp. 521–538.
+   ISBN 978-1-939133-28-1.
 
 2. **[R]** Kwon, W., Li, Z., Zhuang, S., Sheng, Y., Zheng, L., Yu, C. H., Gonzalez, J. E.,
    Zhang, H., Stoica, I. "Efficient Memory Management for Large Language Model Serving with

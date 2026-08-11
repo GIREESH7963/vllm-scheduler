@@ -134,13 +134,24 @@ Worth a short paragraph in §2, because it pre-empts the three likeliest misread
 
 *Checked August 2026.*
 
-> **Update — the reading pass has been done.** Seven of the ten were obtained in full and the
+> **Update — the reading pass has been done.** Eight of the ten were obtained in full and the
 > cited passages read directly; §2 of `docs/paper_draft.md` now quotes them and §14 there records
-> read status per entry (**[R]** read / **[M]** metadata only). The three not obtained are Orca
-> (USENIX PDF returns HTTP 403) and the two paywalled LPS papers, Zhang & Zwart 2008 and
-> Zhang/Dai/Zwart 2009; each is cited only for a claim that a read source corroborates. Full
-> author lists were recovered from the papers for PagedAttention, Sarathi-Serve and Llumnix, so
-> only Orca still carries a † in §14.
+> read status per entry (**[R]** read / **[M]** metadata only). Only the two paywalled LPS papers
+> (Zhang & Zwart 2008; Zhang/Dai/Zwart 2009) were not obtained, and each is cited solely for a
+> claim the open-access 2011 paper corroborates. Full author lists were recovered from the papers
+> themselves, so no entry still carries a †.
+>
+> **Orca needed a user-agent, not a mirror.** `www.usenix.org/system/files/osdi22-yu.pdf` returns
+> HTTP 403 to the fetch tool but 200 to `curl` with a browser user-agent. Worth remembering for
+> the rest of the USENIX corpus — the paper is open access and the block is not about access.
+>
+> **What reading Orca changed.** It supplied the sharpest framing in the paper. Orca's scheduler
+> reserves KV slots at admission and states a guarantee: "if the reservation is possible, it is
+> guaranteed that the manager can allocate buffers for the newly generated keys and values until
+> the request finishes" (§4.2). That guarantee is sound and is exactly as wide as the allocator it
+> ranges over. Our failures occur with it intact. Orca also exposes `max_bs` and `n_slots` as
+> *separate* operator knobs, which is the contrast §8 needs: vLLM collapses them into one, so
+> raising the concurrency limit shrinks the KV region.
 >
 > **A caution that earned its place.** The fetch tool's summarising model misreported the
 > PagedAttention memory breakdown — it gave parameters as "approximately 30-40%" and supplied a
