@@ -34,43 +34,71 @@ specified, so this draft is venue-neutral. See §13 for the open items that bloc
 
 ## Abstract
 
+*Submission length, ~215 words. The extended version below carries the same claims with the
+evidence attached; keep the two in step.*
+
+On a single Tesla T4 running vLLM 0.8.5.post1 with Qwen2.5-1.5B and 3B under n-gram speculative
+decoding, KV-cache occupancy — the signal serving systems use to govern admission and capacity —
+is **non-monotonically related to failure**. Across ten trials of one configuration, every
+survivor peaked at a higher occupancy than every death (survived at 82.6%, died at 57.4%, no
+overlap), so no threshold on the signal separates them. The binding resource lies outside the
+paged pool: in 16 engine deaths, every failure was a dense `[N, k+1, V]` fp32 tensor in the
+speculative-decoding scorer, invisible to every admission signal the engine exposes. Its size
+follows `M = N·(k+1)·V·4` bytes, predicting the failing allocation to within 0.1% at k = 4 and
+k = 7 and 0.5% at N ≈ 410; the `V` term is read from the source rather than measured. Disabling
+speculative decoding removes the failure (0/3 versus 3/3) at a higher occupancy than killed the
+speculative arm. Which resource binds is itself a scheduler setting: raising `max_num_seqs` from
+256 to 1024 shifts it to the KV pool and halves sustainable concurrency, because the cap sizes an
+activation reserve taken from that pool. The failing path is absent from vLLM's V1 engine, and we
+claim no generality beyond this system.
+
+---
+
+## Extended summary
+
 Continuously-batched LLM serving systems are provisioned as though the paged KV cache were the
 binding resource: admission control, capacity planning and autoscaling all key on KV occupancy.
-We report a single-GPU vLLM deployment in which that signal is not merely imprecise but
-**non-monotonically related to failure**. Under an identical configuration, the engine
-**survived a full load ramp at 82.6% KV occupancy having died at 57.4%**; across a wider set of
-failures it died with 37–56% of the pool free. No threshold on occupancy separates the runs that
-died from the runs that lived, because the resource that binds is not in the pool the signal
-measures. We further show that *which* resource binds is itself a scheduler setting: raising
-`max_num_seqs` from 256 to 1024 — nominally an admission limit — moves the binding constraint
-from an unmonitored allocation to the KV pool on the same model, GPU and workload, because the
-raised cap enlarges vLLM's activation reservation and shrinks the pool the same setting is
-presumed to govern. Halving the concurrency the engine can sustain is the direct consequence.
+We test that assumption on one deployment — a single Tesla T4 running vLLM 0.8.5.post1 with
+Qwen2.5-1.5B and 3B under n-gram speculative decoding — and find the signal not merely imprecise
+but **non-monotonically related to failure**. Across ten repeated trials of one configuration,
+every survivor peaked at a *higher* KV occupancy than every death: the engine survived a full
+load ramp at 82.6% having died at 57.4%, with a 20-point gap and no overlap between the two
+groups. No threshold on occupancy separates them, because the resource that binds is not in the
+pool the signal measures.
 
-We then identify what does bind. Across 16 independent engine deaths spanning two model sizes,
-three experiments and two speculative depths, every failure occurred in one allocation: a dense
-`[N, k+1, V]` fp32 tensor in the speculative-decoding scorer, which lives outside the paged
-allocator and is invisible to every admission signal the engine exposes. That speculative
-decoding carries a memory cost at high concurrency is known; what we add is an exact and tested
-form. The law `M = N·(k+1)·V·4` bytes predicts the failing allocation to within 0.1% at k = 4
-and k = 7, to within 0.5% out at N ≈ 410, and correctly predicts that k = 2 does not fail at all
-at the default sequence cap. A matched control closes the argument: disabling speculative
-decoding removes the failure entirely (0/3 versus 3/3) at a *higher* occupancy than the one that
-killed the speculative arm.
+*Which* resource binds turns out to be a scheduler setting. Raising `max_num_seqs` from 256 to
+1024 — nominally an admission limit — moves the binding constraint from an unmonitored
+allocation to the KV pool on the same model, GPU and workload, because the raised cap enlarges
+vLLM's activation reservation and shrinks the pool the same setting is presumed to govern,
+halving the concurrency the engine can sustain.
 
-Finally, at n = 10 repeats, admission control is shown to govern **aggregate throughput as well
-as service differentiation** (+178 tok/s and +0.888 SLO attainment for an uncapped queue over
-FCFS, both surviving Holm correction across a 207-comparison family), where the common framing
-has admission policy trading latency for fairness at fixed capacity.
+We then identify what binds. In 16 engine deaths across two model sizes, three experiments and
+two speculative depths, every failure occurred in one allocation: a dense `[N, k+1, V]` fp32
+tensor in the speculative-decoding scorer, outside the paged allocator and invisible to every
+admission signal the engine exposes. That speculative decoding costs memory at high concurrency
+is known; what we add is an exact form and a test of it. `M = N·(k+1)·V·4` bytes predicts the
+failing allocation to within 0.1% at k = 4 and k = 7 and to within 0.5% at N ≈ 410, and correctly
+predicts that k = 2 does not fail at all at the default sequence cap. **The `V` term is read from
+the allocation site rather than measured** — every death in the campaign ran a checkpoint with
+V = 151,936 — so the law is tested on two of its three axes. A matched control closes the causal
+argument: disabling speculative decoding removes the failure entirely (0/3 versus 3/3) at a
+*higher* occupancy than the one that killed the speculative arm.
 
-The unifying claim is not about speculative decoding. It is that a serving system's capacity is
-bounded by resources its capacity signal cannot observe, and that the boundary between regimes
-is movable by parameters that do not appear to be memory parameters at all.
+Finally, in one workload cell at n = 10, admission control governs **aggregate throughput as
+well as service differentiation** (+178 tok/s and +0.888 SLO attainment for an uncapped queue
+over FCFS, both surviving Holm correction across a 207-comparison family), where the common
+framing has admission policy trading latency for fairness at fixed capacity.
 
-> **TODO before submission.** The abstract claims a general property from a single GPU, a single
-> vLLM version and a single model family. §10.1 and §13 state the scope honestly; the abstract
-> must be narrowed to match before it goes out, or the generalisation experiments in §13 must be
-> run. Do not submit the abstract as written above without reading §10.
+**Scope.** These are measurements of one machine, one engine version and one model family, on a
+passively cooled device that thermally throttled through nearly the whole campaign — so absolute
+rates are depressed and only paired comparisons should be read as hardware-independent. The
+specific failing code path does not exist in vLLM's V1 engine, which scores on a flattened
+tensor instead. We therefore do not claim that these constants generalise, nor that this
+particular allocation binds elsewhere. The claim is narrower: in this system the signal used to
+govern capacity was non-monotonically related to the failure it is used to prevent, and the
+regime boundary was movable by a parameter that does not announce itself as a memory parameter.
+Whether other engines also admit against resources they cannot see is an open empirical question
+that this paper motivates rather than settles.
 
 ---
 
@@ -619,10 +647,15 @@ committed results, and degrades cleanly to its pre-F content if `results/expF` i
 
 **Blocking:**
 
-1. **Related work and bibliography do not exist** (§2). No citations have been written, and none
-   should be invented.
-2. **Narrow the abstract** to the scope §10 actually supports, or run the generalisation
-   experiments below.
+1. **Related work and bibliography do not exist** (§2). Scaffolded in `docs/related_work.md`
+   with a verified starter bibliography and five open items; no citations have been written into
+   the draft, and none should be invented.
+2. ~~**Narrow the abstract** to the scope §10 supports.~~ **Done.** The abstract now names the
+   machine, engine version and model family in its first sentence, states that the `V` term is
+   read rather than measured, notes that the failing path is absent from vLLM V1, flags the
+   thermal caveat on absolute rates, and closes on a scope paragraph that declines the general
+   claim. It should be re-checked against §10 after any further result lands — the failure mode
+   to watch for is the scope paragraph drifting out of step with §10.1–10.4.
 3. **Choose a venue and format.** No LaTeX toolchain is installed on this machine. Prior
    assessment of realistic venues: MLSys (competitive), IEEE TPDS, ACM TOMPECS, Performance
    Evaluation, JPDC, FGCS, Cluster Computing, IEEE Access; a workshop such as EuroMLSys or
