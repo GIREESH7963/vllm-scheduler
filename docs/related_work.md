@@ -135,7 +135,7 @@ Worth a short paragraph in §2, because it pre-empts the three likeliest misread
 *Checked August 2026.*
 
 > **Update — the reading pass has been done.** Eight of the ten were obtained in full and the
-> cited passages read directly; §2 of `docs/paper_draft.md` now quotes them and §14 there records
+> cited passages read directly; §2 of `docs/paper_draft.md` now quotes them and §15 there records
 > read status per entry (**[R]** read / **[M]** metadata only). Only the two paywalled LPS papers
 > (Zhang & Zwart 2008; Zhang/Dai/Zwart 2009) were not obtained, and each is cited solely for a
 > claim the open-access 2011 paper corroborates. Full author lists were recovered from the papers
@@ -262,7 +262,7 @@ Worth a short paragraph in §2, because it pre-empts the three likeliest misread
 
 ## 8. A note on scope creep
 
-The draft's §13 lists three experiments that would raise the paper's ceiling. None of them are
+The draft's §14 lists three experiments that would raise the paper's ceiling. None of them are
 blocked by this file, and this file should not grow into a survey. §2 of a paper of this size
 wants roughly 1200 words and 12–18 references. The verified list above is 9; items F–J would
 bring it to a reasonable count without further searching.

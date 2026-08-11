@@ -25,11 +25,11 @@ Two conventions, because they are the difference between a defensible paper and 
 - **Numbers are not restated from memory.** Where a figure appears here it exists in a generated
   file; where a figure does *not* exist, this draft says so rather than estimating it.
 
-**Citation status** (applies to §2 and §14). No reference is written from memory, and every
+**Citation status** (applies to §2 and §15). No reference is written from memory, and every
 quotation was transcribed from the paper itself rather than from a search result or a fetch
 summary — a summariser misreported one of these papers' central numbers during drafting, which is
 why the rule exists. Eight of the ten references were obtained in full and the cited passages
-read directly (**[R]** in §14); the two paywalled LPS papers (**[M]**) are cited only for claims
+read directly (**[R]** in §15); the two paywalled LPS papers (**[M]**) are cited only for claims
 an [R] source corroborates. Five gaps have no verified citation — the batch-size reversal,
 FastServe's metadata, statistics references, thermal non-stationarity, and the
 allocator-fragmentation account in §7.2 — each marked **[CITE]** at the point it is needed and
@@ -38,7 +38,7 @@ tracked in `docs/related_work.md` §7. **The draft is not submittable while any 
 **Format.** Markdown, because this machine has no LaTeX or pandoc toolchain (`pdflatex`,
 `xelatex`, `latexmk`, `tectonic`, `pandoc` all absent) and the rest of `docs/` is Markdown.
 Converting to a venue template is mechanical once a venue is chosen; no venue or format was
-specified, so this draft is venue-neutral. See §13 for the open items that block submission.
+specified, so this draft is venue-neutral. See §14 for the open items that block submission.
 
 ---
 
@@ -322,7 +322,9 @@ throttling as non-stationarity (§10.4); `related_work.md` §7 items H and I.]**
 
 ## 3. Experimental setup
 
-Single-node, single-GPU. Full capture in `snapshots/paper-v2/ENVIRONMENT.json`.
+Single-node, single-GPU. **Figure 1** shows the harness: an admission layer in front of an
+unmodified vLLM engine, which is what lets §9 vary admission policy without touching the engine
+whose failure §7 characterises. Full capture in `snapshots/paper-v2/ENVIRONMENT.json`.
 
 | | |
 |---|---|
@@ -395,7 +397,9 @@ From `docs/queueing_model.md` §4:
 
 *Italicised μ_max and N\* are extrapolations, not measurements (§6.1).* Only `phase1_mixed`
 both spans the knee generously and has a flat plateau (slope −0.61 tok/s/seq, indistinguishable
-from zero at this noise level; MAPE 12.7%). It is the reference fit.
+from zero at this noise level; MAPE 12.7%). It is the reference fit, and **Figure 8** shows it
+against its measurements; **Figure 2** shows the throughput curves for all workloads, where the
+workload-specificity of the knee is visible directly.
 
 ---
 
@@ -467,6 +471,15 @@ lived** — which is precisely what an admission controller keyed on occupancy w
 argument requires no model and no theory of the mechanism: two runs of one configuration, one
 dead at low occupancy and one alive at high.
 
+**Figure 9** puts the same point geometrically, for the Experiment A campaign. A KV-bound system
+fails along the horizontal axis, occupancy rising to 100%; this one fails along the vertical
+axis, N reaching `max_num_seqs`, with occupancy at 28.4% ± 0.3%. The dashed line traces where
+occupancy would have to go for KV to be the binding resource, and the trials never approach it.
+The figure also marks the band that vLLM's KV-based admission control does guard — occupancy
+approaching exhaustion, where preemption and recompute engage — and the failures fall well
+outside it. **Figure 3** shows the same three trials against concurrency, dying with 71.6% of
+the cache unused.
+
 A second, independent line of evidence comes from an experiment that varied speculative depth
 (§7.4). Its k = 7 arm died in 3/3 trials at N = 186, 187 and 256 against a sequence cap of 256,
 with occupancy at the failing step of **43.6%, 43.6% and 63.3%** against an estimated KV ceiling
@@ -500,6 +513,14 @@ that failed, and our test statistic is MiB per sequence computed from that — b
 any prediction of the *concurrency* at which death occurs, which depends on total headroom. This
 is a source reading, not an experiment, and is reported as such.
 
+**Figure 5** is the accounting gap in one picture. On the left, what vLLM reserves at startup for
+the 1.5B configuration: 2.89 GiB of weights, 2.02 GiB of activation headroom, 8.15 GiB of KV
+cache. On the right, what the device actually holds at the moment of failure: the weights
+unchanged, 2.31 GiB of KV in use, **5.84 GiB of KV reserved and never touched**, and 1.86 GiB of
+activations and scorer. Into that state the scorer requests 742 MiB with 736 MiB free, and the
+engine dies — six megabytes short, beside six gigabytes of reserved cache it is not permitted to
+use. The reservation discipline of §2.1 is working exactly as designed throughout.
+
 This allocation also explains §7.1's stochasticity, which an occupancy account cannot. The tensor
 is requested once per engine step as a single contiguous block; whether a request of that size
 succeeds depends on the state of the caching allocator at that instant — how fragmented the
@@ -525,6 +546,8 @@ of Experiments A and B (`docs/experiment_b.md` §5):
 
 The 1.5B sweep died at lower concurrency and asked for correspondingly *less* memory, which is
 what makes this a test rather than a fit: the failing allocation tracks N, not model size.
+**Figure 4** shows the underlying trajectory — device memory climbing with concurrency until the
+allocator has no room left for the next request.
 
 ### 7.4 The law on the k axis (Experiment F)
 
@@ -583,7 +606,9 @@ sweep: per-token KV cost rises 1.29× (36 layers against 28) and the pool it lan
 they predict **2.21×**, inside the measured interval; vLLM's own reported maximum-concurrency
 ratio (2.21×) agrees independently.
 
-The scorer allocation, meanwhile, does not move with model size at all. **This is the bottleneck
+The scorer allocation, meanwhile, does not move with model size at all. **Figure 10** places the
+two panels side by side at the same scale, which is the whole result: KV cost per sequence moves
+with model size, and the allocation that kills the engine does not. **This is the bottleneck
 moving**: the wall sits at the same N for both models, but the 3B engine arrives there having
 spent twice as much of a smaller pool on KV. Extrapolating, the 3B arm would exhaust its pool at
 N ≈ 400, beyond the cap of 256 — which is why the scorer wall still arrives first. The margin is
@@ -645,6 +670,11 @@ correction and **9 survive Holm**. The surviving contrasts include:
 | `edf` vs `fcfs` | SLO attainment | +0.412 | +3.69 | 0.0000 |
 | `srpt` vs `fcfs` | SLO attainment | +0.397 | +3.78 | 0.0000 |
 
+**Figure 6** shows aggregate SLO attainment by policy and arrival rate across the Phase-2 grid,
+and **Figure 7** breaks the same attainment down by workload class, where the differentiation
+these policies are designed for is visible: `nocap` holds every class above 0.9 in the n = 10
+cell while `fcfs` collapses on all four.
+
 The throughput row is the one that matters for framing. Admission policy is commonly described
 as trading latency or fairness *at fixed capacity*. Here an uncapped queue gains **both** +0.888
 SLO attainment **and** +178 tok/s (287 → 464) over FCFS, with both effects surviving the
@@ -679,7 +709,7 @@ not be reported as one**. Consequently "the allocation is model-size independent
 demonstrated on two models that agree on precisely the parameter which would have made it
 size-*dependent*. Measuring V requires a model from a different family, which changes layer
 count, KV cost per token and activation profile simultaneously — so a disagreement could not be
-attributed to V. §13 gives the concrete blocked experiment.
+attributed to V. §14 gives the concrete blocked experiment.
 
 **10.4 Thermal throttling.** 85–89 °C with the throttle flag set through nearly the whole
 campaign. Absolute rates are depressed; only paired and ratio comparisons are safe. Repeats
@@ -754,7 +784,53 @@ committed results, and degrades cleanly to its pre-F content if `results/expF` i
 
 ---
 
-## 13. Open items before submission
+## 13. Conclusion
+
+We set out to fit a service-rate model to a continuously-batched LLM server and found that the
+model could not be identified, because the engine died before it saturated. That failure turned
+out to be the result. On the system we measured, the engine never once ran out of the resource
+its capacity signal reports.
+
+The evidence for that is a pair of runs rather than an argument. Under one configuration, at one
+seed, minutes apart, the engine died with the KV pool 57.4% full and then survived a full load
+ramp at 80.7%; across ten trials every survivor peaked higher than every death, with no overlap
+between the groups. Nothing in an occupancy threshold can separate those runs, which is what an
+admission controller keyed on occupancy is asked to do. What binds instead is an allocation in
+the speculative-decoding scorer, `N·(k+1)·V·4` bytes, sitting outside the paged allocator and
+absent from every gauge the engine exposes; it predicts the failing allocation to within 0.1% at
+two speculative depths and to within 0.5% at a concurrency 60% beyond anything else we measured,
+and removing it removes the failure at a *higher* occupancy than the one that killed the
+speculative arm.
+
+Two consequences seem to us more durable than the constants.
+
+**The reservation is only as wide as the allocator it names.** Orca's admission-time guarantee is
+sound, and our engine dies with it fully intact — six megabytes short of a scorer allocation
+while six gigabytes of reserved KV sit untouched (Figure 5). A memory-safety argument that ranges
+over one allocator is not a memory-safety argument for the system, and continuous batching has
+accumulated allocators faster than it has accumulated accounting for them.
+
+**A capacity limit that is also a memory parameter can invert.** `max_num_seqs` bounds
+concurrency and sizes the activation reserve deducted from the KV pool, so raising it from 256 to
+1024 does not raise the sustainable concurrency but roughly halves it, and moves the binding
+resource from the scorer to the pool. Orca kept these as two knobs; collapsing them into one
+gives the operator a control whose sign changes partway along its range. That is a property of an
+implementation, not of a queueing discipline, and it is invisible to the theory that would
+otherwise describe the system.
+
+None of this says speculative decoding is a poor design, or that we have found a defect. The
+allocation does exactly what it was written to do. The finding is that its size is unbounded in a
+dimension nothing admits against — and that the discipline which makes serving systems safe, the
+reserve-before-admit rule, is stated over an allocator rather than over a device.
+
+We measured one GPU, one engine version and one model family, and §10 is explicit that the
+constants should not be carried elsewhere. The question we think worth carrying is smaller and
+harder to dismiss: for any serving system, what does its capacity signal *not* cover, and has
+anyone checked whether the uncovered part is the part that binds?
+
+---
+
+## 14. Open items before submission
 
 **Blocking:**
 
@@ -793,7 +869,7 @@ either is quoted.
 
 ---
 
-## 14. References
+## 15. References
 
 *Read status is recorded per entry, because the two are not the same thing and the distinction
 governs what each may be cited for.* **[R]** = full text obtained and the passages cited here

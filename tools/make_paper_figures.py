@@ -280,7 +280,9 @@ def fig_regime_diagram(expA, out: Path):
     ax.set_xlabel("Concurrent sequences,  N")
     ax.set_ylabel("KV cache occupancy  (%)")
     ax.set_title("Regime diagram: the failure boundary is vertical, not horizontal", loc="left")
-    ax.legend(loc="upper left")
+    # Not "upper left": that corner holds the guarded-region callout, and the legend lands on top
+    # of it. Centre-left sits above the dashed line at those x-values, which is empty.
+    ax.legend(loc="center left")
     ax.text(0.985, 0.035,
             "A KV-bound system fails on the horizontal axis (occupancy → 100%).\n"
             "This system fails on the vertical axis (N → max_num_seqs) at 28% KV.",
