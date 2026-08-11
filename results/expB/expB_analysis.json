@@ -344,5 +344,197 @@
       ],
       "survivor_exceeds_death_kv": true
     }
+  },
+  "expF": {
+    "arms": {
+      "k2_cap256": {
+        "k": 2,
+        "vocab": 151936,
+        "predicted_mib_per_seq": 1.73876953125,
+        "expects_death": false,
+        "trials": [
+          {
+            "trial": 1,
+            "died": false,
+            "alloc_mib": null,
+            "n": 252.0,
+            "peak_n": 256.0,
+            "peak_kv": 0.8290479499652537,
+            "kv_at_fail": 0.7008339124391939,
+            "site": null,
+            "mib_per_seq": null,
+            "file": "20260811T034957Z_expA_trial1.json"
+          },
+          {
+            "trial": 2,
+            "died": false,
+            "alloc_mib": null,
+            "n": 253.0,
+            "peak_n": 256.0,
+            "peak_kv": 0.8271948112114895,
+            "kv_at_fail": 0.8014825110030114,
+            "site": null,
+            "mib_per_seq": null,
+            "file": "20260811T040512Z_expA_trial2.json"
+          },
+          {
+            "trial": 3,
+            "died": false,
+            "alloc_mib": null,
+            "n": 256.0,
+            "peak_n": 256.0,
+            "peak_kv": 0.831364373407459,
+            "kv_at_fail": 0.7772758860319666,
+            "site": null,
+            "mib_per_seq": null,
+            "file": "20260811T042105Z_expA_trial3.json"
+          }
+        ],
+        "n_died": 0,
+        "n_trials": 3,
+        "n_measured": 0,
+        "peak_n_observed": 256.0,
+        "peak_kv_observed": 0.831364373407459
+      },
+      "k7_cap256": {
+        "k": 7,
+        "vocab": 151936,
+        "predicted_mib_per_seq": 4.63671875,
+        "expects_death": true,
+        "trials": [
+          {
+            "trial": 1,
+            "died": true,
+            "alloc_mib": 1187.84,
+            "n": 256.0,
+            "peak_n": 256.0,
+            "peak_kv": 0.6333101690989114,
+            "kv_at_fail": 0.6333101690989114,
+            "site": "batch_expansion.py:227 in _contract_batch",
+            "mib_per_seq": 4.64,
+            "file": "20260811T033438Z_expA_trial1.json"
+          },
+          {
+            "trial": 2,
+            "died": true,
+            "alloc_mib": 864.0,
+            "n": 186.0,
+            "peak_n": 186.0,
+            "peak_kv": 0.435835070650915,
+            "kv_at_fail": 0.435835070650915,
+            "site": "batch_expansion.py:227 in _contract_batch",
+            "mib_per_seq": 4.645161290322581,
+            "file": "20260811T033940Z_expA_trial2.json"
+          },
+          {
+            "trial": 3,
+            "died": true,
+            "alloc_mib": 868.0,
+            "n": 187.0,
+            "peak_n": 188.0,
+            "peak_kv": 0.4356034283066945,
+            "kv_at_fail": 0.4356034283066945,
+            "site": "batch_expansion.py:227 in _contract_batch",
+            "mib_per_seq": 4.641711229946524,
+            "file": "20260811T034430Z_expA_trial3.json"
+          }
+        ],
+        "n_died": 3,
+        "n_trials": 3,
+        "n_measured": 3,
+        "mean_mib_per_seq": 4.642290840089701,
+        "rel_error_pct": 0.12017313083095546
+      }
+    },
+    "reference_k4": {
+      "k": 4,
+      "mib_per_seq": 2.898046875,
+      "alloc_mib": 741.9,
+      "n": 256
+    },
+    "regime": {
+      "regime_spec_on_cap512": {
+        "trials": [
+          {
+            "trial": 1,
+            "died": true,
+            "alloc_mib": 1187.84,
+            "n": 410.0,
+            "kv_at_fail": 0.9865813895159268,
+            "peak_n": 410.0,
+            "peak_kv": 0.9865813895159268,
+            "site": "batch_expansion.py:227 in _contract_batch",
+            "mib_per_seq": 2.897170731707317
+          },
+          {
+            "trial": 2,
+            "died": true,
+            "alloc_mib": 1167.36,
+            "n": 407.0,
+            "kv_at_fail": 0.9892149485828944,
+            "peak_n": 407.0,
+            "peak_kv": 0.9892149485828944,
+            "site": "batch_expansion.py:227 in _contract_batch",
+            "mib_per_seq": 2.868206388206388
+          },
+          {
+            "trial": 3,
+            "died": true,
+            "alloc_mib": 1177.6,
+            "n": 408.0,
+            "kv_at_fail": 0.9895911713067469,
+            "peak_n": 408.0,
+            "peak_kv": 0.9895911713067469,
+            "site": "batch_expansion.py:227 in _contract_batch",
+            "mib_per_seq": 2.8862745098039215
+          }
+        ],
+        "n_trials": 3,
+        "n_died": 3,
+        "spec_decoding": true,
+        "mean_mib_per_seq": 2.883883876572542,
+        "rel_error_pct": -0.4853550257697357
+      },
+      "regime_spec_off_cap512": {
+        "trials": [
+          {
+            "trial": 1,
+            "died": false,
+            "alloc_mib": null,
+            "n": 281.0,
+            "kv_at_fail": 0.9885879107098069,
+            "peak_n": 402.0,
+            "peak_kv": 0.9996237772761475,
+            "site": null,
+            "mib_per_seq": null
+          },
+          {
+            "trial": 2,
+            "died": false,
+            "alloc_mib": null,
+            "n": 282.0,
+            "kv_at_fail": 0.991597692500627,
+            "peak_n": 401.0,
+            "peak_kv": 0.9994983697015299,
+            "site": null,
+            "mib_per_seq": null
+          },
+          {
+            "trial": 3,
+            "died": false,
+            "alloc_mib": null,
+            "n": 278.0,
+            "kv_at_fail": 0.9857035364936042,
+            "peak_n": 396.0,
+            "peak_kv": 0.9991221469776774,
+            "site": null,
+            "mib_per_seq": null
+          }
+        ],
+        "n_trials": 3,
+        "n_died": 0,
+        "spec_decoding": false
+      }
+    }
   }
 }

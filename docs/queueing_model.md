@@ -202,7 +202,7 @@ $$M_{\text{weights}} + M_{\text{KV}}(N, L) + \underbrace{c \cdot N (k{+}1) V}_{\
 
 whose third term — not the second — is what binds on this hardware.
 
-**Experiment B measures c.** Across seven independent engine deaths spanning two model sizes,
+**Experiment B measures c.** Across ten independent engine deaths spanning two model sizes,
 two experiments and two distinct allocation sizes, the failing allocation is predicted to within
 0.1% by taking c = 4 bytes — the scorer materialises its probability tensor in fp32:
 
@@ -218,6 +218,41 @@ than a footnote. First, the allocation is **independent of model size**: both ch
 V = 151,936 and the same k, so the wall sits at the same N for a 1.5B and a 3B model. Second, it
 is **linear in N and invisible to μ(N)** — the service-rate model sees N = 256 and predicts
 μ = μ_max, with no term that fails. The full analysis is in `docs/experiment_b.md`.
+
+**Which terms of this law are measured, and which are asserted.** The ten deaths vary N — the
+1.5B sweep died at N = 220 and the 3B at N = 256 — and they pin c = 4 bytes to within 0.1%. They
+do not vary the other two terms. Every death used k = 4, and the two checkpoints share
+V = 151,936, so the claim of model-size independence rests on two models that agree on precisely
+the parameter that would have made the allocation size-dependent. **The V term is therefore
+established by inspection of the allocation site rather than by measurement**: at
+`vllm/spec_decode/batch_expansion.py:226`, `new_zeros(*all_tokens.shape, self._vocab_size)`
+names the vocabulary dimension explicitly. That is a direct reading of the code that fails, not
+an inference from the failure, but it is not an independent measurement and should not be
+reported as one. Measuring V would require a model from a different family, which changes layer
+count, KV cost per token and activation profile at the same time, so a disagreement could not be
+attributed to V — the confound is why the arm was not run, and stating the limit is the honest
+alternative to a result that could not be interpreted either way.
+
+The `(k+1)` term is a different case, because it is the one term that could plausibly have taken
+another form: how many speculative tokens are actually scored per step depends on scheduler
+behaviour, not just on the configured `k`. **Experiment F has now measured it.** At k = 7 the
+engine died in 3/3 trials at 4.642 MiB/seq against 4.637 predicted, +0.1%, a ratio to k = 4 of
+1.602 observed against 1.600 predicted — 8/5, fixed by the tensor's shape before the arm ran. At
+k = 2 the arm survived 3/3, as the law requires: 1.739 MiB/seq puts its boundary past the
+sequence cap, so the engine cannot reach it. A law that over-predicted would have killed k = 2;
+one that under-predicted would have spared k = 7.
+
+**So the law is tested on two axes and asserted on one.** N is varied by the ten A/B deaths and
+again by F's re-run of C, which died at N ≈ 410 — nearly twice B's range — and still matched to
+-0.5%. `(k+1)` is varied by F across k = 2, 4, 7. `V` remains a reading of the source, for the
+reason given above. That is the claim the paper is entitled to make, and it is stronger than
+what this section originally asserted: the constraint's *shape* is measured, not just its value
+at one operating point.
+
+F also supplies the mechanism control this section never had. The same ramp with
+speculative decoding disabled survived 3/3 trials at 99.9% KV occupancy — higher than the
+98.7–99.0% at which the spec-on arm died. Removing the term removes the failure, at an occupancy
+that would have triggered it if occupancy were the constraint. See `docs/experiment_b.md` §9.
 
 ### 5.4 Jensen bias from fitting on run-averaged N
 

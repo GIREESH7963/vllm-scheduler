@@ -107,7 +107,9 @@ rather than the 1.29× the architecture alone would suggest.
 
 ## 5. The allocation that kills the engine does not move at all
 
-Every OOM in this campaign — 10 independent engine deaths across two model sizes and two experiments — failed at the same source line, `batch_expansion.py:227` in `_contract_batch`, reached via `spec_decode_worker.py:794` `score_proposals`.
+Every OOM in this campaign — 16 independent engine deaths across two model sizes and three experiments — failed at the same source line, `batch_expansion.py:227` in `_contract_batch`, reached via `spec_decode_worker.py:794` `score_proposals`.
+
+The 10 from Experiments A and B are tabulated below; Experiment F's 6 are in §9.
 
 `queueing_model.md` §5.3 proposed that the binding term is a dense scorer tensor of shape
 `[N, k+1=5, V=151936] fp32`, growing linearly in N and invisible to the service-rate model.
@@ -132,6 +134,10 @@ The model holds to within a fraction of a percent across two distinct allocation
 which is the part that makes it a test rather than a fit: the 1.5B sweep died at a lower
 concurrency and correspondingly asked for *less* memory. The failing allocation tracks N,
 not model size.
+
+This table varies N and model size. It does **not** vary `k` or `V`, so on its own it
+measures the law's leading constant and leaves the other two terms asserted — see §9,
+where Experiment F moves `k`, and `queueing_model.md` §5.3 for what remains untested.
 
 **This is the bottleneck moving.** The scorer tensor is the same at a given concurrency for
 both models, so the wall sits at the same N — but the 3B engine arrives there having
@@ -169,6 +175,12 @@ Supported:
 - The failing allocation is a dense fp32 scorer tensor linear in concurrency, with a
   measured coefficient of 2.898 MiB per sequence,
   confirmed against two different allocation sizes.
+- The `(k+1)` factor of that coefficient, which Experiment B holds fixed at k=4.
+  Experiment F measures it at k=7: 4.642 MiB per sequence
+  against 4.637 predicted, +0.1% — see §9.
+- That speculative decoding is *necessary* for the failure, not merely correlated
+  with it: the same load ramp with the scorer disabled survived 3/3
+  trials at a KV occupancy higher than any at which the scorer arm died — §9.3.
 - KV cost per sequence roughly doubles from 1.5B to 3B, for architectural reasons that
   predict the measured ratio without reference to the sweep.
 - Speculative-decoding acceptance falls materially with model size.
@@ -178,6 +190,11 @@ Not supported:
 - Any statement about μ_max or N\* for either arm. Neither sweep saturated.
 - Any absolute throughput or power figure as a hardware ceiling — the device throttled
   through nearly the whole campaign.
+- **The `V` term of the scorer law.** Every death in this campaign, F included, ran a
+  Qwen2.5 checkpoint, and all of them share V = 151,936. The vocabulary dimension is
+  read off the allocation site — `new_zeros(*all_tokens.shape, self._vocab_size)` at
+  `batch_expansion.py:226` — which is a direct reading of the code that fails, not an
+  independent measurement, and must not be reported as one.
 - **Determinism of the 3B boundary.** It is stochastic: 5 of
   10 probe trials died, a reproduction rate of 50% with a
   Wilson 95% interval of [24%, 76%].
@@ -220,4 +237,95 @@ of the caching allocator — how fragmented the reserved-but-unallocated pool is
 instant. That is why the reported free memory at failure sits close to, but not below,
 the size of the allocation. Nothing about the boundary requires it to be crossed
 deterministically.
+
+## 9. Experiment F — the `(k+1)` term, and the mechanism control
+
+*Folded in from `results/expF/expF_analysis.json`; F's own driver is
+`phase3-limits/run_expF.sh` and its analysis `tools/analyze_expF.py`. Same GPU, same 3B
+checkpoint, same load ramp as the probe trials in §8 — only `k` changes.*
+
+§5 measures the failing allocation against N and finds it linear. That is consistent with
+the scorer tensor but does not identify it: any per-sequence allocation would look the
+same. The law claims a specific slope, `(k+1)·V·4 bytes`, and B cannot test the `(k+1)`
+factor because both its arms ran k=4. F varies it. This is the term most likely to have
+taken another form — how many speculative tokens are actually scored per step is a
+scheduler decision, not simply the configured `k`.
+
+| Arm | k | Trials | Died | MiB/seq measured | Predicted | Error |
+|---|---|---|---|---|---|---|
+| `expB` reference | 4 | — | — | 2.898 | 2.898 | (the anchor) |
+| `k2_cap256` | 2 | 3 | 0 | — (no death to measure) | 1.739 | — |
+| `k7_cap256` | 7 | 3 | 3 | 4.642 | 4.637 | +0.1% |
+
+**k=7 is the decisive arm and it lands at +0.1%.** It died in
+3/3 trials at 4.642 MiB per
+sequence against 4.637 predicted, and the ratio to the
+k=4 reference is 1.602 observed against 1.600 predicted — 8/5, a number
+fixed by the tensor's shape before the arm ran. Both arms died at the same source
+line as every other death in the campaign.
+
+### 9.1 Why this is the scorer and not the sequence cap
+
+A death at high concurrency is ambiguous — it could be the scorer, or it could be the
+engine simply running out of the resource the cap and the KV pool jointly bound. The
+k=7 deaths resolve it, on **occupancy**, not concurrency:
+
+- They died at N = 186, 187, 256, against `max_num_seqs` = 256.
+- KV occupancy at the failing step was 43.6%, 43.6%, 63.3%, against an estimated KV ceiling of
+  N ≈ 363 at this cap (`results/expF/calibration.json`).
+
+Up to 37% of the KV pool was still free at the moment the
+engine died. Neither the cap nor exhaustion of the pool can account for a failure with
+that much room left, and the allocation that did fail is the size the law predicts to
+within a tenth of a percent. Concurrency alone would not have carried this argument:
+one of the three deaths sits at N = 256, the cap itself.
+
+### 9.2 The k=2 null
+
+k=2 survived all 3 trials, as predicted: at 1.739 MiB per sequence its boundary was forecast at
+N ≈ 344 (`tools/analyze_expF.py`, fixed before the arm ran), which lies
+past the cap of 256, so the engine cannot reach it. The arm pushed to
+N = 256 and 83.1% KV occupancy without dying.
+
+This is the cheap falsification F could have failed and did not. A law that
+over-predicts the allocation would have killed this arm too; one that under-
+predicts would not have killed k=7. Being right about *which* arm dies is a
+separate test from being right about the number.
+
+### 9.3 The mechanism control — turn the scorer off and the OOM goes away
+
+F's fourth step re-ran experiment C at `max_num_seqs` = 512, a cap chosen from the
+calibration sweep rather than guessed. (C's first attempt used 1024, where vLLM sizes
+its activation reserve at the cap and leaves only 1.63 GiB of KV — that run measured
+the cap, not the question. See `results/expF/calibration.json`.) Both arms are the
+same model, cap, ramp and seed; the only difference is `--speculative-config`.
+
+| Arm | Speculative decoding | Trials | Died | Peak N | Peak KV |
+|---|---|---|---|---|---|
+| `spec on` | on | 3 | 3 | 410 | 98.96% |
+| `spec off` | off | 3 | 0 | 402 | 99.96% |
+
+**The spec-on arm died 3/3, at 2.884 MiB per sequence against
+2.898 predicted (-0.5%)** — the same law, at allocations
+of 1167–1188 MiB, larger than anything in §5's table (638–742 MiB),
+and at a concurrency well beyond it: that table spans N = 220 to 256, and this
+extends the same linear fit out to N ≈ 410.
+
+**The spec-off arm died 0/3.** It rode the ramp to λ=8
+at 99.91–99.96% KV occupancy — *higher* than
+the 98.66–98.96% at which the spec-on arm died —
+and kept serving.
+
+This is the control the diagnosis needed. §8 shows occupancy does not predict the
+failure; this shows what does. Remove the allocation the law names and the failure
+disappears, under a load that drives the same engine to a fuller KV pool than the one
+that killed it. The mechanism is not merely consistent with the deaths — it is
+necessary for them.
+
+> **These deaths are not low-occupancy ones.** At this cap the spec-on arm reaches
+> N ≈ 410 and a nearly full KV pool before the scorer allocation fails, so it does not
+> demonstrate the low-KV OOM that §5 and §8 document at the default cap of 256. It
+> demonstrates the *mechanism*, against a matched control. The two arms of §9 do
+> different jobs: k=7 shows the failure arriving with a third of the pool free, and
+> this pair shows it not arriving at all once the scorer is gone.
 

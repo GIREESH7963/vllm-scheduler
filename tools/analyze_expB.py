@@ -210,6 +210,77 @@ def predicted_scorer_mib(n: float) -> float:
     return n * K_PLUS_1 * VOCAB * BYTES_PER_LOGIT / 2**20
 
 
+def finite(x) -> float | None:
+    """A telemetry sample, or None if missing or NaN.
+
+    The probe records NaN for `num_running` and `kv_occupancy` when the engine dies mid-stage
+    rather than dropping the sample, and NaN is truthy, so an unguarded `if n:` lets one dead
+    trial poison an arm's mean. Mirrors `_num` in tools/analyze_expF.py.
+    """
+    if x is None or isinstance(x, bool):
+        return None
+    try:
+        v = float(x)
+    except (TypeError, ValueError):
+        return None
+    return v if math.isfinite(v) else None
+
+
+def load_expF() -> dict | None:
+    """Experiment F's arms, if F has run.
+
+    F varies `k` at a fixed model, which is the one axis Experiment B cannot move: both B arms
+    ran k=4, so B measures the scorer law's leading constant and leaves `(k+1)` asserted. The
+    per-arm agreement is computed by `tools/analyze_expF.py` and read back here rather than
+    recomputed, so the two documents cannot drift apart.
+    """
+    f = RESULTS / "expF" / "expF_analysis.json"
+    if not f.exists():
+        return None
+    d = json.loads(f.read_text())
+    out = {"arms": d["arms"], "reference_k4": d["reference_k4"], "regime": {}}
+
+    # F's fourth step re-ran experiment C at a cap chosen from calibration rather than guessed.
+    # The spec-off arm is the mechanism control: with speculative decoding off no scorer tensor
+    # is allocated at all, so the law predicts no OOM however full the KV pool gets.
+    for tag in ("regime_spec_on_cap512", "regime_spec_off_cap512"):
+        p = RESULTS / "expF" / tag / "expA_summary.json"
+        if not p.exists():
+            continue
+        trials = json.loads(p.read_text())
+        # Read the arm's identity off the command line it actually ran, not off its directory
+        # name — the directory is a label, the argv is the experiment.
+        spec_on = any("--speculative-config" in (t.get("server_argv") or []) for t in trials)
+        rows = []
+        for t in trials:
+            o = t.get("oom") or {}
+            peaks = t.get("peaks") or {}
+            at_fail = t.get("at_failure") or {}
+            n = finite(at_fail.get("num_running")) or finite(peaks.get("num_running"))
+            alloc = finite(o.get("failed_alloc_mib"))
+            rows.append({
+                "trial": t.get("trial"),
+                "died": bool(t.get("died")),
+                "alloc_mib": alloc,
+                "n": n,
+                "kv_at_fail": finite(at_fail.get("kv_occupancy")),
+                "peak_n": finite(peaks.get("num_running")),
+                "peak_kv": finite(peaks.get("kv_occupancy")),
+                "site": o.get("alloc_site"),
+                "mib_per_seq": (alloc / n) if (alloc and n) else None,
+            })
+        measured = [r["mib_per_seq"] for r in rows if r["mib_per_seq"]]
+        arm = {"trials": rows, "n_trials": len(rows),
+               "n_died": sum(1 for r in rows if r["died"]),
+               "spec_decoding": spec_on}
+        if measured:
+            arm["mean_mib_per_seq"] = st.fmean(measured)
+            arm["rel_error_pct"] = 100 * (st.fmean(measured) - predicted_scorer_mib(1.0)) \
+                / predicted_scorer_mib(1.0)
+        out["regime"][tag] = arm
+    return out
+
+
 # --------------------------------------------------------------------------- report
 
 
@@ -371,6 +442,10 @@ def main() -> None:
     out["oom"] = {"events": events,
                   "scorer_mib_per_seq": predicted_scorer_mib(1.0),
                   "tensor": f"[N, k+1={K_PLUS_1}, V={VOCAB}] fp32"}
+
+    expF = load_expF()
+    if expF:
+        out["expF"] = expF
 
     out_path = RESULTS / "expB" / "expB_analysis.json"
     out_path.write_text(json.dumps(out, indent=2, default=float) + "\n")
@@ -538,10 +613,22 @@ def write_markdown(out: dict, path: Path) -> None:
     w("## 5. The allocation that kills the engine does not move at all")
     w("")
     ev = out["oom"]["events"]
-    w(f"Every OOM in this campaign — {len(ev)} independent engine deaths across two model sizes "
-      "and two experiments — failed at the same source line, `batch_expansion.py:227` in "
-      "`_contract_batch`, reached via `spec_decode_worker.py:794` `score_proposals`.")
+    F = out.get("expF")
+    # F's deaths are not in this table — it is an expB table — but they are the same failure at
+    # the same line, and the campaign-wide count has to include them or it understates the case.
+    f_deaths = 0
+    if F:
+        f_deaths = sum(a.get("n_died", 0) for a in F["arms"].values()) \
+            + sum(a.get("n_died", 0) for a in F["regime"].values())
+    w(f"Every OOM in this campaign — {len(ev) + f_deaths} independent engine deaths across two "
+      f"model sizes and {'three' if f_deaths else 'two'} experiments — failed at the same source "
+      "line, `batch_expansion.py:227` in `_contract_batch`, reached via "
+      "`spec_decode_worker.py:794` `score_proposals`.")
     w("")
+    if f_deaths:
+        w(f"The {len(ev)} from Experiments A and B are tabulated below; Experiment F's "
+          f"{f_deaths} are in §9.")
+        w("")
     w("`queueing_model.md` §5.3 proposed that the binding term is a dense scorer tensor of shape")
     w(f"`{out['oom']['tensor']}`, growing linearly in N and invisible to the service-rate model.")
     w("Experiment B measures its coefficient. In fp32 that tensor is")
@@ -564,6 +651,13 @@ def write_markdown(out: dict, path: Path) -> None:
     w("concurrency and correspondingly asked for *less* memory. The failing allocation tracks N,")
     w("not model size.")
     w("")
+    if F:
+        # Every death in the table above ran k=4, so the table tests the law's leading constant
+        # and nothing else. F moves k, and its regime arm moves N well past anything B reached.
+        w("This table varies N and model size. It does **not** vary `k` or `V`, so on its own it")
+        w("measures the law's leading constant and leaves the other two terms asserted — see §9,")
+        w("where Experiment F moves `k`, and `queueing_model.md` §5.3 for what remains untested.")
+        w("")
     kvs = {tag: [e["telemetry"]["peak_kv_occupancy"] * 100 for e in ev
                  if e["arm"] == tag and (e.get("telemetry") or {}).get("peak_kv_occupancy")]
            for tag in ("1.5b", "3b")}
@@ -608,6 +702,19 @@ def write_markdown(out: dict, path: Path) -> None:
     w("- The failing allocation is a dense fp32 scorer tensor linear in concurrency, with a")
     w(f"  measured coefficient of {out['oom']['scorer_mib_per_seq']:.3f} MiB per sequence,")
     w("  confirmed against two different allocation sizes.")
+    if F:
+        k7 = F["arms"].get("k7_cap256") or {}
+        if k7.get("mean_mib_per_seq"):
+            w("- The `(k+1)` factor of that coefficient, which Experiment B holds fixed at k=4.")
+            w(f"  Experiment F measures it at k=7: {k7['mean_mib_per_seq']:.3f} MiB per sequence")
+            w(f"  against {k7['predicted_mib_per_seq']:.3f} predicted, "
+              f"{k7['rel_error_pct']:+.1f}% — see §9.")
+        spec_off = F["regime"].get("regime_spec_off_cap512") or {}
+        if spec_off.get("n_trials") and not spec_off.get("n_died"):
+            w("- That speculative decoding is *necessary* for the failure, not merely correlated")
+            w(f"  with it: the same load ramp with the scorer disabled survived "
+              f"{spec_off['n_trials']}/{spec_off['n_trials']}")
+            w("  trials at a KV occupancy higher than any at which the scorer arm died — §9.3.")
     w("- KV cost per sequence roughly doubles from 1.5B to 3B, for architectural reasons that")
     w("  predict the measured ratio without reference to the sweep.")
     w("- Speculative-decoding acceptance falls materially with model size.")
@@ -617,6 +724,12 @@ def write_markdown(out: dict, path: Path) -> None:
     w("- Any statement about μ_max or N\\* for either arm. Neither sweep saturated.")
     w("- Any absolute throughput or power figure as a hardware ceiling — the device throttled")
     w("  through nearly the whole campaign.")
+    if F:
+        w("- **The `V` term of the scorer law.** Every death in this campaign, F included, ran a")
+        w("  Qwen2.5 checkpoint, and all of them share V = 151,936. The vocabulary dimension is")
+        w("  read off the allocation site — `new_zeros(*all_tokens.shape, self._vocab_size)` at")
+        w("  `batch_expansion.py:226` — which is a direct reading of the code that fails, not an")
+        w("  independent measurement, and must not be reported as one.")
     rep = out["reproduction"]
     r15, r3 = rep["1.5b"], rep["3b"]
     if r3["died"] < r3["trials"]:
@@ -687,7 +800,162 @@ def write_markdown(out: dict, path: Path) -> None:
         w("deterministically.")
         w("")
 
+    if F:
+        write_expF_section(w, out, F)
+
     path.write_text("\n".join(L) + "\n")
+
+
+def write_expF_section(w, out: dict, F: dict) -> None:
+    """§9 — Experiment F, folded in from results/expF.
+
+    B establishes that the failing allocation is linear in N. F establishes what the slope is
+    made of, which is the difference between a fitted coefficient and a law.
+    """
+    k2, k7 = F["arms"].get("k2_cap256") or {}, F["arms"].get("k7_cap256") or {}
+    ref = F["reference_k4"]
+
+    w("## 9. Experiment F — the `(k+1)` term, and the mechanism control")
+    w("")
+    w("*Folded in from `results/expF/expF_analysis.json`; F's own driver is")
+    w("`phase3-limits/run_expF.sh` and its analysis `tools/analyze_expF.py`. Same GPU, same 3B")
+    w("checkpoint, same load ramp as the probe trials in §8 — only `k` changes.*")
+    w("")
+    w("§5 measures the failing allocation against N and finds it linear. That is consistent with")
+    w("the scorer tensor but does not identify it: any per-sequence allocation would look the")
+    w("same. The law claims a specific slope, `(k+1)·V·4 bytes`, and B cannot test the `(k+1)`")
+    w("factor because both its arms ran k=4. F varies it. This is the term most likely to have")
+    w("taken another form — how many speculative tokens are actually scored per step is a")
+    w("scheduler decision, not simply the configured `k`.")
+    w("")
+    w("| Arm | k | Trials | Died | MiB/seq measured | Predicted | Error |")
+    w("|---|---|---|---|---|---|---|")
+    w(f"| `expB` reference | {ref['k']} | — | — | {ref['mib_per_seq']:.3f} | "
+      f"{ref['mib_per_seq']:.3f} | (the anchor) |")
+    for tag, a in (("k2_cap256", k2), ("k7_cap256", k7)):
+        if not a.get("n_trials"):
+            continue
+        meas = (f"{a['mean_mib_per_seq']:.3f}" if a.get("mean_mib_per_seq")
+                else "— (no death to measure)")
+        err = f"{a['rel_error_pct']:+.1f}%" if a.get("rel_error_pct") is not None else "—"
+        w(f"| `{tag}` | {a['k']} | {a['n_trials']} | {a['n_died']} | {meas} | "
+          f"{a['predicted_mib_per_seq']:.3f} | {err} |")
+    w("")
+
+    if k7.get("mean_mib_per_seq"):
+        ratio = k7["mean_mib_per_seq"] / ref["mib_per_seq"]
+        w(f"**k=7 is the decisive arm and it lands at {k7['rel_error_pct']:+.1f}%.** It died in")
+        w(f"{k7['n_died']}/{k7['n_trials']} trials at {k7['mean_mib_per_seq']:.3f} MiB per")
+        w(f"sequence against {k7['predicted_mib_per_seq']:.3f} predicted, and the ratio to the")
+        w(f"k=4 reference is {ratio:.3f} observed against {8 / 5:.3f} predicted — 8/5, a number")
+        w("fixed by the tensor's shape before the arm ran. Both arms died at the same source")
+        w("line as every other death in the campaign.")
+        w("")
+
+    # The confound experiment C could not break. State it on occupancy, because concurrency does
+    # not carry it: one of the three deaths lands on the sequence cap itself.
+    deaths = [t for t in k7.get("trials", []) if t.get("died")]
+    ns = sorted(t["n"] for t in deaths if t.get("n"))
+    kvs = sorted(t["kv_at_fail"] for t in deaths if t.get("kv_at_fail"))
+    if ns and kvs:
+        w("### 9.1 Why this is the scorer and not the sequence cap")
+        w("")
+        w("A death at high concurrency is ambiguous — it could be the scorer, or it could be the")
+        w("engine simply running out of the resource the cap and the KV pool jointly bound. The")
+        w("k=7 deaths resolve it, on **occupancy**, not concurrency:")
+        w("")
+        w(f"- They died at N = {', '.join(f'{n:.0f}' for n in ns)}, against `max_num_seqs` = 256.")
+        w(f"- KV occupancy at the failing step was "
+          f"{', '.join(f'{v * 100:.1f}%' for v in kvs)}, against an estimated KV ceiling of")
+        w("  N ≈ 363 at this cap (`results/expF/calibration.json`).")
+        w("")
+        w(f"Up to {100 * (1 - max(kvs)):.0f}% of the KV pool was still free at the moment the")
+        w("engine died. Neither the cap nor exhaustion of the pool can account for a failure with")
+        w("that much room left, and the allocation that did fail is the size the law predicts to")
+        w("within a tenth of a percent. Concurrency alone would not have carried this argument:")
+        w(f"one of the three deaths sits at N = {max(ns):.0f}, the cap itself.")
+        w("")
+
+    if k2.get("n_trials"):
+        w("### 9.2 The k=2 null")
+        w("")
+        if k2.get("n_died"):
+            w(f"k=2 died in {k2['n_died']}/{k2['n_trials']} trials, which the null did not")
+            w("predict. What the law claims is the *size* of the allocation, not where the")
+            w("boundary lands — the latter depends on free memory at the failing step. Judge it")
+            w("on MiB/seq, in the table above.")
+        else:
+            w(f"k=2 survived all {k2['n_trials']} trials, as predicted: at "
+              f"{k2['predicted_mib_per_seq']:.3f} MiB per sequence its boundary was forecast at")
+            w("N ≈ 344 (`tools/analyze_expF.py`, fixed before the arm ran), which lies")
+            w("past the cap of 256, so the engine cannot reach it. The arm pushed to")
+            w(f"N = {k2.get('peak_n_observed', float('nan')):.0f} and "
+              f"{100 * k2.get('peak_kv_observed', float('nan')):.1f}% KV occupancy without dying.")
+            w("")
+            w("This is the cheap falsification F could have failed and did not. A law that")
+            w("over-predicts the allocation would have killed this arm too; one that under-")
+            w("predicts would not have killed k=7. Being right about *which* arm dies is a")
+            w("separate test from being right about the number.")
+        w("")
+
+    on = F["regime"].get("regime_spec_on_cap512") or {}
+    off = F["regime"].get("regime_spec_off_cap512") or {}
+    if on.get("n_trials") and off.get("n_trials"):
+        w("### 9.3 The mechanism control — turn the scorer off and the OOM goes away")
+        w("")
+        w("F's fourth step re-ran experiment C at `max_num_seqs` = 512, a cap chosen from the")
+        w("calibration sweep rather than guessed. (C's first attempt used 1024, where vLLM sizes")
+        w("its activation reserve at the cap and leaves only 1.63 GiB of KV — that run measured")
+        w("the cap, not the question. See `results/expF/calibration.json`.) Both arms are the")
+        w("same model, cap, ramp and seed; the only difference is `--speculative-config`.")
+        w("")
+        w("| Arm | Speculative decoding | Trials | Died | Peak N | Peak KV |")
+        w("|---|---|---|---|---|---|")
+        for tag, a in (("spec on", on), ("spec off", off)):
+            pk_n = [t["peak_n"] for t in a["trials"] if t.get("peak_n")]
+            pk_kv = [t["peak_kv"] for t in a["trials"] if t.get("peak_kv")]
+            # Two decimals: the spec-off arm peaks at 0.9996, and rounding that to "100.0%"
+            # claims an exhaustion that did not happen.
+            w(f"| `{tag}` | {'on' if a['spec_decoding'] else 'off'} | {a['n_trials']} | "
+              f"{a['n_died']} | {max(pk_n):.0f} | {100 * max(pk_kv):.2f}% |")
+        w("")
+        if on.get("mean_mib_per_seq") is not None:
+            allocs = sorted(t["alloc_mib"] for t in on["trials"] if t.get("alloc_mib"))
+            b_allocs = sorted(e["failed_alloc_mib"] for e in out["oom"]["events"])
+            b_ns = sorted(e["n_at_failing_step"] for e in out["oom"]["events"]
+                          if e.get("n_at_failing_step"))
+            on_ns = sorted(t["n"] for t in on["trials"] if t.get("n"))
+            w(f"**The spec-on arm died {on['n_died']}/{on['n_trials']}, at "
+              f"{on['mean_mib_per_seq']:.3f} MiB per sequence against")
+            w(f"{out['oom']['scorer_mib_per_seq']:.3f} predicted "
+              f"({on['rel_error_pct']:+.1f}%)** — the same law, at allocations")
+            w(f"of {min(allocs):.0f}–{max(allocs):.0f} MiB, larger than anything in §5's table "
+              f"({min(b_allocs):.0f}–{max(b_allocs):.0f} MiB),")
+            w(f"and at a concurrency well beyond it: that table spans N = {min(b_ns):.0f} to "
+              f"{max(b_ns):.0f}, and this")
+            w(f"extends the same linear fit out to N ≈ {max(on_ns):.0f}.")
+            w("")
+        w(f"**The spec-off arm died {off['n_died']}/{off['n_trials']}.** It rode the ramp to λ=8")
+        off_kv = [t["peak_kv"] for t in off["trials"] if t.get("peak_kv")]
+        on_kv = [t["peak_kv"] for t in on["trials"] if t.get("peak_kv")]
+        if off_kv and on_kv:
+            w(f"at {100 * min(off_kv):.2f}–{100 * max(off_kv):.2f}% KV occupancy — *higher* than")
+            w(f"the {100 * min(on_kv):.2f}–{100 * max(on_kv):.2f}% at which the spec-on arm died —")
+            w("and kept serving.")
+        w("")
+        w("This is the control the diagnosis needed. §8 shows occupancy does not predict the")
+        w("failure; this shows what does. Remove the allocation the law names and the failure")
+        w("disappears, under a load that drives the same engine to a fuller KV pool than the one")
+        w("that killed it. The mechanism is not merely consistent with the deaths — it is")
+        w("necessary for them.")
+        w("")
+        w("> **These deaths are not low-occupancy ones.** At this cap the spec-on arm reaches")
+        w("> N ≈ 410 and a nearly full KV pool before the scorer allocation fails, so it does not")
+        w("> demonstrate the low-KV OOM that §5 and §8 document at the default cap of 256. It")
+        w("> demonstrates the *mechanism*, against a matched control. The two arms of §9 do")
+        w("> different jobs: k=7 shows the failure arriving with a third of the pool free, and")
+        w("> this pair shows it not arriving at all once the scorer is gone.")
+        w("")
 
 
 if __name__ == "__main__":
