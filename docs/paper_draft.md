@@ -1,7 +1,8 @@
 # KV-cache capacity is not serving capacity
 
-*Working title. A memory allocation outside the paged KV allocator bounds continuously-batched
-LLM inference, and admission control governs aggregate capacity as well as differentiation.*
+*Working title. In a continuously-batched LLM server, the signal used to govern capacity is
+non-monotonically related to the failure it is used to prevent, and which resource binds is
+itself a scheduler setting.*
 
 ---
 
@@ -33,28 +34,38 @@ specified, so this draft is venue-neutral. See §13 for the open items that bloc
 
 ## Abstract
 
-Continuously-batched LLM serving systems are routinely provisioned as though the paged KV cache
-were the binding resource: admission control, capacity planning and autoscaling all key on KV
-occupancy. We show on a single-GPU vLLM deployment that this assumption is not merely imprecise
-but **inverted**. Across 16 independent engine deaths spanning two model sizes, three
-experiments and two speculative depths, every failure occurred in the same allocation — a dense
+Continuously-batched LLM serving systems are provisioned as though the paged KV cache were the
+binding resource: admission control, capacity planning and autoscaling all key on KV occupancy.
+We report a single-GPU vLLM deployment in which that signal is not merely imprecise but
+**non-monotonically related to failure**. Under an identical configuration, the engine
+**survived a full load ramp at 82.6% KV occupancy having died at 57.4%**; across a wider set of
+failures it died with 37–56% of the pool free. No threshold on occupancy separates the runs that
+died from the runs that lived, because the resource that binds is not in the pool the signal
+measures. We further show that *which* resource binds is itself a scheduler setting: raising
+`max_num_seqs` from 256 to 1024 — nominally an admission limit — moves the binding constraint
+from an unmonitored allocation to the KV pool on the same model, GPU and workload, because the
+raised cap enlarges vLLM's activation reservation and shrinks the pool the same setting is
+presumed to govern. Halving the concurrency the engine can sustain is the direct consequence.
+
+We then identify what does bind. Across 16 independent engine deaths spanning two model sizes,
+three experiments and two speculative depths, every failure occurred in one allocation: a dense
 `[N, k+1, V]` fp32 tensor in the speculative-decoding scorer, which lives outside the paged
-allocator and is invisible to every admission signal the engine exposes. We give a closed-form
-law for its size, `M = N·(k+1)·V·4` bytes, and test it on two of its three axes: it predicts the
-failing allocation to within 0.1% at k = 4 and k = 7, and to within 0.5% out at N ≈ 410, while
-correctly predicting that k = 2 does not fail at all at the default sequence cap. The failure is
-not explained by occupancy: engines died with 37–56% of the KV
-pool free, and in matched trials *survived* a full load ramp at 82.6% occupancy having *died* at
-57.4% under an identical configuration. Disabling speculative decoding removes the failure
-entirely at a *higher* occupancy than the one that killed the speculative arm. We further show
-that the binding resource can be flipped between the scorer and the KV pool by changing a single
-scheduler parameter, `max_num_seqs`, on the same model, GPU and workload — because raising the
-sequence cap enlarges vLLM's activation reservation and shrinks the KV pool that the same
-setting is presumed to govern. Finally, at n = 10 repeats, admission control is shown to govern
-**aggregate throughput as well as service differentiation** (+178 tok/s and +0.888 SLO
-attainment for an uncapped queue over FCFS, both surviving Holm correction across a
-207-comparison family), contradicting the common framing in which admission policy trades
-latency for fairness at fixed capacity.
+allocator and is invisible to every admission signal the engine exposes. That speculative
+decoding carries a memory cost at high concurrency is known; what we add is an exact and tested
+form. The law `M = N·(k+1)·V·4` bytes predicts the failing allocation to within 0.1% at k = 4
+and k = 7, to within 0.5% out at N ≈ 410, and correctly predicts that k = 2 does not fail at all
+at the default sequence cap. A matched control closes the argument: disabling speculative
+decoding removes the failure entirely (0/3 versus 3/3) at a *higher* occupancy than the one that
+killed the speculative arm.
+
+Finally, at n = 10 repeats, admission control is shown to govern **aggregate throughput as well
+as service differentiation** (+178 tok/s and +0.888 SLO attainment for an uncapped queue over
+FCFS, both surviving Holm correction across a 207-comparison family), where the common framing
+has admission policy trading latency for fairness at fixed capacity.
+
+The unifying claim is not about speculative decoding. It is that a serving system's capacity is
+bounded by resources its capacity signal cannot observe, and that the boundary between regimes
+is movable by parameters that do not appear to be memory parameters at all.
 
 > **TODO before submission.** The abstract claims a general property from a single GPU, a single
 > vLLM version and a single model family. §10.1 and §13 state the scope honestly; the abstract
@@ -72,27 +83,42 @@ KV capacity *is* serving capacity: if the pool has room, the system can take the
 
 That assumption is load-bearing. It is why vLLM exposes KV occupancy as a first-class gauge, why
 admission controllers throttle on it, and why capacity planning reduces to "how many sequences
-fit in the pool". This paper reports that on the system we measured, it is wrong in a specific
-and reproducible way, and that the failure it hides is not an edge case but the *only* way our
-engine ever died.
+fit in the pool". The finding that organises this paper is a pair of runs that breaks it without
+needing any model at all:
+
+> Two trials of one configuration — same engine, same workload, same seed, same machine, eight
+> minutes apart. The first **died with the KV pool 57.4% full**. The third **survived the entire
+> ramp at 80.7%** and kept serving. Across the full set of ten trials the widest such pair is a
+> death at 57.4% against a survival at **82.6%**.
+
+Occupancy is therefore not merely a weak predictor of failure in this system. It is not
+monotonically related to it, so no threshold on the signal can separate the two runs. Something
+outside the pool is binding, and the gauge that operators watch cannot see it.
+
+The rest of the paper answers two questions that follow. **What is binding?** (§7) — an
+allocation in the speculative-decoding scorer, outside the paged allocator, whose size we give in
+closed form and test. **When does it bind?** (§8) — a question with an uncomfortable answer,
+since the regime boundary turns out to be movable by a scheduler parameter that does not look
+like a memory parameter.
 
 ### 1.1 Contributions
 
-1. **A closed-form law for the binding allocation** (§7). The speculative-decoding scorer
-   materialises a dense `[N, k+1, V]` fp32 probability tensor per engine step. Its size,
-   `N·(k+1)·V·4` bytes, predicts the observed failing allocation to within 0.1%. The law is
-   tested on N (220 → 410) and on k (2, 4, 7); the V term is read from the source, not measured,
-   and we say so.
-2. **A refutation of occupancy as the capacity signal** (§7.4). Deaths occurred with 37–56% of
-   the KV pool free. In matched trials the engine survived at 82.6% occupancy having died at
-   57.4% under an identical configuration — the relationship is not merely weak but
-   non-monotonic.
-3. **A mechanism control** (§7.5). With speculative decoding disabled the same ramp survives
-   3/3 at 99.91–99.96% occupancy, higher than the 98.66–98.96% at which the speculative arm died
-   3/3. Removing the allocation removes the failure.
-4. **A demonstrated regime flip** (§8). Changing `max_num_seqs` from 256 to 1024 moves the
-   binding resource from the scorer to the KV pool on the same model, GPU and workload, because
-   the raised cap costs 3.1 GiB of activation reservation taken out of the KV pool.
+1. **Occupancy is non-monotonically related to failure** (§7.1). Deaths occurred with 37–56% of
+   the KV pool free, and matched trials survived at 82.6% having died at 57.4%. This is the
+   paper's central result and it requires no model: two runs of one configuration, one dead at
+   low occupancy and one alive at high.
+2. **The binding resource is selectable by a scheduler parameter** (§8). Changing `max_num_seqs`
+   from 256 to 1024 moves the binding constraint from the scorer to the KV pool on the same
+   model, GPU and workload, because the raised cap costs 3.1 GiB of activation reservation taken
+   out of the KV pool. Raising the admission limit **halves** the concurrency the engine can
+   sustain.
+3. **A matched mechanism control** (§7.5). With speculative decoding disabled the same ramp
+   survives 3/3 at 99.91–99.96% occupancy, higher than the 98.66–98.96% at which the speculative
+   arm died 3/3. Removing the allocation removes the failure, at an occupancy that would have
+   triggered it were occupancy the constraint.
+4. **A closed-form law for the allocation, tested on two axes** (§7.2–7.4). `N·(k+1)·V·4` bytes
+   predicts the failing allocation to within 0.1% across N from 220 to 410 and k ∈ {2, 4, 7}. The
+   V term is read from the source, not measured, and we say so.
 5. **Admission control governs aggregate capacity** (§9). At n = 10, an uncapped queue beats FCFS
    by +178 tok/s *and* +0.888 SLO attainment, both surviving Holm correction over 207
    comparisons — where the n = 3 campaign had yielded a single surviving contrast in 171, and not
@@ -102,13 +128,37 @@ engine ever died.
    number as prominently as the first, because the model's failure to generalise is itself the
    finding that motivates §7.
 
-### 1.2 What this paper does not claim
+### 1.2 Relation to what is already known
+
+Two of the ingredients here are not new, and the paper is weaker if it pretends otherwise.
+
+**That speculative decoding costs memory at high concurrency is known**, as is the fact that it
+degrades at large batch sizes, where the target model is already compute-efficient and the extra
+`k` verification positions are overhead. The existing treatment of this is a *speedup* question,
+measured in throughput. Our contributions on this axis are narrower and different in kind: an
+exact closed form rather than a scaling statement, a test of that form on the `k` axis, and the
+observation that the allocation is not a tax on throughput but the thing that **ends the
+engine's life** — a survival question, which is what makes it a capacity-planning problem rather
+than a tuning one.
+
+**Limited processor sharing is established queueing theory** (§4). We adopt it as the correct
+description of a batch-parallel server; we do not claim it. What is not in that literature is the
+coupling in §8, where the multiprogramming limit and the memory constraint are entangled by the
+implementation, so that raising the limit shrinks the resource the limit governs.
+
+The novel core is §7.1 and §8: a capacity signal that is non-monotonically related to the failure
+it is used to prevent, and a regime boundary movable by a parameter that does not announce itself
+as a memory parameter.
+
+### 1.3 What this paper does not claim
 
 The failure we characterise is specific to vLLM's V0 engine (§10.2), to a single T4 (§10.1) and
-to a model family with one vocabulary size (§10.3). The *mechanism* — a scorer allocation
-scaling with `N × (k+1) × V`, outside the paged allocator and invisible to admission control —
-is a design property whose persistence in other engines is an open empirical question that
-nothing here settles.
+to a model family with one vocabulary size (§10.3). We do not claim speculative decoding is a bad
+design — it is a net win in the regime it was built for — nor that we have found a defect: the
+allocation does exactly what it was written to do. The finding is that its size is unbounded in a
+dimension nothing admits against. The *mechanism* — an allocation scaling with `N × (k+1) × V`,
+outside the paged allocator and invisible to admission control — is a design property whose
+persistence in other engines is an open empirical question that nothing here settles.
 
 ---
 
@@ -127,13 +177,12 @@ positions in one pass and accepts a prefix. Our runs use vLLM's prompt-lookup n-
 the proposal distribution depends on the prompt rather than on a draft model. The scoring step
 is where the allocation of §7 lives.
 
-> **TODO — Related work.** This repository contains no bibliography and this draft fabricates no
-> citations. The sections that must be written and cited before submission: continuous batching
-> and paged attention (vLLM and successors); speculative decoding and its acceptance-rate
-> literature; LLM serving admission control and SLO-aware scheduling; queueing models for
-> batch-parallel servers, in particular limited processor sharing. §5.1's LPS framing in
-> particular needs to be positioned against the existing LPS literature rather than presented as
-> novel.
+> **TODO — Related work.** This section is scaffolded in `docs/related_work.md`, which carries a
+> verified starter bibliography (9 references, each with the source it was checked against), the
+> subsection structure, a claim-to-citation map for this draft, and five open items. No citation
+> in this repository is written from memory or invented. Two positioning risks identified there
+> are already reflected above: §1.2 concedes the known cost of speculative decoding at high
+> concurrency, and §4 concedes that limited processor sharing is established theory.
 
 ---
 
@@ -174,8 +223,16 @@ the **aggregate rate grows with N**.
 
 The correct description is an M/G/1 queue with a concurrency-dependent service rate, batch-
 parallel below a knee and processor-sharing above it, subject to a hard multiprogramming limit —
-**limited processor sharing**, not PS. The multiprogramming limit is not a modelling convenience:
-it is `max_num_seqs`, and §8 shows it is also, unexpectedly, a memory-allocation parameter.
+**limited processor sharing**, not PS.
+
+**We adopt LPS; we do not claim it.** It is established queueing theory with a substantial
+literature on fluid and diffusion limits and heavy-traffic approximations, and the contribution
+here is only the observation that a continuously-batched LLM engine is an instance of it. What is
+*not* in that literature is the coupling §8 reports: the multiprogramming limit is not a
+modelling convenience but `max_num_seqs`, and raising it **shrinks the memory the limit is
+supposed to govern**. In LPS theory the multiprogramming limit is a free parameter; here it is
+entangled with the resource constraint by the implementation, and the two cannot be set
+independently.
 
 ---
 
@@ -238,7 +295,55 @@ under open-loop arrivals — are carried in `docs/queueing_model.md` §5.4–5.7
 
 ## 7. The memory boundary
 
-### 7.1 The allocation
+This section is ordered as the investigation ran: first the observation that the capacity signal
+does not work (§7.1), then the identification of what actually binds (§7.2), the closed form and
+its tests (§7.3–7.4), and a matched control that removes the mechanism and with it the failure
+(§7.5).
+
+### 7.1 Occupancy does not explain the failures
+
+The engine's reproduction behaviour is stochastic, and that turns out to be the most informative
+thing about it. Repeating one configuration as independent trials — fresh server, fresh engine, a
+load ramp escalating until the engine dies or the ramp is exhausted — the 3B boundary reproduced
+in **5 of 10** trials, a 50% rate with a Wilson 95% interval of [24%, 76%]
+(`docs/experiment_b.md` §8). A trial that survives is not one that failed to reach the boundary:
+it reaches the same concurrency ceiling and keeps serving.
+
+The survivors invert the ordering that any occupancy-based account requires:
+
+| Arm | Peak KV when it died | Peak KV when it survived |
+|---|---|---|
+| `1.5b` | 28.2%, 28.5%, 28.7% | — |
+| `3b` | 57.4%, 59.1%, 59.5%, 59.6%, 60.9% | 80.7%, 80.8%, 80.9%, 81.3%, 82.6% |
+
+If occupancy were the binding constraint, no trial could survive at an occupancy above the
+lowest at which another trial died. That ordering is violated across the whole 3B set: **every**
+survivor peaked higher than **every** death, with a gap of nearly 20 percentage points between
+the highest death (60.9%) and the lowest survival (80.7%). The separation is not marginal and
+the two groups do not overlap.
+
+The inversion is not an artefact of drift between batches. The first three trials ran back to
+back within nine minutes on one engine at one seed, and contain the inversion on their own: a
+death at 57.4%, a death at 59.6%, then a survival at 80.7%. The remaining seven trials, run
+about nine hours later, reproduce the same pattern and extend the survivor range to 82.6%.
+
+Occupancy is therefore not merely a poor predictor of failure here; it is not monotonically
+related to it. **No threshold on this signal separates the runs that died from the runs that
+lived** — which is precisely what an admission controller keyed on occupancy would need. The
+argument requires no model and no theory of the mechanism: two runs of one configuration, one
+dead at low occupancy and one alive at high.
+
+A second, independent line of evidence comes from an experiment that varied speculative depth
+(§7.4). Its k = 7 arm died in 3/3 trials at N = 186, 187 and 256 against a sequence cap of 256,
+with occupancy at the failing step of **43.6%, 43.6% and 63.3%** against an estimated KV ceiling
+of N ≈ 363. Up to 37% of the pool was free at the moment of death, so neither the cap nor
+exhaustion of the pool accounts for it.
+
+We state that arm on occupancy rather than concurrency deliberately: one of its three deaths
+lands on the cap itself, so a concurrency-only argument would not carry. The occupancy argument
+covers all three.
+
+### 7.2 The allocation that does
 
 Every OOM in this campaign — **16 independent engine deaths across two model sizes and three
 experiments** — failed at the same source line: `batch_expansion.py:227` in `_contract_batch`,
@@ -261,7 +366,14 @@ that failed, and our test statistic is MiB per sequence computed from that — b
 any prediction of the *concurrency* at which death occurs, which depends on total headroom. This
 is a source reading, not an experiment, and is reported as such.
 
-### 7.2 The law on the N axis
+This allocation also explains §7.1's stochasticity, which an occupancy account cannot. The tensor
+is requested once per engine step as a single contiguous block; whether a request of that size
+succeeds depends on the state of the caching allocator at that instant — how fragmented the
+reserved-but-unallocated pool happens to be. Reported free memory at failure sits close to, but
+not below, the size of the allocation. Nothing about the boundary requires it to be crossed
+deterministically, which is why it must be reported as a rate rather than a threshold.
+
+### 7.3 The law on the N axis
 
 With k+1 = 5 and V = 151,936, the law gives **2.898 MiB per sequence**. Against the ten deaths
 of Experiments A and B (`docs/experiment_b.md` §5):
@@ -275,7 +387,7 @@ of Experiments A and B (`docs/experiment_b.md` §5):
 The 1.5B sweep died at lower concurrency and asked for correspondingly *less* memory, which is
 what makes this a test rather than a fit: the failing allocation tracks N, not model size.
 
-### 7.3 The law on the k axis (Experiment F)
+### 7.4 The law on the k axis (Experiment F)
 
 The N-axis test cannot identify the scorer specifically — any per-sequence allocation would look
 linear in N. The `(k+1)` factor is the discriminating term, and the one most likely to have
@@ -295,35 +407,6 @@ survive: at 1.739 MiB/seq its boundary lies past the sequence cap, so the engine
 and it did not — surviving 3/3 while reaching N = 256 and 83.1% occupancy. A law that
 over-predicted would have killed k = 2; one that under-predicted would have spared k = 7.
 
-### 7.4 Occupancy does not explain the failures
-
-The k = 7 deaths came at N = 186, 187 and 256 against a cap of 256, with KV occupancy at the
-failing step of **43.6%, 43.6% and 63.3%**, against an estimated KV ceiling of N ≈ 363 at that
-cap. Up to 37% of the pool was free at the moment of death, so neither the cap nor exhaustion
-accounts for it.
-
-We state this on occupancy rather than concurrency deliberately: one of the three deaths lands
-on the cap itself, so a concurrency-only argument would not carry.
-
-The stronger form comes from the reproduction trials (`docs/experiment_b.md` §8). The 3B
-boundary is stochastic — 5 of 10 probe trials died, a 50% rate with a Wilson 95% interval of
-[24%, 76%] — and the survivors invert the ordering that any occupancy-based account requires:
-
-| Arm | Peak KV when it died | Peak KV when it survived |
-|---|---|---|
-| `1.5b` | 28.2%, 28.5%, 28.7% | — |
-| `3b` | 57.4%, 59.1%, 59.5%, 59.6%, 60.9% | 80.7%, 80.8%, 80.9%, 81.3%, 82.6% |
-
-The engine **survived a full ramp at 82.6% occupancy having died at 57.4%** under an identical
-configuration. Occupancy is not merely a poor predictor of failure here; it is not monotonically
-related to it. This needs no model — two runs of one configuration, one dead at low occupancy
-and one alive at high.
-
-The stochasticity is consistent with the mechanism: the tensor is requested once per engine
-step, and whether a request of that size succeeds depends on the state of the caching allocator
-at that instant. Reported free memory at failure sits close to, but not below, the allocation
-size.
-
 ### 7.5 The mechanism control
 
 Experiment F's fourth step re-ran the speculative-decoding contrast at `max_num_seqs` = 512, a
@@ -336,7 +419,7 @@ seed; only `--speculative-config` differs.
 | spec off | off | 3 | **0** | 402 | 99.96% |
 
 The spec-on arm died 3/3 at **2.884 MiB/seq against 2.898 predicted (−0.5%)**, at allocations of
-1167–1188 MiB — larger than anything in §7.2's table — and at N ≈ 410, extending the law's
+1167–1188 MiB — larger than anything in §7.3's table — and at N ≈ 410, extending the law's
 tested range from 220–256 out to 410.
 
 The spec-off arm **died 0/3**, riding the ramp to λ = 8 at 99.91–99.96% occupancy — *higher* than
@@ -347,7 +430,7 @@ necessary for them.
 
 > **These particular deaths are not low-occupancy ones.** At cap 512 the spec-on arm reaches
 > N ≈ 410 and a nearly full pool before the scorer allocation fails, so this pair does not
-> demonstrate the low-KV OOM of §7.2 and §7.4. It demonstrates the *mechanism*, against a matched
+> demonstrate the low-KV OOM of §7.1 and §7.3. It demonstrates the *mechanism*, against a matched
 > control. The two arms do different jobs: k = 7 shows the failure arriving with a third of the
 > pool free; this pair shows it not arriving at all once the scorer is gone.
 
@@ -495,6 +578,7 @@ Because the distinction is easy to lose in prose, every substantive claim is lab
 
 | Claim | Status |
 |---|---|
+| KV occupancy is non-monotonically related to failure | **Empirical** — every 3B survivor peaked above every 3B death (§7.1) |
 | Arrivals Poisson; service requirement generally distributed | **By construction** |
 | N ≤ `max_num_seqs` | **Architectural** |
 | μ(N) non-decreasing and concave | **Theoretical** — batching amortises a fixed per-step cost |
