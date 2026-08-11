@@ -1,0 +1,58 @@
+# Experiment F-1 (E-1 re-run) — k=2 at the DEFAULT cap. A predicted null.
+#
+# Companion to configs/scorer_k7_qwen3b_cap256.yaml; see that file for why the original arms at
+# max_num_seqs=1024 measured nothing (the raised cap shrank KV from 4.74 to 1.63 GiB and the
+# engine went KV-bound near N ~ 149 instead of reaching the scorer).
+#
+# At k=2 each sequence demands 1.739 MiB of scorer memory, putting the scorer boundary at
+# N ~ 344 — beyond both the default cap of 256 and, comfortably, the concurrency the workload
+# reaches. So the prediction here is a *null*: the engine should NOT die. It should sit at the
+# cap and serve.
+#
+#     scorer boundary   N ~ 344   (1.739 MiB/seq)  <- never reached
+#     sequence cap      N = 256                    <- binds first
+#     KV-bound ceiling  N ~ 365
+#
+# A predicted null is worth a full three trials because it is the arm that can most cheaply
+# falsify the law. If the engine dies here anyway, at a concurrency the scorer cannot explain,
+# then the failure is not the scorer allocation and the paper's central quantitative claim is
+# wrong. Three arms now make three different predictions from one formula — k=2 survives, k=4
+# dies at 256 where boundary and cap coincide, k=7 dies at 129 where nothing else can reach —
+# and the formula is only supported if all three land.
+model: Qwen/Qwen2.5-3B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  # Unset, matching configs/oomprobe_qwen3b.yaml — see the k=7 companion for why the default is
+  # used rather than an explicit 256.
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 2
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  # Pushed two stages past the k=4 ramp. A null result is only informative if the arm was driven
+  # hard enough to have died had it been going to, so this one has to run out of offered load
+  # rather than out of stages.
+  rates: [2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125

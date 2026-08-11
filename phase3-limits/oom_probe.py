@@ -93,7 +93,13 @@ class VllmServer:
             argv += ["--enforce-eager"]
         return argv
 
-    def start(self, timeout_s: float = 600.0) -> None:
+    def spawn(self) -> None:
+        """Launch the server process without waiting for it to become healthy.
+
+        Split out of ``start`` so a caller that only needs something vLLM prints during startup
+        — the memory-profiling split, say — can read it and tear down without paying for
+        cudagraph capture and warmup. ``start`` is this plus the health wait.
+        """
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
         fh = self.log_path.open("w", encoding="utf-8")
         env = dict(os.environ)
@@ -104,6 +110,12 @@ class VllmServer:
             # is the only reliable way to free the GPU before the next trial.
             start_new_session=True,
         )
+
+    def returncode(self) -> int | None:
+        return self.proc.poll() if self.proc else None
+
+    def start(self, timeout_s: float = 600.0) -> None:
+        self.spawn()
         deadline = time.monotonic() + timeout_s
         while time.monotonic() < deadline:
             if self.proc.poll() is not None:

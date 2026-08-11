@@ -1,0 +1,68 @@
+# Experiment F-2 (E-2 re-run) — k=7 at the DEFAULT cap. The decisive arm.
+#
+# The first attempt at this arm set max_num_seqs=1024, inheriting the choice from experiment C
+# without noticing what the flag costs. vLLM sizes its memory-profiling pass at max_num_seqs and
+# reserves the resulting activation peak, so the cap does not merely bound concurrency — it buys
+# activation headroom out of the KV pool:
+#
+#     cap  256 -> activation 2.52 GiB, KV 4.74 GiB
+#     cap 1024 -> activation 5.64 GiB, KV 1.63 GiB
+#
+# With 1.63 GiB of KV the engine pinned at ~99% occupancy near N ~ 149 and never died, so the
+# measured quantity — MiB per sequence at the failing allocation — came out NaN in all three
+# trials. Dropping back to the default cap restores the 4.74 GiB pool, whose KV-bound ceiling is
+# an estimated N ~ 365.
+#
+# That makes this arm the sharpest test available, because at k=7 the three candidate limits are
+# now well separated instead of coincident:
+#
+#     scorer boundary   N ~ 129   (4.637 MiB/seq)
+#     sequence cap      N = 256
+#     KV-bound ceiling  N ~ 365
+#
+# A death at N ~ 129 can only be the scorer. It cannot be the cap, which is twice as far away,
+# and it cannot be KV, which is nearly three times as far. This single arm therefore does two
+# jobs: it measures the law's (k+1) term, and it breaks the scorer/max_num_seqs confound that
+# experiment C set out to break and could not, because C's own cap change removed the KV
+# headroom needed to reach the boundary.
+#
+# Prediction, stated before the run: dies at N ~ 129 with a failed allocation near 598 MiB,
+# giving 4.637 MiB/seq against k=4's measured 2.898. The companion k=2 arm predicts a null.
+model: Qwen/Qwen2.5-3B-Instruct
+
+server:
+  base_url: http://localhost:8000
+  dtype: float16
+  gpu_memory_utilization: 0.9
+  # Deliberately unset: vLLM's default of 256 is the configuration every observed death used,
+  # and setting it explicitly to 256 would change the profiling pass in ways the default does
+  # not. Left absent so this matches configs/oomprobe_qwen3b.yaml exactly.
+  speculative_config:
+    method: ngram
+    num_speculative_tokens: 7
+    prompt_lookup_min: 2
+    prompt_lookup_max: 5
+
+workload:
+  mix:
+    short: 0.4
+    coding: 0.2
+    reasoning: 0.2
+    long: 0.2
+
+ramp:
+  # k=7 is predicted to fail at roughly half the concurrency k=4 did, so the ramp starts lower
+  # and steps more finely through the region where the boundary is expected. Overshooting it
+  # between two coarse stages would lose the concurrency reading the whole measurement rests on.
+  rates: [1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0]
+  stage_s: 60
+  seed: 4242
+
+telemetry:
+  interval_s: 0.25
+  gpu_index: 0
+  cooldown_c: 77
+
+slo:
+  ttft_ms: 1000
+  tpot_ms: 125
