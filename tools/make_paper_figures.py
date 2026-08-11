@@ -594,11 +594,104 @@ def fig_model_size(runs, expB, out: Path):
     axR.set_ylabel("Failing allocation  (MiB)")
     axR.set_title("b.  The allocation that kills it does not", loc="left")
     axR.legend(loc="upper left", fontsize=7.6)
-    axR.text(0.985, 0.035, "7 engine deaths, 2 model sizes,\npredicted to within 0.1%",
+    n_ev = len([e for e in expB["oom"]["events"] if e.get("n_at_failing_step")])
+    axR.text(0.985, 0.035, f"{n_ev} engine deaths, 2 model sizes,\npredicted to within 0.1%",
              transform=axR.transAxes, fontsize=7.6, color=ps.INK_2, ha="right", linespacing=1.5)
 
     fig.tight_layout()
     return ps.save(fig, out, "fig10_model_size_comparison")
+
+
+# ======================================================================================
+# fig 11 — the scorer law on the k axis (Experiment F)
+# ======================================================================================
+
+def fig_scorer_law(expF, out: Path):
+    """The failing allocation against speculative depth, k.
+
+    Figure 10b tests the law against N at a fixed k=4, which cannot distinguish the scorer from
+    any other per-sequence allocation. This tests the (k+1) factor itself — the one term that
+    could plausibly have taken another form, since how many speculative tokens are scored per
+    step is a scheduler decision rather than simply the configured k.
+
+    k=2 is drawn open, not filled. It survived, so there is no failing allocation to measure;
+    plotting it as a datum would claim a measurement the experiment did not make.
+    """
+    if not expF:
+        print("  fig11: skipped, run tools/analyze_expF.py first")
+        return []
+
+    arms = expF["arms"]
+    ref = expF["reference_k4"]
+    # MiB per sequence per unit of (k+1) — the law's slope, from the tensor's shape alone.
+    per_kp1 = ref["mib_per_seq"] / (ref["k"] + 1)
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.8))
+
+    ks = np.linspace(1.4, 7.8, 100)
+    ax.plot(ks, (ks + 1) * per_kp1, color=ps.INK, lw=1.5, zorder=3,
+            label=f"$(k{{+}}1)\\,V\\times$4 B  =  {per_kp1:.4f} MiB/seq per $(k{{+}}1)$")
+
+    # The k=4 anchor: measured by Experiment B, and what fixes the line's slope.
+    ax.scatter([ref["k"]], [ref["mib_per_seq"]], s=110, marker="s", color=ps.MODEL_COLOR["3b"],
+               edgecolor="white", linewidth=1.0, zorder=6,
+               label=f"k=4 — Experiment B anchor ({ref['mib_per_seq']:.3f})")
+
+    measured, survived = [], []
+    for tag, a in arms.items():
+        trials = [t for t in a["trials"] if t.get("mib_per_seq")]
+        if trials:
+            # No per-trial scatter: the three trials span 0.005 MiB on a 5.6 MiB axis, so drawn
+            # points would sit inside the mean's marker and imply a spread the eye cannot read.
+            # The observed range goes in the callout instead, where it is legible.
+            ax.scatter([a["k"]], [a["mean_mib_per_seq"]], s=110, marker="o",
+                       color=ps.SLOTS[0], edgecolor="white", linewidth=1.0, zorder=6,
+                       label=f"k={a['k']} — {a['n_died']}/{a['n_trials']} died, "
+                             f"{a['mean_mib_per_seq']:.3f} ({a['rel_error_pct']:+.1f}%)")
+            measured.append(a)
+        else:
+            ax.scatter([a["k"]], [a["predicted_mib_per_seq"]], s=110, marker="o",
+                       facecolor="none", edgecolor=ps.MUTED, linewidth=1.3, zorder=6,
+                       label=f"k={a['k']} — survived {a['n_trials']}/{a['n_trials']}, "
+                             "no allocation to measure")
+            survived.append(a)
+
+    # Callouts go into the empty regions: below the line on the left, above it on the right.
+    # Anywhere else and the leader lines cross the fit or the k=4 marker.
+    for a in survived:
+        ps.annotate(ax, f"predicted {a['predicted_mib_per_seq']:.3f} MiB/seq puts the boundary\n"
+                        "past max_num_seqs = 256, so the engine\n"
+                        "cannot reach it — and it did not",
+                    (a["k"], a["predicted_mib_per_seq"]), (2.25, 0.72), color=ps.MUTED)
+    for a in measured:
+        obs = sorted(t["mib_per_seq"] for t in a["trials"] if t.get("mib_per_seq"))
+        ps.annotate(ax, f"{a['n_died']}/{a['n_trials']} deaths, "
+                        f"{obs[0]:.3f}–{obs[-1]:.3f} MiB/seq\n"
+                        f"(mean {a['mean_mib_per_seq']:.3f} against "
+                        f"{a['predicted_mib_per_seq']:.3f} predicted, "
+                        f"{a['rel_error_pct']:+.1f}%)",
+                    (a["k"], a["mean_mib_per_seq"]), (4.15, 5.18), color=ps.STATUS_BAD)
+
+    ax.set_xlim(1.4, 7.8)
+    ax.set_ylim(0, 5.6)
+    ax.set_xticks([2, 3, 4, 5, 6, 7])
+    ax.set_xlabel("Speculative depth,  $k$  (num_speculative_tokens)")
+    ax.set_ylabel("Failing allocation per sequence  (MiB)")
+    ax.set_title("The scorer law holds on the $k$ axis, not just on $N$", loc="left")
+    ax.legend(loc="upper left", fontsize=7.6)
+
+    if measured:
+        best = max(measured, key=lambda a: a["k"])
+        ratio = best["mean_mib_per_seq"] / ref["mib_per_seq"]
+        pred_ratio = (best["k"] + 1) / (ref["k"] + 1)
+        ax.text(0.985, 0.035,
+                f"ratio to k=4: {ratio:.3f} observed vs {pred_ratio:.3f} predicted\n"
+                f"(${best['k'] + 1}/{ref['k'] + 1}$, fixed by the tensor's shape before the run)",
+                transform=ax.transAxes, fontsize=7.6, color=ps.INK_2, ha="right",
+                linespacing=1.5)
+
+    fig.tight_layout()
+    return ps.save(fig, out, "fig11_scorer_law_k")
 
 
 def main() -> None:
@@ -615,10 +708,11 @@ def main() -> None:
     model_fit = load_json(rd / "model" / "queueing_model_fit.json")
     expA = load_json(rd / "expA" / "expA_summary_corrected.json")
     expB = load_json(rd / "expB" / "expB_analysis.json")
+    expF = load_json(rd / "expF" / "expF_analysis.json")
 
     print(f"runs={len(runs)}  stats={'y' if stats else 'n'}  "
           f"model={'y' if model_fit else 'n'}  expA={'y' if expA else 'n'}  "
-          f"expB={'y' if expB else 'n'}")
+          f"expB={'y' if expB else 'n'}  expF={'y' if expF else 'n'}")
 
     made = []
     made += fig_architecture(out)
@@ -631,6 +725,7 @@ def main() -> None:
     made += fig_model_vs_measured(model_fit, out)
     made += fig_regime_diagram(expA, out)
     made += fig_model_size(runs, expB, out)
+    made += fig_scorer_law(expF, out)
 
     print(f"\nwrote {len(made)} files to {out}:")
     for p in sorted({p.stem for p in made}):
