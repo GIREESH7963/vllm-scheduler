@@ -1,6 +1,6 @@
 # Statistical analysis — Phase-2 policy comparison
 
-All intervals are **two-sided 95% t-intervals** on n=3 repeats per cell (multiplier t(0.975, df=2) = **4.303**, not 1.96). Effect sizes are **Hedges' g** (Cohen's d with the small-sample correction J = 0.8 at n=3). Contrasts use **Welch's t-test**; p-values are additionally reported Holm-adjusted across the whole family of 171 comparisons.
+All intervals are **two-sided 95% t-intervals** on n=3 repeats per cell (multiplier t(0.975, df=2) = **4.303**, not 1.96). Effect sizes are **Hedges' g** (Cohen's d with the small-sample correction J = 0.8 at n=3). Contrasts use **Welch's t-test**; p-values are additionally reported Holm-adjusted across the whole family of 207 comparisons.
 
 > **Read the intervals before the means.** With n=3 the CI half-width is 2.48 SD/√n. Several cells below have intervals wide enough that the point estimate alone would be misleading; those are flagged rather than quietly reported.
 
@@ -65,6 +65,19 @@ All intervals are **two-sided 95% t-intervals** on n=3 repeats per cell (multipl
 | `srpt-prediction` | 1 | 266.3 (n=1) | 2818.9 (n=1) | 17251.5 (n=1) | 5261.3 (n=1) | 0.441 (n=1) | 0.448 [0.335, 0.566] |
 | `srpt-prompt-proxy` | 1 | 329.0 (n=1) | 2483.6 (n=1) | 18774.6 (n=1) | 5436.0 (n=1) | 0.462 (n=1) | 0.456 [0.343, 0.573] |
 
+## Workload `phase2_mixed_n10`
+
+
+### λ = 4 req/s
+
+| Policy | n | Throughput (tok/s) | Total lat p50 (ms) | Total lat p99 (ms) | Queue wait p99 (ms) | SLO (repeat mean) | SLO (pooled Wilson) |
+|---|---|---|---|---|---|---|---|
+| `adaptive` | 10 | 400.8 ± 56.2 | 6080.3 ± 1375.8 | 21425.4 ± 2584.9 | 4975.0 ± 1121.7 | 0.284 ± 0.193 | 0.308 [0.273, 0.345] |
+| `edf` | 10 | 273.7 ± 16.9 | 2764.4 ± 333.2 | 17657.6 ± 2762.2 | 5511.2 ± 153.5 | 0.478 ± 0.068 | 0.477 [0.436, 0.519] |
+| `fcfs` *(baseline)* | 10 | 286.5 ± 22.9 | 7121.4 ± 1246.5 | 20180.9 ± 2256.8 | 5791.3 ± 361.2 | 0.066 ± 0.084 | 0.083 [0.061, 0.112] |
+| `nocap` | 10 | 464.1 ± 60.1 | 4181.9 ± 1254.4 | 18785.0 ± 3820.7 | 6.3 ± 1.7 | 0.955 ± 0.040 | 0.954 [0.936, 0.967] |
+| `srpt` | 10 | 314.8 ± 18.5 | 3047.7 ± 650.0 | 19863.1 ± 2787.5 | 5126.3 ± 451.1 | 0.464 ± 0.058 | 0.464 [0.422, 0.507] |
+
 ## Per-class SLO attainment
 
 Mean ± 95% CI over 3 repeats, by workload class.
@@ -112,6 +125,16 @@ Mean ± 95% CI over 3 repeats, by workload class.
 | `srpt-oracle` | 0.231 (n=1) | 0.238 (n=1) | 0.133 (n=1) | 0.568 (n=1) |
 | `srpt-prediction` | 0.000 (n=1) | 0.286 (n=1) | 0.133 (n=1) | 0.750 (n=1) |
 | `srpt-prompt-proxy` | 0.154 (n=1) | 0.190 (n=1) | 0.267 (n=1) | 0.750 (n=1) |
+
+**`phase2_mixed_n10`, λ = 4**
+
+| Policy | coding | long | reasoning | short |
+|---|---|---|---|---|
+| `adaptive` | 0.242 ± 0.169 | 0.291 ± 0.217 | 0.344 ± 0.222 | 0.270 ± 0.197 |
+| `edf` | 0.128 ± 0.124 | 0.438 ± 0.125 | 0.050 ± 0.084 | 0.867 ± 0.069 |
+| `fcfs` | 0.030 ± 0.048 | 0.042 ± 0.057 | 0.096 ± 0.131 | 0.070 ± 0.094 |
+| `nocap` | 0.995 ± 0.011 | 0.982 ± 0.028 | 0.968 ± 0.043 | 0.911 ± 0.088 |
+| `srpt` | 0.236 ± 0.125 | 0.036 ± 0.047 | 0.377 ± 0.103 | 0.813 ± 0.040 |
 
 ## Contrasts vs `fcfs`
 
@@ -193,14 +216,14 @@ Mean ± 95% CI over 3 repeats, by workload class.
 | `edf` | Throughput | 317 | 274 | -43.4 [-85.2, -1.55] | -2.44 | large | 0.046 | 1.000 |
 | `edf` | Total latency p50 | 6.26e+03 | 2.56e+03 | -3.7e+03 [-6.14e+03, -1.26e+03] | -3.84 | large | 0.021 | 1.000 |
 | `edf` | Total latency p99 | 2.36e+04 | 1.57e+04 | -7.96e+03 [-1.59e+04, -13.7] | -2.75 | large | 0.050 | 1.000 |
-| `nocap` | SLO attainment | 0.122 | 0.908 | +0.785 [+0.516, +1.05] | +5.46 | large | 0.002 | 0.223 |
+| `nocap` | SLO attainment | 0.122 | 0.908 | +0.785 [+0.516, +1.05] | +5.46 | large | 0.002 | 0.263 |
 | `nocap` | Throughput | 317 | 470 | +152 [-31.2, +336] | +2.30 | large | 0.071 | 1.000 |
 | `nocap` | Total latency p50 | 6.26e+03 | 3.77e+03 | -2.49e+03 [-5.5e+03, +515] | -1.56 | large | 0.081 | 1.000 |
 | `nocap` | Total latency p99 | 2.36e+04 | 2.06e+04 | -3.08e+03 [-1.12e+04, +5.09e+03] | -1.04 | large | 0.251 | 1.000 |
 | `srpt` | SLO attainment | 0.122 | 0.429 | +0.307 [-0.00449, +0.618] | +2.62 | large | 0.051 | 1.000 |
 | `srpt` | Throughput | 317 | 323 | +5.75 [-44.3, +55.8] | +0.28 | small | 0.704 | 1.000 |
 | `srpt` | Total latency p50 | 6.26e+03 | 3.19e+03 | -3.07e+03 [-5.3e+03, -839] | -2.53 | large | 0.019 | 1.000 |
-| `srpt` | Total latency p99 | 2.36e+04 | 1.94e+04 | -4.19e+03 [-5.31e+03, -3.06e+03] | -7.10 | large | 0.001 | 0.109 |
+| `srpt` | Total latency p99 | 2.36e+04 | 1.94e+04 | -4.19e+03 [-5.31e+03, -3.06e+03] | -7.10 | large | 0.001 | 0.130 |
 | `srpt-oracle` | SLO attainment | 0.122 | 0.376 | +nan [+nan, +nan] | +nan | undefined | nan | nan |
 | `srpt-oracle` | Throughput | 317 | 298 | +nan [+nan, +nan] | +nan | undefined | nan | nan |
 | `srpt-oracle` | Total latency p50 | 6.26e+03 | 2.71e+03 | +nan [+nan, +nan] | +nan | undefined | nan | nan |
@@ -214,15 +237,44 @@ Mean ± 95% CI over 3 repeats, by workload class.
 | `srpt-prompt-proxy` | Total latency p50 | 6.26e+03 | 2.48e+03 | +nan [+nan, +nan] | +nan | undefined | nan | nan |
 | `srpt-prompt-proxy` | Total latency p99 | 2.36e+04 | 1.88e+04 | +nan [+nan, +nan] | +nan | undefined | nan | nan |
 
+**`phase2_mixed_n10`, λ = 4**
+
+| Policy | Metric | baseline | treatment | Δ [95% CI] | g | magnitude | p | p_holm |
+|---|---|---|---|---|---|---|---|---|
+| `adaptive` | SLO attainment | 0.0663 | 0.284 | +0.218 [+0.0156, +0.42] | +1.00 | large | 0.037 | 1.000 |
+| `adaptive` | Throughput | 287 | 401 | +114 [+55.8, +173] | +1.83 | large | 0.001 | 0.191 |
+| `adaptive` | Total latency p50 | 7.12e+03 | 6.08e+03 | -1.04e+03 [-2.77e+03, +684] | -0.54 | medium | 0.221 | 1.000 |
+| `adaptive` | Total latency p99 | 2.02e+04 | 2.14e+04 | +1.24e+03 [-1.95e+03, +4.44e+03] | +0.35 | small | 0.423 | 1.000 |
+| `edf` | SLO attainment | 0.0663 | 0.478 | +0.412 [+0.311, +0.512] | +3.69 | large | 0.000 | 0.000 ✓ |
+| `edf` | Throughput | 287 | 274 | -12.9 [-39.5, +13.8] | -0.44 | small | 0.322 | 1.000 |
+| `edf` | Total latency p50 | 7.12e+03 | 2.76e+03 | -4.36e+03 [-5.62e+03, -3.09e+03] | -3.27 | large | 0.000 | 0.003 ✓ |
+| `edf` | Total latency p99 | 2.02e+04 | 1.77e+04 | -2.52e+03 [-5.85e+03, +799] | -0.69 | medium | 0.128 | 1.000 |
+| `nocap` | SLO attainment | 0.0663 | 0.955 | +0.888 [+0.799, +0.977] | +9.24 | large | 0.000 | 0.000 ✓ |
+| `nocap` | Throughput | 287 | 464 | +178 [+115, +240] | +2.67 | large | 0.000 | 0.009 ✓ |
+| `nocap` | Total latency p50 | 7.12e+03 | 4.18e+03 | -2.94e+03 [-4.58e+03, -1.3e+03] | -1.61 | large | 0.001 | 0.242 |
+| `nocap` | Total latency p99 | 2.02e+04 | 1.88e+04 | -1.4e+03 [-5.59e+03, +2.8e+03] | -0.30 | small | 0.488 | 1.000 |
+| `srpt` | SLO attainment | 0.0663 | 0.464 | +0.397 [+0.302, +0.493] | +3.78 | large | 0.000 | 0.000 ✓ |
+| `srpt` | Throughput | 287 | 315 | +28.3 [+0.837, +55.7] | +0.93 | large | 0.044 | 1.000 |
+| `srpt` | Total latency p50 | 7.12e+03 | 3.05e+03 | -4.07e+03 [-5.41e+03, -2.74e+03] | -2.81 | large | 0.000 | 0.003 ✓ |
+| `srpt` | Total latency p99 | 2.02e+04 | 1.99e+04 | -318 [-3.66e+03, +3.02e+03] | -0.09 | negligible | 0.843 | 1.000 |
+
 ## What survives
 
-- Comparisons made: **171**
-- Significant at p < 0.05 **before** correction: **16**
-- Significant **after** Holm correction: **1**
+- Comparisons made: **207**
+- Significant at p < 0.05 **before** correction: **32**
+- Significant **after** Holm correction: **9**
 
 Surviving contrasts:
 
-- `nocap` vs `fcfs` — Queue wait p99 (phase2_mixed, λ=4): -5.94e+03 ms, g = -136.97, p_holm = 0.0032
+- `nocap` vs `fcfs` — SLO attainment (phase2_mixed_n10, λ=4): +0.888 frac, g = +9.24, p_holm = 0.0000
+- `nocap` vs `fcfs` — Queue wait p99 (phase2_mixed_n10, λ=4): -5.78e+03 ms, g = -15.52, p_holm = 0.0000
+- `edf` vs `fcfs` — SLO attainment (phase2_mixed_n10, λ=4): +0.412 frac, g = +3.69, p_holm = 0.0000
+- `srpt` vs `fcfs` — SLO attainment (phase2_mixed_n10, λ=4): +0.397 frac, g = +3.78, p_holm = 0.0000
+- `edf` vs `fcfs` — Total latency p50 (phase2_mixed_n10, λ=4): -4.36e+03 ms, g = -3.27, p_holm = 0.0026
+- `srpt` vs `fcfs` — Total latency p50 (phase2_mixed_n10, λ=4): -4.07e+03 ms, g = -2.81, p_holm = 0.0026
+- `nocap` vs `fcfs` — Queue wait p99 (phase2_mixed, λ=4): -5.94e+03 ms, g = -136.97, p_holm = 0.0038
+- `nocap` vs `fcfs` — Throughput (phase2_mixed_n10, λ=4): +178 tok/s, g = +2.67, p_holm = 0.0088
+- `adaptive` vs `fcfs` — TPOT p50 (phase2_mixed_n10, λ=4): +12.4 ms, g = +2.37, p_holm = 0.0406
 
 ## Caveats
 

@@ -1,0 +1,364 @@
+[expCD 14:08:21] waiting for the running 3B probe batch to finish
+[expCD 14:19:25] waiting for the running 3B probe batch to finish
+[expCD 14:43:58] 3B probe batch finished (7 trials written)
+[expCD 14:44:18] Experiment C [spec_on]: configs/regime_qwen3b_spec_on_cap1024.yaml
+  [C:spec_on] 
+  [C:spec_on] [trial 1] cooling / waiting for a free GPU ...
+  [C:spec_on] [trial 1] GPU used=0.44GiB temp=76.0C -> starting server
+  [C:spec_on]     stage λ=2: ok=17 fail=0 running=95.0 kv=0.6961811422777966 mem=14.43GiB temp=85.0C
+  [C:spec_on]     stage λ=3: ok=65 fail=0 running=115.0 kv=0.9885096316323082 mem=12.28GiB temp=85.0C
+  [C:spec_on]     stage λ=4: ok=55 fail=0 running=106.0 kv=0.9618114227779655 mem=12.28GiB temp=85.0C
+  [C:spec_on]     stage λ=5: ok=46 fail=0 running=103.0 kv=0.9591078066914498 mem=12.28GiB temp=85.0C
+  [C:spec_on]     stage λ=6: ok=52 fail=0 running=125.0 kv=0.9901993916863805 mem=12.28GiB temp=84.0C
+  [C:spec_on]     stage λ=8: ok=79 fail=0 running=112.0 kv=0.9881716796214938 mem=12.28GiB temp=84.0C
+  [C:spec_on] [trial 1] wrote 20260810T144418Z_expA_trial1.json
+  [C:spec_on] 
+  [C:spec_on] [trial 2] cooling / waiting for a free GPU ...
+  [C:spec_on] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [C:spec_on]     stage λ=2: ok=19 fail=0 running=93.0 kv=0.6799594457587023 mem=13.30GiB temp=85.0C
+  [C:spec_on]     stage λ=3: ok=62 fail=0 running=117.0 kv=0.990537343697195 mem=11.48GiB temp=85.0C
+  [C:spec_on]     stage λ=4: ok=55 fail=0 running=110.0 kv=0.9841162554917202 mem=11.48GiB temp=85.0C
+  [C:spec_on]     stage λ=5: ok=49 fail=0 running=102.0 kv=0.9340993578911795 mem=11.48GiB temp=85.0C
+  [C:spec_on]     stage λ=6: ok=53 fail=0 running=123.0 kv=0.9827644474484624 mem=11.48GiB temp=84.0C
+  [C:spec_on]     stage λ=8: ok=82 fail=0 running=109.0 kv=0.9844542075025347 mem=11.48GiB temp=84.0C
+  [C:spec_on] [trial 2] wrote 20260810T145336Z_expA_trial2.json
+  [C:spec_on] 
+  [C:spec_on] [trial 3] cooling / waiting for a free GPU ...
+  [C:spec_on] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [C:spec_on]     stage λ=2: ok=18 fail=0 running=94.0 kv=0.6904359580939506 mem=14.37GiB temp=85.0C
+  [C:spec_on]     stage λ=3: ok=63 fail=0 running=117.0 kv=0.9922271037512673 mem=12.31GiB temp=85.0C
+  [C:spec_on]     stage λ=4: ok=56 fail=0 running=112.0 kv=0.990537343697195 mem=12.31GiB temp=85.0C
+  [C:spec_on]     stage λ=5: ok=46 fail=0 running=105.0 kv=0.9878337276106793 mem=12.31GiB temp=84.0C
+  [C:spec_on]     stage λ=6: ok=62 fail=0 running=127.0 kv=0.9803987833727611 mem=12.31GiB temp=84.0C
+  [C:spec_on]     stage λ=8: ok=81 fail=0 running=103.0 kv=0.9635011828320379 mem=12.31GiB temp=84.0C
+  [C:spec_on] [trial 3] wrote 20260810T150324Z_expA_trial3.json
+  [C:spec_on] 
+  [C:spec_on] ==============================================================================
+  [C:spec_on] EXPERIMENT A SUMMARY
+  [C:spec_on] ==============================================================================
+  [C:spec_on] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [C:spec_on]     1 False        nan                               None    147   99.97    12.28
+  [C:spec_on]     2 False        nan                               None    147   99.73    11.48
+  [C:spec_on]     3 False        nan                               None    147   99.86    12.31
+  [C:spec_on] 
+  [C:spec_on] reproduced OOM in 0/3 independent trials
+  [C:spec_on] wrote results/expCD/regime_spec_on/expA_summary.json
+[expCD 15:13:10] Experiment C [spec_on] done (rc=0)
+[expCD 15:13:30] Experiment C [spec_off]: configs/regime_qwen3b_spec_off_cap1024.yaml
+  [C:spec_off] 
+  [C:spec_off] [trial 1] cooling / waiting for a free GPU ...
+  [C:spec_off] [trial 1] GPU used=0.44GiB temp=77.0C -> starting server
+  [C:spec_off]     stage λ=2: ok=20 fail=0 running=92.0 kv=0.7316661034133153 mem=10.88GiB temp=85.0C
+  [C:spec_off]     stage λ=3: ok=77 fail=0 running=117.0 kv=0.9891855356539372 mem=12.00GiB temp=86.0C
+  [C:spec_off]     stage λ=4: ok=65 fail=0 running=109.0 kv=0.995606623859412 mem=12.00GiB temp=85.0C
+  [C:spec_off]     stage λ=5: ok=69 fail=0 running=117.0 kv=0.9895234876647516 mem=12.00GiB temp=85.0C
+  [C:spec_off]     stage λ=6: ok=84 fail=0 running=101.0 kv=0.9807367353835755 mem=12.00GiB temp=84.0C
+  [C:spec_off]     stage λ=8: ok=67 fail=0 running=112.0 kv=0.9898614396755661 mem=12.00GiB temp=84.0C
+  [C:spec_off] [trial 1] wrote 20260810T151330Z_expA_trial1.json
+  [C:spec_off] 
+  [C:spec_off] [trial 2] cooling / waiting for a free GPU ...
+  [C:spec_off] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [C:spec_off]     stage λ=2: ok=20 fail=0 running=92.0 kv=0.7303142953700574 mem=10.90GiB temp=85.0C
+  [C:spec_off]     stage λ=3: ok=78 fail=0 running=115.0 kv=0.9895234876647516 mem=12.02GiB temp=86.0C
+  [C:spec_off]     stage λ=4: ok=66 fail=0 running=107.0 kv=0.9692463670158837 mem=12.02GiB temp=86.0C
+  [C:spec_off]     stage λ=5: ok=66 fail=0 running=112.0 kv=0.9746535991889151 mem=12.02GiB temp=85.0C
+  [C:spec_off]     stage λ=6: ok=79 fail=0 running=106.0 kv=0.9952686718485975 mem=12.02GiB temp=85.0C
+  [C:spec_off]     stage λ=8: ok=69 fail=0 running=112.0 kv=0.995606623859412 mem=12.02GiB temp=85.0C
+  [C:spec_off] [trial 2] wrote 20260810T152259Z_expA_trial2.json
+  [C:spec_off] 
+  [C:spec_off] [trial 3] cooling / waiting for a free GPU ...
+  [C:spec_off] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [C:spec_off]     stage λ=2: ok=20 fail=0 running=92.0 kv=0.7309901993916863 mem=10.96GiB temp=85.0C
+  [C:spec_off]     stage λ=3: ok=80 fail=0 running=112.0 kv=0.9655288948969246 mem=11.80GiB temp=86.0C
+  [C:spec_off]     stage λ=4: ok=64 fail=0 running=108.0 kv=0.9851301115241635 mem=11.80GiB temp=86.0C
+  [C:spec_off]     stage λ=5: ok=67 fail=0 running=116.0 kv=0.9895234876647516 mem=11.80GiB temp=85.0C
+  [C:spec_off]     stage λ=6: ok=81 fail=0 running=103.0 kv=0.9918891517404529 mem=11.80GiB temp=84.0C
+  [C:spec_off]     stage λ=8: ok=70 fail=0 running=109.0 kv=0.9689084150050693 mem=11.80GiB temp=84.0C
+  [C:spec_off] [trial 3] wrote 20260810T153241Z_expA_trial3.json
+  [C:spec_off] 
+  [C:spec_off] ==============================================================================
+  [C:spec_off] EXPERIMENT A SUMMARY
+  [C:spec_off] ==============================================================================
+  [C:spec_off] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [C:spec_off]     1 False        nan                               None    134   99.97    12.00
+  [C:spec_off]     2 False        nan                               None    135   99.97    12.02
+  [C:spec_off]     3 False        nan                               None    135   99.97    11.80
+  [C:spec_off] 
+  [C:spec_off] reproduced OOM in 0/3 independent trials
+  [C:spec_off] wrote results/expCD/regime_spec_off/expA_summary.json
+[expCD 15:42:29] Experiment C [spec_off] done (rc=0)
+[expCD 15:42:50] starting 1.5B server for phase-2 (spec decode on, default max_num_seqs)
+[expCD 15:43:48] server healthy
+[expCD 15:43:48] Experiment D: configs/phase2_mixed_n10.yaml  (5 policies x 10 repeats, ~3 h)
+  [D] [p2] policies=['nocap', 'fcfs', 'srpt', 'edf', 'adaptive'] rates=[4.0] x 10 repeats (cap=8).
+  [D] [p2] nocap λ=4 rep=0: SLO=1.00 totlat_p99=13001ms qwait_p99=8ms TPOT_p50=51ms n=93
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=1: SLO=0.98 totlat_p99=17629ms qwait_p99=3ms TPOT_p50=37ms n=59
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=2: SLO=1.00 totlat_p99=18931ms qwait_p99=5ms TPOT_p50=50ms n=77
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=3: SLO=0.93 totlat_p99=9405ms qwait_p99=5ms TPOT_p50=33ms n=55
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=4: SLO=0.87 totlat_p99=22877ms qwait_p99=6ms TPOT_p50=69ms n=86
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=5: SLO=0.95 totlat_p99=17044ms qwait_p99=3ms TPOT_p50=34ms n=60
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=6: SLO=1.00 totlat_p99=18536ms qwait_p99=7ms TPOT_p50=53ms n=71
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=7: SLO=0.85 totlat_p99=26510ms qwait_p99=10ms TPOT_p50=83ms n=78
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=8: SLO=1.00 totlat_p99=17819ms qwait_p99=8ms TPOT_p50=65ms n=75
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] nocap λ=4 rep=9: SLO=0.97 totlat_p99=26099ms qwait_p99=8ms TPOT_p50=50ms n=63
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=0: SLO=0.11 totlat_p99=17180ms qwait_p99=5962ms TPOT_p50=28ms n=58
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=1: SLO=0.00 totlat_p99=18258ms qwait_p99=5986ms TPOT_p50=31ms n=45
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=2: SLO=0.25 totlat_p99=17989ms qwait_p99=5982ms TPOT_p50=28ms n=55
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=3: SLO=0.31 totlat_p99=19241ms qwait_p99=4361ms TPOT_p50=30ms n=55
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=4: SLO=0.00 totlat_p99=23044ms qwait_p99=5998ms TPOT_p50=32ms n=46
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=5: SLO=0.00 totlat_p99=20334ms qwait_p99=5908ms TPOT_p50=28ms n=44
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=6: SLO=0.00 totlat_p99=16351ms qwait_p99=5848ms TPOT_p50=28ms n=39
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=7: SLO=0.00 totlat_p99=26490ms qwait_p99=5987ms TPOT_p50=31ms n=31
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=8: SLO=0.00 totlat_p99=23075ms qwait_p99=5973ms TPOT_p50=33ms n=41
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] fcfs λ=4 rep=9: SLO=0.00 totlat_p99=19847ms qwait_p99=5908ms TPOT_p50=29ms n=34
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=0: SLO=0.47 totlat_p99=19140ms qwait_p99=4864ms TPOT_p50=27ms n=69
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=1: SLO=0.47 totlat_p99=20553ms qwait_p99=3967ms TPOT_p50=29ms n=45
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=2: SLO=0.49 totlat_p99=18135ms qwait_p99=5173ms TPOT_p50=29ms n=60
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=3: SLO=0.64 totlat_p99=14892ms qwait_p99=5516ms TPOT_p50=30ms n=52
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=4: SLO=0.38 totlat_p99=20967ms qwait_p99=5900ms TPOT_p50=29ms n=58
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=5: SLO=0.52 totlat_p99=17098ms qwait_p99=4936ms TPOT_p50=27ms n=50
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=6: SLO=0.41 totlat_p99=23031ms qwait_p99=5262ms TPOT_p50=26ms n=50
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=7: SLO=0.36 totlat_p99=18011ms qwait_p99=5705ms TPOT_p50=26ms n=50
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=8: SLO=0.40 totlat_p99=17900ms qwait_p99=4272ms TPOT_p50=28ms n=52
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] srpt λ=4 rep=9: SLO=0.49 totlat_p99=28905ms qwait_p99=5669ms TPOT_p50=27ms n=46
+  [D] [thermal] GPU 85C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=0: SLO=0.49 totlat_p99=11218ms qwait_p99=5484ms TPOT_p50=29ms n=70
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=1: SLO=0.58 totlat_p99=23261ms qwait_p99=5253ms TPOT_p50=32ms n=51
+  [D] [thermal] GPU 85C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=2: SLO=0.56 totlat_p99=16673ms qwait_p99=5357ms TPOT_p50=31ms n=65
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=3: SLO=0.62 totlat_p99=16739ms qwait_p99=5623ms TPOT_p50=30ms n=52
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=4: SLO=0.42 totlat_p99=13884ms qwait_p99=5910ms TPOT_p50=35ms n=60
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=5: SLO=0.48 totlat_p99=15588ms qwait_p99=5357ms TPOT_p50=30ms n=49
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=6: SLO=0.37 totlat_p99=15844ms qwait_p99=5324ms TPOT_p50=33ms n=52
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=7: SLO=0.31 totlat_p99=20376ms qwait_p99=5730ms TPOT_p50=30ms n=53
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=8: SLO=0.48 totlat_p99=22137ms qwait_p99=5389ms TPOT_p50=35ms n=58
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] edf λ=4 rep=9: SLO=0.48 totlat_p99=20856ms qwait_p99=5684ms TPOT_p50=28ms n=45
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=0: SLO=0.34 totlat_p99=24317ms qwait_p99=5943ms TPOT_p50=36ms n=73
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=1: SLO=0.86 totlat_p99=16547ms qwait_p99=1771ms TPOT_p50=39ms n=59
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=2: SLO=0.47 totlat_p99=19180ms qwait_p99=2699ms TPOT_p50=53ms n=77
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=3: SLO=0.13 totlat_p99=16971ms qwait_p99=5852ms TPOT_p50=31ms n=50
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=4: SLO=0.00 totlat_p99=20743ms qwait_p99=5962ms TPOT_p50=43ms n=66
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=5: SLO=0.02 totlat_p99=19804ms qwait_p99=5796ms TPOT_p50=35ms n=47
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=6: SLO=0.37 totlat_p99=23837ms qwait_p99=5725ms TPOT_p50=46ms n=69
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=7: SLO=0.24 totlat_p99=24092ms qwait_p99=5958ms TPOT_p50=45ms n=57
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=8: SLO=0.41 totlat_p99=20709ms qwait_p99=4074ms TPOT_p50=51ms n=75
+  [D] [thermal] GPU 84C > 77C — cooling down before measuring ...
+  [D] [thermal] resumed at 77C
+  [D] [p2] adaptive λ=4 rep=9: SLO=0.00 totlat_p99=28054ms qwait_p99=5970ms TPOT_p50=41ms n=41
+  [D] [p2] wrote phase2_mixed_n10_policy_summary.json and 6 figures:
+  [D]      results/figures/phase2_mixed_n10_slo_attainment.png
+  [D]      results/figures/phase2_mixed_n10_total_latency_p99.png
+  [D]      results/figures/phase2_mixed_n10_queue_wait_p99.png
+  [D]      results/figures/phase2_mixed_n10_tpot_p50.png
+  [D]      results/figures/phase2_mixed_n10_byclass_slo.png
+  [D]      results/figures/phase2_mixed_n10_byclass_totlat_p99.png
+[expCD 18:06:39] Experiment D done (rc=0)
+[expCD 18:06:39] stopping server pid 2273704
+[expCD 18:06:43] gpu free (used=5 MiB)
+[expCD 18:06:43] regenerating derived artefacts
+  [fit] observations: 184 total, 123 healthy (59 excluded for failed requests, 3 for silent output truncation)
+  [fit]   truncated: 20260707T014238Z_modelval_mixed_r4_rep2.json  N=140.8 X=31.0 tok/s actual/requested=0.055
+  [fit]   truncated: 20260810T040936Z_expB_qwen1.5b_r4_rep2.json  N=139.8 X=31.6 tok/s actual/requested=0.056
+  [fit]   truncated: 20260810T045421Z_expB_qwen3b_r5_rep0.json  N=134.4 X=13.8 tok/s actual/requested=0.024
+  [fit] 
+  [fit] POOLED (all workloads)  (n=123, N in [0.36, 129.2])
+  [fit]   r0      =    37.73 tok/s/seq  95% CI [33.40, 48.79]
+  [fit]   mu_max  =    311.3 tok/s       95% CI [277.5, 343.6]
+  [fit]   N*      =     8.25 seqs        95% CI [5.99, 9.36]
+  [fit]   R^2     =   0.2609   RMSE = 118.6 tok/s  MAPE = 59.2%
+  [fit]   points below/above knee: 53/70   plateau slope = 0.993 tok/s/seq
+  [fit] 
+  [fit] workload `expB_qwen1.5b`  (n=17, N in [0.37, 117.0])
+  [fit]   r0      =     8.52 tok/s/seq  95% CI [6.36, 12.21]
+  [fit]   mu_max  =    355.2 tok/s       95% CI [281.5, 436.5]
+  [fit]   N*      =    41.69 seqs        95% CI [28.04, 62.56]
+  [fit]   R^2     =   0.8127   RMSE = 56.5 tok/s  MAPE = 32.4%
+  [fit]   points below/above knee: 11/6   plateau slope = 3.060 tok/s/seq
+  [fit] 
+  [fit] workload `expB_qwen3b`  (n=18, N in [0.90, 129.2])
+  [fit]   r0      =     4.06 tok/s/seq  95% CI [3.85, 4.59]
+  [fit]   mu_max  =    470.8 tok/s       95% CI [438.9, 487.6]
+  [fit]   N*      =   116.07 seqs        95% CI [100.98, 126.21]
+  [fit]   R^2     =   0.9504   RMSE = 32.0 tok/s  MAPE = 22.8%
+  [fit]   points below/above knee: 15/3   plateau slope = 1.732 tok/s/seq
+  [fit] 
+  [fit] workload `modelval_mixed`  (n=17, N in [0.36, 116.8])
+  [fit]   r0      =     8.65 tok/s/seq  95% CI [6.61, 12.31]
+  [fit]   mu_max  =    355.7 tok/s       95% CI [283.0, 435.3]
+  [fit]   N*      =    41.10 seqs        95% CI [28.26, 61.04]
+  [fit]   R^2     =   0.8254   RMSE = 54.5 tok/s  MAPE = 29.1%
+  [fit]   points below/above knee: 11/6   plateau slope = 3.009 tok/s/seq
+  [fit] 
+  [fit] workload `phase1_mixed`  (n=9, N in [1.37, 60.6])
+  [fit]   r0      =    12.60 tok/s/seq  95% CI [11.93, 14.86]
+  [fit]   mu_max  =    247.5 tok/s       95% CI [240.3, 253.0]
+  [fit]   N*      =    19.65 seqs        95% CI [16.69, 20.82]
+  [fit]   R^2     =   0.9826   RMSE = 11.0 tok/s  MAPE = 12.7%
+  [fit]   points below/above knee: 6/3   plateau slope = -0.606 tok/s/seq
+  [fit] 
+  [fit] workload `phase1_validation`  (n=6, N in [1.24, 32.6])
+  [fit]   r0      =    63.27 tok/s/seq  95% CI [63.27, 63.27]
+  [fit]   mu_max  =    141.2 tok/s       95% CI [112.6, 170.6]
+  [fit]   N*      =     2.23 seqs        95% CI [1.78, 2.70]
+  [fit]   R^2     =   0.3723   RMSE = 30.3 tok/s  MAPE = 21.1%
+  [fit]   points below/above knee: 1/5   plateau slope = 3.437 tok/s/seq
+  [fit] 
+  [fit] workload `phase2_chat`  (n=23, N in [3.63, 11.8])
+  [fit]   r0      =    58.23 tok/s/seq  95% CI [56.05, 61.01]
+  [fit]   mu_max  =    349.2 tok/s       95% CI [308.5, 387.8]
+  [fit]   N*      =     6.00 seqs        95% CI [5.26, 6.72]
+  [fit]   R^2     =   0.4787   RMSE = 55.4 tok/s  MAPE = 14.7%
+  [fit]   points below/above knee: 10/13   plateau slope = 30.529 tok/s/seq
+  [fit] 
+  [fit] workload `phase2_mixed`  (n=19, N in [3.56, 18.2])
+  [fit]   r0      =    50.57 tok/s/seq  95% CI [45.46, 54.35]
+  [fit]   mu_max  =    451.9 tok/s       95% CI [398.7, 549.3]
+  [fit]   N*      =     8.94 seqs        95% CI [7.65, 11.79]
+  [fit]   R^2     =   0.8621   RMSE = 38.8 tok/s  MAPE = 11.5%
+  [fit]   points below/above knee: 15/4   plateau slope = 16.731 tok/s/seq
+  [fit] 
+  [fit] workload `phase2_mixed_n10`  (n=14, N in [5.39, 22.8])
+  [fit]   r0      =    39.75 tok/s/seq  95% CI [36.75, 46.06]
+  [fit]   mu_max  =    512.5 tok/s       95% CI [485.7, 557.6]
+  [fit]   N*      =    12.89 seqs        95% CI [10.64, 14.89]
+  [fit]   R^2     =   0.7335   RMSE = 42.6 tok/s  MAPE = 8.7%
+  [fit]   points below/above knee: 7/7   plateau slope = 9.161 tok/s/seq
+  [fit] 
+  [fit] wrote results/model/queueing_model_fit.json
+  [expB] wrote /home/abburigireesh/vllm_scheduler/results/expB/expB_analysis.json
+  [expB] wrote /home/abburigireesh/vllm_scheduler/docs/experiment_b.md
+  [expB] 
+  [expB] 1.5b: 17/21 runs used, N in [0.4, 117.0]
+  [expB]    KV per sequence = 0.1103% [0.1082, 0.1146]
+  [expB]    throughput slope: low third 9.69 -> high third 3.06 tok/s/seq (ratio 0.32; a plateau would be ~0)
+  [expB]    acceptance 0.723 +/- 0.013
+  [expB] 
+  [expB] 3b: 18/21 runs used, N in [0.9, 129.2]
+  [expB]    KV per sequence = 0.2501% [0.2435, 0.2567]
+  [expB]    throughput slope: low third 5.12 -> high third 3.99 tok/s/seq (ratio 0.78; a plateau would be ~0)
+  [expB]    acceptance 0.589 +/- 0.011
+  [expB] 
+  [expB] KV per sequence, 3B / 1.5B = 2.27x [2.17, 2.34]  (predicted from architecture: 2.21x)
+  [expB] acceptance rate 0.723 -> 0.589 (g = -5.66, Welch p = 1.33e-17)
+  [stats] /home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  [stats]   res = hypotest_fun_out(*samples, **kwds)
+  [stats] runs loaded      : 113
+  [stats] cells            : 28  (5 config x rate groups)
+  [stats] contrasts        : 207 vs 'fcfs'
+  [stats] significant raw  : 32
+  [stats] significant Holm : 9
+  [stats] wrote            : results/stats/STATISTICS.md, policy_stats.json, policy_contrasts.json
+  [figs] runs=192  stats=y  model=y  expA=y  expB=y
+  [figs] 
+  [figs] wrote 20 files to results/figures/paper:
+  [figs]   fig01_architecture
+  [figs]   fig02_throughput_vs_concurrency
+  [figs]   fig03_kv_vs_concurrency
+  [figs]   fig04_memory_vs_concurrency
+  [figs]   fig05_bottleneck
+  [figs]   fig06_aggregate_slo
+  [figs]   fig07_perclass_slo_heatmap
+  [figs]   fig08_model_vs_measured
+  [figs]   fig09_regime_diagram
+  [figs]   fig10_model_size_comparison
+[expCD 18:07:34] EXPERIMENTS C AND D COMPLETE
+[expCD 18:07:34] summary:
+[expCD 18:07:34]   C/spec_on: 3 trials
+[expCD 18:07:34]   C/spec_off: 3 trials
+[expCD 18:07:34]   D: 50 / 50 runs
+[expCD 18:07:34]   3B probe: 10 / 10 trials
+[expCD 18:07:34] read next: docs/experiment_b.md, results/stats/STATISTICS.md, results/figures/paper/

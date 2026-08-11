@@ -199,7 +199,7 @@
       },
       {
         "arm": "3b",
-        "source": "probe trial 1",
+        "source": "probea trial 1",
         "failed_alloc_mib": 742.0,
         "free_at_failure_mib": 610.0,
         "alloc_site": "batch_expansion.py:227 in _contract_batch",
@@ -213,13 +213,55 @@
       },
       {
         "arm": "3b",
-        "source": "probe trial 2",
+        "source": "probea trial 2",
         "failed_alloc_mib": 742.0,
         "free_at_failure_mib": 588.0,
         "alloc_site": "batch_expansion.py:227 in _contract_batch",
         "telemetry": {
           "peak_num_running": 256.0,
           "peak_kv_occupancy": 0.595552466990966
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "3b",
+        "source": "probeb trial 2",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 584.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.5950891823025248
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "3b",
+        "source": "probeb trial 3",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 590.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.5909196201065554
+        },
+        "n_at_failing_step": 256.0,
+        "implied_n_from_alloc": 256.0431339511373,
+        "predicted_mib_at_n": 741.875
+      },
+      {
+        "arm": "3b",
+        "source": "probeb trial 4",
+        "failed_alloc_mib": 742.0,
+        "free_at_failure_mib": 694.0,
+        "alloc_site": "batch_expansion.py:227 in _contract_batch",
+        "telemetry": {
+          "peak_num_running": 256.0,
+          "peak_kv_occupancy": 0.6086402594394256
         },
         "n_at_failing_step": 256.0,
         "implied_n_from_alloc": 256.0431339511373,
@@ -259,6 +301,48 @@
       "pool_ratio": 1.719409282700422,
       "predicted_occupancy_ratio": 2.2106690777576854,
       "vllm_reported_max_concurrency_ratio": 2.2061611374407586
+    }
+  },
+  "reproduction": {
+    "1.5b": {
+      "trials": 3,
+      "died": 3,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.4385029681293942,
+        1.0
+      ],
+      "peak_kv_when_died": [
+        28.166133515129268,
+        28.674812522942993,
+        28.486024437568823
+      ],
+      "peak_kv_when_survived": [],
+      "survivor_exceeds_death_kv": false
+    },
+    "3b": {
+      "trials": 10,
+      "died": 5,
+      "rate": 0.5,
+      "wilson_ci95": [
+        0.2365930904679055,
+        0.7634069095320946
+      ],
+      "peak_kv_when_died": [
+        57.36622654621264,
+        59.5552466990966,
+        59.50891823025248,
+        59.09196201065554,
+        60.86402594394256
+      ],
+      "peak_kv_when_survived": [
+        80.71577484364141,
+        82.62682418346074,
+        81.29488070419274,
+        80.82001389854065,
+        80.94741718786193
+      ],
+      "survivor_exceeds_death_kv": true
     }
   }
 }

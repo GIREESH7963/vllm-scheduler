@@ -1,0 +1,73 @@
+
+[trial 1] cooling / waiting for a free GPU ...
+[trial 1] GPU used=0.44GiB temp=49.0C -> starting server
+    stage λ=2: ok=111 fail=0 running=1.0 kv=0.002779708130646319 mem=12.50GiB temp=79.0C
+    stage λ=3: ok=42 fail=0 running=123.0 kv=0.3093583507065092 mem=13.71GiB temp=85.0C
+    stage λ=4: ok=13 fail=0 running=256.0 kv=0.6330785267546908 mem=14.64GiB temp=87.0C
+    stage λ=5: ok=72 fail=0 running=256.0 kv=0.7338429464906184 mem=14.74GiB temp=88.0C
+    stage λ=6: ok=70 fail=0 running=253.0 kv=0.797312948807042 mem=14.64GiB temp=87.0C
+    stage λ=8: ok=48 fail=0 running=255.0 kv=0.8211721102617558 mem=14.10GiB temp=86.0C
+[trial 1] wrote 20260810T135853Z_expA_trial1.json
+
+[trial 2] cooling / waiting for a free GPU ...
+[trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=67 fail=0 running=46.0 kv=0.1148946027333797 mem=14.30GiB temp=84.0C
+    stage λ=3: ok=7 fail=0 running=193.0 kv=0.43514014361825337 mem=13.95GiB temp=86.0C
+[trial 2] wrote 20260810T140636Z_expA_trial2.json
+
+[trial 3] cooling / waiting for a free GPU ...
+[trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=68 fail=0 running=45.0 kv=0.11593699328237206 mem=14.31GiB temp=84.0C
+    stage λ=3: ok=6 fail=0 running=193.0 kv=0.43548760713458423 mem=13.92GiB temp=86.0C
+[trial 3] wrote 20260810T141045Z_expA_trial3.json
+
+[trial 4] cooling / waiting for a free GPU ...
+[trial 4] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=71 fail=0 running=41.0 kv=0.1119990734306231 mem=14.23GiB temp=84.0C
+    stage λ=3: ok=7 fail=0 running=189.0 kv=0.43305536252026866 mem=13.52GiB temp=86.0C
+[trial 4] wrote 20260810T141453Z_expA_trial4.json
+
+[trial 5] cooling / waiting for a free GPU ...
+[trial 5] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=60 fail=0 running=52.0 kv=0.12821403752605975 mem=12.28GiB temp=84.0C
+    stage λ=3: ok=6 fail=0 running=201.0 kv=0.4451007644197359 mem=14.88GiB temp=86.0C
+    stage λ=4: ok=57 fail=0 running=252.0 kv=0.6528839471855455 mem=14.93GiB temp=86.0C
+    stage λ=5: ok=72 fail=0 running=252.0 kv=0.7507528376187167 mem=12.64GiB temp=86.0C
+    stage λ=6: ok=63 fail=0 running=256.0 kv=0.7861941162844568 mem=14.07GiB temp=86.0C
+    stage λ=8: ok=56 fail=0 running=256.0 kv=0.8007875839703498 mem=14.83GiB temp=86.0C
+[trial 5] wrote 20260810T141913Z_expA_trial5.json
+
+[trial 6] cooling / waiting for a free GPU ...
+[trial 6] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=64 fail=0 running=48.0 kv=0.12010655547834148 mem=14.83GiB temp=84.0C
+    stage λ=3: ok=5 fail=0 running=198.0 kv=0.4387305999536716 mem=14.44GiB temp=86.0C
+    stage λ=4: ok=51 fail=0 running=256.0 kv=0.6643502432244615 mem=13.63GiB temp=86.0C
+    stage λ=5: ok=75 fail=0 running=256.0 kv=0.7634931665508455 mem=14.81GiB temp=86.0C
+    stage λ=6: ok=63 fail=0 running=256.0 kv=0.78758397034978 mem=14.43GiB temp=86.0C
+    stage λ=8: ok=56 fail=0 running=256.0 kv=0.8063470002316424 mem=14.71GiB temp=86.0C
+[trial 6] wrote 20260810T142720Z_expA_trial6.json
+
+[trial 7] cooling / waiting for a free GPU ...
+[trial 7] GPU used=0.44GiB temp=77.0C -> starting server
+    stage λ=2: ok=71 fail=0 running=42.0 kv=0.11211489460273338 mem=13.83GiB temp=84.0C
+    stage λ=3: ok=7 fail=0 running=189.0 kv=0.4277275886031967 mem=13.42GiB temp=86.0C
+    stage λ=4: ok=45 fail=0 running=253.0 kv=0.6621496409543665 mem=14.65GiB temp=86.0C
+    stage λ=5: ok=72 fail=0 running=256.0 kv=0.7706740792216817 mem=14.95GiB temp=86.0C
+    stage λ=6: ok=69 fail=0 running=252.0 kv=0.7622191336576326 mem=12.09GiB temp=85.0C
+    stage λ=8: ok=50 fail=0 running=256.0 kv=0.8094741718786194 mem=14.71GiB temp=86.0C
+[trial 7] wrote 20260810T143534Z_expA_trial7.json
+
+==============================================================================
+EXPERIMENT A SUMMARY
+==============================================================================
+trial  died  alloc MiB                               site    run     kv%  mem GiB
+    1 False        nan                               None    256   82.63    14.10
+    2  True      742.0 batch_expansion.py:227 in _contrac    256   59.51     0.44
+    3  True      742.0 batch_expansion.py:227 in _contrac    256   59.09     0.44
+    4  True      742.0 batch_expansion.py:227 in _contrac    256   60.86    14.84
+    5 False        nan                               None    256   81.29    14.83
+    6 False        nan                               None    256   80.82    14.71
+    7 False        nan                               None    256   80.95    14.71
+
+reproduced OOM in 3/7 independent trials
+wrote results/expB/oom3b_more/expA_summary.json

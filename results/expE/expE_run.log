@@ -1,0 +1,103 @@
+[expE 14:39:17] waiting for experiments C and D to finish
+[expE 18:08:30] C and D finished
+[expE 18:08:30] Experiment E [k2]: configs/scorer_k2_qwen3b.yaml
+  [E:k2] 
+  [E:k2] [trial 1] cooling / waiting for a free GPU ...
+  [E:k2] [trial 1] GPU used=0.44GiB temp=65.0C -> starting server
+  [E:k2]     stage λ=2: ok=34 fail=0 running=78.0 kv=0.5843190266982088 mem=12.64GiB temp=85.0C
+  [E:k2]     stage λ=3: ok=65 fail=0 running=116.0 kv=0.9675566069618114 mem=14.30GiB temp=85.0C
+  [E:k2]     stage λ=4: ok=58 fail=0 running=106.0 kv=0.9371409259885096 mem=14.30GiB temp=85.0C
+  [E:k2]     stage λ=5: ok=45 fail=0 running=103.0 kv=0.9898614396755661 mem=14.30GiB temp=85.0C
+  [E:k2]     stage λ=6: ok=66 fail=0 running=116.0 kv=0.9648529908752957 mem=14.30GiB temp=85.0C
+  [E:k2]     stage λ=8: ok=69 fail=0 running=101.0 kv=0.9165258533288273 mem=14.30GiB temp=84.0C
+  [E:k2] [trial 1] wrote 20260810T180830Z_expA_trial1.json
+  [E:k2] 
+  [E:k2] [trial 2] cooling / waiting for a free GPU ...
+  [E:k2] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [E:k2]     stage λ=2: ok=21 fail=0 running=91.0 kv=0.6860425819533627 mem=11.91GiB temp=85.0C
+  [E:k2]     stage λ=3: ok=64 fail=0 running=118.0 kv=0.9851301115241635 mem=13.21GiB temp=86.0C
+  [E:k2]     stage λ=4: ok=58 fail=0 running=110.0 kv=0.9624873267995945 mem=13.21GiB temp=86.0C
+  [E:k2]     stage λ=5: ok=50 fail=0 running=105.0 kv=0.9827644474484624 mem=13.21GiB temp=85.0C
+  [E:k2]     stage λ=6: ok=64 fail=0 running=121.0 kv=0.948293342345387 mem=13.21GiB temp=84.0C
+  [E:k2]     stage λ=8: ok=76 fail=0 running=102.0 kv=0.9283541737073335 mem=13.21GiB temp=84.0C
+  [E:k2] [trial 2] wrote 20260810T181730Z_expA_trial2.json
+  [E:k2] 
+  [E:k2] [trial 3] cooling / waiting for a free GPU ...
+  [E:k2] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [E:k2]     stage λ=2: ok=21 fail=0 running=91.0 kv=0.683338965866847 mem=11.57GiB temp=85.0C
+  [E:k2]     stage λ=3: ok=63 fail=0 running=114.0 kv=0.9891855356539372 mem=12.87GiB temp=85.0C
+  [E:k2]     stage λ=4: ok=58 fail=0 running=111.0 kv=0.9773572152754308 mem=12.87GiB temp=85.0C
+  [E:k2]     stage λ=5: ok=50 fail=0 running=103.0 kv=0.9682325109834403 mem=12.87GiB temp=85.0C
+  [E:k2]     stage λ=6: ok=60 fail=0 running=123.0 kv=0.9851301115241635 mem=12.88GiB temp=84.0C
+  [E:k2]     stage λ=8: ok=68 fail=0 running=111.0 kv=0.9834403514700912 mem=12.88GiB temp=84.0C
+  [E:k2] [trial 3] wrote 20260810T182714Z_expA_trial3.json
+  [E:k2] 
+  [E:k2] ==============================================================================
+  [E:k2] EXPERIMENT A SUMMARY
+  [E:k2] ==============================================================================
+  [E:k2] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [E:k2]     1 False        nan                               None    148   99.97    14.30
+  [E:k2]     2 False        nan                               None    143   99.93    13.21
+  [E:k2]     3 False        nan                               None    143   99.90    12.88
+  [E:k2] 
+  [E:k2] reproduced OOM in 0/3 independent trials
+  [E:k2] wrote results/expE/k2/expA_summary.json
+[expE 18:37:00] Experiment E [k2] done (rc=0)
+[expE 18:37:20] Experiment E [k7]: configs/scorer_k7_qwen3b.yaml
+  [E:k7] 
+  [E:k7] [trial 1] cooling / waiting for a free GPU ...
+  [E:k7] [trial 1] GPU used=0.44GiB temp=77.0C -> starting server
+  [E:k7]     stage λ=2: ok=13 fail=0 running=99.0 kv=0.7022642784724569 mem=14.31GiB temp=85.0C
+  [E:k7]     stage λ=3: ok=63 fail=0 running=113.0 kv=0.9733017911456573 mem=14.45GiB temp=85.0C
+  [E:k7]     stage λ=4: ok=51 fail=0 running=112.0 kv=0.9891855356539372 mem=14.45GiB temp=85.0C
+  [E:k7]     stage λ=5: ok=42 fail=0 running=108.0 kv=0.9871578235890504 mem=14.45GiB temp=84.0C
+  [E:k7]     stage λ=6: ok=48 fail=0 running=113.0 kv=0.9564041906049341 mem=14.45GiB temp=84.0C
+  [E:k7]     stage λ=8: ok=70 fail=0 running=112.0 kv=0.9885096316323082 mem=14.45GiB temp=84.0C
+  [E:k7] [trial 1] wrote 20260810T183720Z_expA_trial1.json
+  [E:k7] 
+  [E:k7] [trial 2] cooling / waiting for a free GPU ...
+  [E:k7] [trial 2] GPU used=0.44GiB temp=77.0C -> starting server
+  [E:k7]     stage λ=2: ok=13 fail=0 running=99.0 kv=0.7036160865157148 mem=14.69GiB temp=85.0C
+  [E:k7]     stage λ=3: ok=63 fail=0 running=113.0 kv=0.9787090233186887 mem=14.39GiB temp=85.0C
+  [E:k7]     stage λ=4: ok=52 fail=0 running=111.0 kv=0.9915511997296383 mem=14.39GiB temp=85.0C
+  [E:k7]     stage λ=5: ok=42 fail=0 running=107.0 kv=0.9672186549509969 mem=14.39GiB temp=84.0C
+  [E:k7]     stage λ=6: ok=56 fail=0 running=118.0 kv=0.9655288948969246 mem=14.39GiB temp=84.0C
+  [E:k7]     stage λ=8: ok=79 fail=0 running=110.0 kv=0.9800608313619465 mem=14.39GiB temp=84.0C
+  [E:k7] [trial 2] wrote 20260810T184645Z_expA_trial2.json
+  [E:k7] 
+  [E:k7] [trial 3] cooling / waiting for a free GPU ...
+  [E:k7] [trial 3] GPU used=0.44GiB temp=77.0C -> starting server
+  [E:k7]     stage λ=2: ok=16 fail=0 running=96.0 kv=0.6982088543426833 mem=13.77GiB temp=85.0C
+  [E:k7]     stage λ=3: ok=60 fail=0 running=113.0 kv=0.9749915511997297 mem=13.53GiB temp=85.0C
+  [E:k7]     stage λ=4: ok=52 fail=0 running=110.0 kv=0.9895234876647516 mem=13.53GiB temp=85.0C
+  [E:k7]     stage λ=5: ok=41 fail=0 running=109.0 kv=0.9912132477188239 mem=13.53GiB temp=84.0C
+  [E:k7]     stage λ=6: ok=61 fail=0 running=123.0 kv=0.9668807029401825 mem=13.53GiB temp=84.0C
+  [E:k7]     stage λ=8: ok=65 fail=0 running=108.0 kv=0.9689084150050693 mem=13.53GiB temp=84.0C
+  [E:k7] [trial 3] wrote 20260810T185634Z_expA_trial3.json
+  [E:k7] 
+  [E:k7] ==============================================================================
+  [E:k7] EXPERIMENT A SUMMARY
+  [E:k7] ==============================================================================
+  [E:k7] trial  died  alloc MiB                               site    run     kv%  mem GiB
+  [E:k7]     1 False        nan                               None    149   99.93    14.45
+  [E:k7]     2 False        nan                               None    147   99.76    14.39
+  [E:k7]     3 False        nan                               None    148   99.93    13.53
+  [E:k7] 
+  [E:k7] reproduced OOM in 0/3 independent trials
+  [E:k7] wrote results/expE/k7/expA_summary.json
+[expE 19:06:17] Experiment E [k7] done (rc=0)
+[expE 19:06:17] SKIPPING E-3: meta-llama/Llama-3.2-1B-Instruct is gated and no usable HF token was found.
+[expE 19:06:17]   To enable: accept the licence at https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct,
+[expE 19:06:17]   export HF_TOKEN=hf_..., then re-run ./phase3-limits/run_expE.sh
+[expE 19:06:17] EXPERIMENT E COMPLETE
+  arm              trial  died   alloc MiB      N  MiB/seq  predicted
+  k2               1      False        nan    148      nan      1.739
+  k2               2      False        nan    143      nan      1.739
+  k2               3      False        nan    143      nan      1.739
+  k7               1      False        nan    149      nan      4.637
+  k7               2      False        nan    147      nan      4.637
+  k7               3      False        nan    148      nan      4.637
+  
+  The MiB/seq column is the test: it must match the prediction, which is the only
+  quantity in the law that (k+1) and V control. N is free to differ between arms.
+[expE 19:06:17] read next: results/expE/, then fold into docs/experiment_b.md 5

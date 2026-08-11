@@ -1,0 +1,7880 @@
+{
+  "experiment": "A_oom_reproduction",
+  "trial": 3,
+  "timestamp_utc": "20260810T141045Z",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "server_argv": [
+    "/home/abburigireesh/vllm_scheduler/.venv/bin/vllm",
+    "serve",
+    "Qwen/Qwen2.5-3B-Instruct",
+    "--port",
+    "8000",
+    "--dtype",
+    "float16",
+    "--gpu-memory-utilization",
+    "0.9",
+    "--speculative-config",
+    "{\"method\": \"ngram\", \"num_speculative_tokens\": 4, \"prompt_lookup_min\": 2, \"prompt_lookup_max\": 5}"
+  ],
+  "pre_start_gpu_used_gib": 0.44256591796875,
+  "pre_start_temp_c": 77.0,
+  "ramp": {
+    "rates": [
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      8.0
+    ],
+    "stage_s": 60,
+    "seed": 4242
+  },
+  "startup_s": 64.7,
+  "died": true,
+  "death_stage": 4.0,
+  "death_reason": "process_exited",
+  "stage_log": [
+    {
+      "rate": 2.0,
+      "ok": 68,
+      "failed": 0,
+      "num_running": 45.0,
+      "kv_occupancy": 0.11593699328237206,
+      "mem_used_gib": 14.30859375,
+      "temp_c": 84.0
+    },
+    {
+      "rate": 3.0,
+      "ok": 6,
+      "failed": 0,
+      "num_running": 193.0,
+      "kv_occupancy": 0.43548760713458423,
+      "mem_used_gib": 13.923828125,
+      "temp_c": 86.0
+    }
+  ],
+  "requests_ok": 383,
+  "requests_failed": 25,
+  "last_error": "ConnectError: All connection attempts failed",
+  "pre_failure_window": [
+    {
+      "t": 1786371184.5416129,
+      "mono": 4273258.179950447,
+      "kv_occupancy": 0.12520268705119297,
+      "num_running": 47.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 84.0,
+      "power_w": 43.948,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371184.8205688,
+      "mono": 4273258.458906524,
+      "kv_occupancy": 0.12520268705119297,
+      "num_running": 47.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371185.0922487,
+      "mono": 4273258.730586162,
+      "kv_occupancy": 0.12520268705119297,
+      "num_running": 47.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 84.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371185.3640852,
+      "mono": 4273259.002422781,
+      "kv_occupancy": 0.12520268705119297,
+      "num_running": 47.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371185.6371644,
+      "mono": 4273259.275501835,
+      "kv_occupancy": 0.12520268705119297,
+      "num_running": 47.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371185.9088593,
+      "mono": 4273259.54719674,
+      "kv_occupancy": 0.13423673847579343,
+      "num_running": 50.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371186.1820908,
+      "mono": 4273259.82042841,
+      "kv_occupancy": 0.13423673847579343,
+      "num_running": 50.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371186.45663,
+      "mono": 4273260.094967451,
+      "kv_occupancy": 0.13632151957377814,
+      "num_running": 52.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 20.0,
+      "temp_c": 84.0,
+      "power_w": 49.481,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371186.7296138,
+      "mono": 4273260.367951253,
+      "kv_occupancy": 0.13678480426221917,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.3515625,
+      "mem_free_gib": 1.6484375,
+      "util_gpu_pct": 93.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 41.742,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.8984375
+        }
+      ]
+    },
+    {
+      "t": 1786371187.0021636,
+      "mono": 4273260.640501288,
+      "kv_occupancy": 0.1379430159833217,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.65234375,
+      "mem_free_gib": 1.34765625,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 44.238,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.19921875
+        }
+      ]
+    },
+    {
+      "t": 1786371187.2748659,
+      "mono": 4273260.913203582,
+      "kv_occupancy": 0.1379430159833217,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.65234375,
+      "mem_free_gib": 1.34765625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.19921875
+        }
+      ]
+    },
+    {
+      "t": 1786371187.5478446,
+      "mono": 4273261.186182149,
+      "kv_occupancy": 0.1379430159833217,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.65234375,
+      "mem_free_gib": 1.34765625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.948,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.19921875
+        }
+      ]
+    },
+    {
+      "t": 1786371187.8231559,
+      "mono": 4273261.461493623,
+      "kv_occupancy": 0.14199675700718095,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.65234375,
+      "mem_free_gib": 1.34765625,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 17.0,
+      "temp_c": 84.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.19921875
+        }
+      ]
+    },
+    {
+      "t": 1786371188.0965395,
+      "mono": 4273261.734877022,
+      "kv_occupancy": 0.14269168403984245,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 90.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 41.282,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371188.3699548,
+      "mono": 4273262.008292514,
+      "kv_occupancy": 0.14280750521195273,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 42.422,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371188.6426501,
+      "mono": 4273262.280987691,
+      "kv_occupancy": 0.14280750521195273,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 16.0,
+      "temp_c": 84.0,
+      "power_w": 41.767,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371188.9195096,
+      "mono": 4273262.557847525,
+      "kv_occupancy": 0.1350474866805652,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 90.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371189.1927395,
+      "mono": 4273262.831077244,
+      "kv_occupancy": 0.13562659254111653,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 42.713,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371189.4674602,
+      "mono": 4273263.105797663,
+      "kv_occupancy": 0.1350474866805652,
+      "num_running": 52.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 40.991,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371189.7397912,
+      "mono": 4273263.378128733,
+      "kv_occupancy": 0.13620569840166785,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371190.0124319,
+      "mono": 4273263.650769642,
+      "kv_occupancy": 0.13620569840166785,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 94.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 41.742,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371190.286407,
+      "mono": 4273263.924744673,
+      "kv_occupancy": 0.13632151957377814,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 22.0,
+      "temp_c": 84.0,
+      "power_w": 45.887,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371190.5597928,
+      "mono": 4273264.198130305,
+      "kv_occupancy": 0.13632151957377814,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 16.0,
+      "temp_c": 84.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371190.83275,
+      "mono": 4273264.471087553,
+      "kv_occupancy": 0.13771137363910124,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 41.742,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371191.1068685,
+      "mono": 4273264.745206186,
+      "kv_occupancy": 0.13817465832754228,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 20.0,
+      "temp_c": 84.0,
+      "power_w": 46.081,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371191.379197,
+      "mono": 4273265.017534441,
+      "kv_occupancy": 0.13886958536020388,
+      "num_running": 57.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371191.6516526,
+      "mono": 4273265.289990188,
+      "kv_occupancy": 0.13886958536020388,
+      "num_running": 57.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371191.9244595,
+      "mono": 4273265.562797072,
+      "kv_occupancy": 0.13886958536020388,
+      "num_running": 57.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371192.1978984,
+      "mono": 4273265.83623617,
+      "kv_occupancy": 0.1438498957609451,
+      "num_running": 59.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 16.0,
+      "temp_c": 84.0,
+      "power_w": 41.282,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371192.46983,
+      "mono": 4273266.108167836,
+      "kv_occupancy": 0.1438498957609451,
+      "num_running": 59.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.97265625,
+      "mem_free_gib": 1.02734375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 42.422,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.51953125
+        }
+      ]
+    },
+    {
+      "t": 1786371192.7423131,
+      "mono": 4273266.380650807,
+      "kv_occupancy": 0.1423442205235117,
+      "num_running": 57.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 88.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 42.422,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371193.0149183,
+      "mono": 4273266.65325616,
+      "kv_occupancy": 0.14292332638406302,
+      "num_running": 57.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 16.0,
+      "temp_c": 84.0,
+      "power_w": 41.476,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371193.2899806,
+      "mono": 4273266.928318207,
+      "kv_occupancy": 0.13458420199212418,
+      "num_running": 55.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 39.728,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371193.568809,
+      "mono": 4273267.207146493,
+      "kv_occupancy": 0.13458420199212418,
+      "num_running": 55.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 88.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 84.0,
+      "power_w": 40.893,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371193.8413346,
+      "mono": 4273267.479672273,
+      "kv_occupancy": 0.13493166550845492,
+      "num_running": 55.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 94.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 44.432,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371194.1165595,
+      "mono": 4273267.754897335,
+      "kv_occupancy": 0.13608987722955757,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 42.81,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371194.3923786,
+      "mono": 4273268.030716075,
+      "kv_occupancy": 0.13608987722955757,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 41.839,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371194.6647444,
+      "mono": 4273268.303082172,
+      "kv_occupancy": 0.1365531619179986,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 42.324,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371194.9402025,
+      "mono": 4273268.578540167,
+      "kv_occupancy": 0.13574241371322682,
+      "num_running": 55.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 90.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371195.213684,
+      "mono": 4273268.852021724,
+      "kv_occupancy": 0.13539495019689596,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 46.081,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371195.485052,
+      "mono": 4273269.123389693,
+      "kv_occupancy": 0.13608987722955757,
+      "num_running": 55.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 93.0,
+      "util_mem_pct": 17.0,
+      "temp_c": 84.0,
+      "power_w": 40.699,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371195.7600589,
+      "mono": 4273269.398396581,
+      "kv_occupancy": 0.13608987722955757,
+      "num_running": 55.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 84.0,
+      "power_w": 45.859,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371196.0321631,
+      "mono": 4273269.670500918,
+      "kv_occupancy": 0.13551077136900624,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 88.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 42.422,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371196.3044245,
+      "mono": 4273269.942762006,
+      "kv_occupancy": 0.13539495019689596,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 89.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 36.762,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371196.5763717,
+      "mono": 4273270.214709224,
+      "kv_occupancy": 0.13539495019689596,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371196.8510869,
+      "mono": 4273270.48942453,
+      "kv_occupancy": 0.1366689830901089,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 42.932,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371197.1305995,
+      "mono": 4273270.76893702,
+      "kv_occupancy": 0.13678480426221917,
+      "num_running": 53.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 91.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 43.004,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371197.4043722,
+      "mono": 4273271.042709917,
+      "kv_occupancy": 0.13168867268936757,
+      "num_running": 52.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 36.956,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371197.676643,
+      "mono": 4273271.314980503,
+      "kv_occupancy": 0.1322677785499189,
+      "num_running": 52.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 20.0,
+      "temp_c": 84.0,
+      "power_w": 36.956,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371197.9501767,
+      "mono": 4273271.588514333,
+      "kv_occupancy": 0.13168867268936757,
+      "num_running": 51.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 39.46,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371198.2242785,
+      "mono": 4273271.862616167,
+      "kv_occupancy": 0.13168867268936757,
+      "num_running": 51.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 91.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371198.49846,
+      "mono": 4273272.136797718,
+      "kv_occupancy": 0.12995135510771372,
+      "num_running": 49.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 17.0,
+      "temp_c": 84.0,
+      "power_w": 43.851,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371198.7720668,
+      "mono": 4273272.410404335,
+      "kv_occupancy": 0.1292564280750521,
+      "num_running": 48.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 42.422,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371199.04379,
+      "mono": 4273272.682127584,
+      "kv_occupancy": 0.12334954829742872,
+      "num_running": 47.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 44.168,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371199.3164752,
+      "mono": 4273272.954812707,
+      "kv_occupancy": 0.12253880009265694,
+      "num_running": 46.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 20.0,
+      "temp_c": 84.0,
+      "power_w": 40.117,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371199.5887477,
+      "mono": 4273273.227085469,
+      "kv_occupancy": 0.11593699328237206,
+      "num_running": 45.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 40.02,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371199.8637748,
+      "mono": 4273273.502112298,
+      "kv_occupancy": 0.11593699328237206,
+      "num_running": 45.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 45.693,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371200.1370049,
+      "mono": 4273273.775342329,
+      "kv_occupancy": 0.11524206624971045,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 42.519,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371200.4092884,
+      "mono": 4273274.047626137,
+      "kv_occupancy": 0.11535788742182074,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 97.0,
+      "util_mem_pct": 17.0,
+      "temp_c": 84.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371200.6819844,
+      "mono": 4273274.32032208,
+      "kv_occupancy": 0.11535788742182074,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371200.9552207,
+      "mono": 4273274.593558287,
+      "kv_occupancy": 0.11894834375723884,
+      "num_running": 45.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 50.932,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371201.2327442,
+      "mono": 4273274.871081926,
+      "kv_occupancy": 0.11952744961779016,
+      "num_running": 46.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 41.548,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371201.5045588,
+      "mono": 4273275.142896406,
+      "kv_occupancy": 0.11941162844567987,
+      "num_running": 45.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371201.779648,
+      "mono": 4273275.417985553,
+      "kv_occupancy": 0.11941162844567987,
+      "num_running": 45.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 84.0,
+      "power_w": 41.063,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371202.0609217,
+      "mono": 4273275.69925922,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 18.0,
+      "temp_c": 84.0,
+      "power_w": 43.004,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371202.337916,
+      "mono": 4273275.976253487,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.987,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371202.6063075,
+      "mono": 4273276.24464523,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.723,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371202.8801935,
+      "mono": 4273276.518531234,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.071,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371203.1535997,
+      "mono": 4273276.791937315,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.948,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371203.4272304,
+      "mono": 4273277.065568088,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371203.7040446,
+      "mono": 4273277.342382143,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 45.693,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371203.9840038,
+      "mono": 4273277.622341312,
+      "kv_occupancy": 0.11697938383136441,
+      "num_running": 44.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 46.081,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371204.25718,
+      "mono": 4273277.895517463,
+      "kv_occupancy": 0.12971971276349314,
+      "num_running": 48.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 84.0,
+      "power_w": 43.851,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371204.531732,
+      "mono": 4273278.170069563,
+      "kv_occupancy": 0.12971971276349314,
+      "num_running": 48.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 84.0,
+      "power_w": 43.657,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371204.803377,
+      "mono": 4273278.441714439,
+      "kv_occupancy": 0.12971971276349314,
+      "num_running": 48.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371205.075122,
+      "mono": 4273278.7134597,
+      "kv_occupancy": 0.12971971276349314,
+      "num_running": 48.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371205.3468378,
+      "mono": 4273278.985175323,
+      "kv_occupancy": 0.12971971276349314,
+      "num_running": 48.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371205.618795,
+      "mono": 4273279.257132547,
+      "kv_occupancy": 0.13852212184387303,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.101,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371205.8925464,
+      "mono": 4273279.530883873,
+      "kv_occupancy": 0.13852212184387303,
+      "num_running": 54.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371206.1667616,
+      "mono": 4273279.805099439,
+      "kv_occupancy": 0.1401436182534167,
+      "num_running": 56.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371206.4419553,
+      "mono": 4273280.08029295,
+      "kv_occupancy": 0.14199675700718095,
+      "num_running": 57.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371206.7151322,
+      "mono": 4273280.353469866,
+      "kv_occupancy": 0.1438498957609451,
+      "num_running": 58.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 17.0,
+      "temp_c": 84.0,
+      "power_w": 46.731,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371206.9877484,
+      "mono": 4273280.626085987,
+      "kv_occupancy": 0.1444290016214964,
+      "num_running": 59.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 20.0,
+      "temp_c": 84.0,
+      "power_w": 43.269,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371207.2639337,
+      "mono": 4273280.902271325,
+      "kv_occupancy": 0.1444290016214964,
+      "num_running": 59.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371207.5362709,
+      "mono": 4273281.174608554,
+      "kv_occupancy": 0.1444290016214964,
+      "num_running": 59.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.56,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371207.811336,
+      "mono": 4273281.449673552,
+      "kv_occupancy": 0.14778781561269405,
+      "num_running": 60.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 16.0,
+      "temp_c": 84.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371208.087689,
+      "mono": 4273281.726026421,
+      "kv_occupancy": 0.14987259671067876,
+      "num_running": 62.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371208.3601267,
+      "mono": 4273281.998464254,
+      "kv_occupancy": 0.14987259671067876,
+      "num_running": 62.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 45.956,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371208.6342149,
+      "mono": 4273282.272552479,
+      "kv_occupancy": 0.15207319898077365,
+      "num_running": 64.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 15.0,
+      "temp_c": 84.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371208.9060247,
+      "mono": 4273282.544362167,
+      "kv_occupancy": 0.15357887421820704,
+      "num_running": 66.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 46.247,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371209.178047,
+      "mono": 4273282.816384697,
+      "kv_occupancy": 0.15427380125086865,
+      "num_running": 67.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.30859375,
+      "mem_free_gib": 0.69140625,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 17.0,
+      "temp_c": 84.0,
+      "power_w": 42.033,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.85546875
+        }
+      ]
+    },
+    {
+      "t": 1786371209.4510267,
+      "mono": 4273283.089364277,
+      "kv_occupancy": 0.15369469539031733,
+      "num_running": 65.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.69140625,
+      "mem_free_gib": 0.30859375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 47.216,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.23828125
+        }
+      ]
+    },
+    {
+      "t": 1786371209.7254899,
+      "mono": 4273283.363827445,
+      "kv_occupancy": 0.15369469539031733,
+      "num_running": 65.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.69140625,
+      "mem_free_gib": 0.30859375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.529,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.23828125
+        }
+      ]
+    },
+    {
+      "t": 1786371209.9982672,
+      "mono": 4273283.63660484,
+      "kv_occupancy": 0.15369469539031733,
+      "num_running": 65.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.69140625,
+      "mem_free_gib": 0.30859375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.877,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.23828125
+        }
+      ]
+    },
+    {
+      "t": 1786371210.2703283,
+      "mono": 4273283.908666,
+      "kv_occupancy": 0.15774843641417646,
+      "num_running": 68.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.69140625,
+      "mem_free_gib": 0.30859375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 39.266,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.23828125
+        }
+      ]
+    },
+    {
+      "t": 1786371210.5440376,
+      "mono": 4273284.182375347,
+      "kv_occupancy": 0.15774843641417646,
+      "num_running": 68.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.69140625,
+      "mem_free_gib": 0.30859375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 84.0,
+      "power_w": 43.004,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.23828125
+        }
+      ]
+    },
+    {
+      "t": 1786371210.81758,
+      "mono": 4273284.455917816,
+      "kv_occupancy": 0.15716933055362525,
+      "num_running": 66.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.771484375,
+      "mem_free_gib": 2.228515625,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 23.0,
+      "temp_c": 84.0,
+      "power_w": 43.366,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.318359375
+        }
+      ]
+    },
+    {
+      "t": 1786371211.0904922,
+      "mono": 4273284.728829693,
+      "kv_occupancy": 0.15716933055362525,
+      "num_running": 66.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.771484375,
+      "mem_free_gib": 2.228515625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.529,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.318359375
+        }
+      ]
+    },
+    {
+      "t": 1786371211.3721378,
+      "mono": 4273285.010475356,
+      "kv_occupancy": 0.15716933055362525,
+      "num_running": 66.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.771484375,
+      "mem_free_gib": 2.228515625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.318359375
+        }
+      ]
+    },
+    {
+      "t": 1786371211.6479924,
+      "mono": 4273285.286329904,
+      "kv_occupancy": 0.15716933055362525,
+      "num_running": 66.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.771484375,
+      "mem_free_gib": 2.228515625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 44.141,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.318359375
+        }
+      ]
+    },
+    {
+      "t": 1786371211.9198885,
+      "mono": 4273285.558226015,
+      "kv_occupancy": 0.15716933055362525,
+      "num_running": 66.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.771484375,
+      "mem_free_gib": 2.228515625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.318359375
+        }
+      ]
+    },
+    {
+      "t": 1786371212.1947837,
+      "mono": 4273285.83312142,
+      "kv_occupancy": 0.16631920315033588,
+      "num_running": 70.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.8359375,
+      "mem_free_gib": 2.1640625,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 45.111,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.3828125
+        }
+      ]
+    },
+    {
+      "t": 1786371212.4677114,
+      "mono": 4273286.10604916,
+      "kv_occupancy": 0.16794069955987956,
+      "num_running": 72.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.8359375,
+      "mem_free_gib": 2.1640625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.3828125
+        }
+      ]
+    },
+    {
+      "t": 1786371212.7397578,
+      "mono": 4273286.378095427,
+      "kv_occupancy": 0.16794069955987956,
+      "num_running": 72.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.8359375,
+      "mem_free_gib": 2.1640625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.3828125
+        }
+      ]
+    },
+    {
+      "t": 1786371213.0139656,
+      "mono": 4273286.65230309,
+      "kv_occupancy": 0.16794069955987956,
+      "num_running": 72.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.8359375,
+      "mem_free_gib": 2.1640625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.723,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.3828125
+        }
+      ]
+    },
+    {
+      "t": 1786371213.2853203,
+      "mono": 4273286.923657721,
+      "kv_occupancy": 0.17257354644429002,
+      "num_running": 73.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.8359375,
+      "mem_free_gib": 2.1640625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 43.366,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.3828125
+        }
+      ]
+    },
+    {
+      "t": 1786371213.559402,
+      "mono": 4273287.197739662,
+      "kv_occupancy": 0.17257354644429002,
+      "num_running": 73.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.8359375,
+      "mem_free_gib": 2.1640625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 84.0,
+      "power_w": 42.156,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.3828125
+        }
+      ]
+    },
+    {
+      "t": 1786371213.832044,
+      "mono": 4273287.470381505,
+      "kv_occupancy": 0.17396340050961312,
+      "num_running": 73.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 19.0,
+      "temp_c": 84.0,
+      "power_w": 44.723,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371214.1077597,
+      "mono": 4273287.74609725,
+      "kv_occupancy": 0.17581653926337737,
+      "num_running": 74.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 84.0,
+      "power_w": 43.101,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371214.384209,
+      "mono": 4273288.022546467,
+      "kv_occupancy": 0.17581653926337737,
+      "num_running": 74.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 84.0,
+      "power_w": 44.168,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371214.6565711,
+      "mono": 4273288.294908716,
+      "kv_occupancy": 0.17581653926337737,
+      "num_running": 74.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371214.9322383,
+      "mono": 4273288.57057588,
+      "kv_occupancy": 0.17581653926337737,
+      "num_running": 74.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 45.762,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371215.2090132,
+      "mono": 4273288.847350709,
+      "kv_occupancy": 0.17581653926337737,
+      "num_running": 74.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371215.4816086,
+      "mono": 4273289.119946347,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 42.156,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371215.7541997,
+      "mono": 4273289.392537436,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 42.81,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371216.0294554,
+      "mono": 4273289.667792984,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371216.3025112,
+      "mono": 4273289.94084873,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371216.576121,
+      "mono": 4273290.214458707,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.101,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371216.8475773,
+      "mono": 4273290.485914835,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 44.071,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371217.1205406,
+      "mono": 4273290.758878113,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 42.907,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371217.3944414,
+      "mono": 4273291.032779037,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.004,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371217.6668496,
+      "mono": 4273291.305187136,
+      "kv_occupancy": 0.18322909427843415,
+      "num_running": 76.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371217.9384747,
+      "mono": 4273291.576812329,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.269,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371218.2125068,
+      "mono": 4273291.850844448,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 44.362,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371218.486096,
+      "mono": 4273292.124433463,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371218.75801,
+      "mono": 4273292.396347386,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371219.0334022,
+      "mono": 4273292.671739717,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371219.3056815,
+      "mono": 4273292.944018878,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371219.578174,
+      "mono": 4273293.216511907,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371219.8535392,
+      "mono": 4273293.491877051,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.172,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371220.1260657,
+      "mono": 4273293.764403265,
+      "kv_occupancy": 0.19747509844799627,
+      "num_running": 82.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.683,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371220.3978097,
+      "mono": 4273294.036147293,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 97.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 84.0,
+      "power_w": 42.35,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371220.670048,
+      "mono": 4273294.308385441,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371220.9421048,
+      "mono": 4273294.580442403,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371221.214976,
+      "mono": 4273294.853313689,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 46.081,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371221.4864264,
+      "mono": 4273295.124763905,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371221.7584527,
+      "mono": 4273295.396790373,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371222.0310097,
+      "mono": 4273295.669347323,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.101,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371222.3111303,
+      "mono": 4273295.949467946,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.79,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371222.5831149,
+      "mono": 4273296.221452327,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.238,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371222.8551414,
+      "mono": 4273296.493479026,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371223.1322381,
+      "mono": 4273296.770575569,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371223.404749,
+      "mono": 4273297.043086534,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371223.6768863,
+      "mono": 4273297.315223742,
+      "kv_occupancy": 0.2124160296502201,
+      "num_running": 92.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.596,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371223.9564989,
+      "mono": 4273297.594836664,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 95.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371224.2305202,
+      "mono": 4273297.868858017,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371224.5027585,
+      "mono": 4273298.141096173,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.15,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371224.7750134,
+      "mono": 4273298.413350821,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.265,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371225.046817,
+      "mono": 4273298.685154629,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 43.683,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371225.3187733,
+      "mono": 4273298.957110816,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.44,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371225.5909631,
+      "mono": 4273299.229300701,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.168,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371225.8669446,
+      "mono": 4273299.505282149,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371226.1420262,
+      "mono": 4273299.78036389,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.15,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371226.4141517,
+      "mono": 4273300.052489193,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.657,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371226.686195,
+      "mono": 4273300.324532579,
+      "kv_occupancy": 0.23280055594162608,
+      "num_running": 102.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371226.9588313,
+      "mono": 4273300.597168837,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.275,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371227.237421,
+      "mono": 4273300.875758644,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371227.5106103,
+      "mono": 4273301.14894811,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.004,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371227.7827673,
+      "mono": 4273301.421105025,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371228.059191,
+      "mono": 4273301.697528517,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371228.331326,
+      "mono": 4273301.969663428,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.101,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371228.6037748,
+      "mono": 4273302.242112201,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 42.907,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371228.8763442,
+      "mono": 4273302.514681908,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.265,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371229.1488123,
+      "mono": 4273302.787149943,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371229.4205332,
+      "mono": 4273303.058870735,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 42.907,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371229.6928573,
+      "mono": 4273303.331194997,
+      "kv_occupancy": 0.2522585128561501,
+      "num_running": 113.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371229.9652386,
+      "mono": 4273303.603576074,
+      "kv_occupancy": 0.2695158675005791,
+      "num_running": 124.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 97.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.269,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371230.2410345,
+      "mono": 4273303.879372017,
+      "kv_occupancy": 0.2695158675005791,
+      "num_running": 124.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371230.5146596,
+      "mono": 4273304.152997103,
+      "kv_occupancy": 0.2695158675005791,
+      "num_running": 124.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.432,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371230.787738,
+      "mono": 4273304.426075701,
+      "kv_occupancy": 0.2695158675005791,
+      "num_running": 124.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371231.0596461,
+      "mono": 4273304.697983748,
+      "kv_occupancy": 0.2695158675005791,
+      "num_running": 124.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.683,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371231.331131,
+      "mono": 4273304.969468354,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 42.519,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371231.6036155,
+      "mono": 4273305.241953175,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 97.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371231.8883128,
+      "mono": 4273305.52665043,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371232.1616476,
+      "mono": 4273305.799985208,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 45.762,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371232.4332242,
+      "mono": 4273306.071561694,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371232.7048454,
+      "mono": 4273306.343183021,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.657,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371232.976412,
+      "mono": 4273306.614749747,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371233.2497122,
+      "mono": 4273306.888049652,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371233.5229692,
+      "mono": 4273307.161306877,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371233.7949564,
+      "mono": 4273307.433294142,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371234.0665112,
+      "mono": 4273307.704848724,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 42.907,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371234.338624,
+      "mono": 4273307.976961692,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 42.907,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371234.6119246,
+      "mono": 4273308.250262182,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 42.713,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371234.883906,
+      "mono": 4273308.522243245,
+      "kv_occupancy": 0.27924484595784105,
+      "num_running": 132.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371235.1564527,
+      "mono": 4273308.794790098,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 96.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.974,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371235.428547,
+      "mono": 4273309.066884295,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.851,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371235.701784,
+      "mono": 4273309.340121474,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371235.9738512,
+      "mono": 4273309.612188864,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371236.2482252,
+      "mono": 4273309.886562778,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371236.5244544,
+      "mono": 4273310.162791897,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371236.7959082,
+      "mono": 4273310.434245633,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371237.0679805,
+      "mono": 4273310.706318106,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.723,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371237.340219,
+      "mono": 4273310.978556784,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371237.6157815,
+      "mono": 4273311.254119178,
+      "kv_occupancy": 0.3014825110030114,
+      "num_running": 140.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371237.8924031,
+      "mono": 4273311.530740836,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 97.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 41.379,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371238.1650505,
+      "mono": 4273311.803388284,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371238.4375892,
+      "mono": 4273312.075926966,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371238.710425,
+      "mono": 4273312.348762391,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371238.9829595,
+      "mono": 4273312.621297085,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371239.2573173,
+      "mono": 4273312.895655042,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.683,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371239.530451,
+      "mono": 4273313.168788491,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.529,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371239.8046174,
+      "mono": 4273313.442954965,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371240.0780768,
+      "mono": 4273313.716414537,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371240.3541071,
+      "mono": 4273313.992444679,
+      "kv_occupancy": 0.3185082233032198,
+      "num_running": 147.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.537,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371240.6278467,
+      "mono": 4273314.266184299,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 96.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.402,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371240.9001389,
+      "mono": 4273314.538476479,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.956,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371241.1722412,
+      "mono": 4273314.810578781,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371241.4475465,
+      "mono": 4273315.085884022,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.111,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371241.7195709,
+      "mono": 4273315.357908572,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.269,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371241.9948852,
+      "mono": 4273315.633222694,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371242.2677538,
+      "mono": 4273315.906091294,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 46.634,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371242.5400474,
+      "mono": 4273316.178385163,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371242.8137176,
+      "mono": 4273316.452055089,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.596,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371243.085745,
+      "mono": 4273316.72408288,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.247,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371243.3570402,
+      "mono": 4273316.995377742,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371243.6296546,
+      "mono": 4273317.267992218,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.634,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371243.9056566,
+      "mono": 4273317.543994028,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371244.1780353,
+      "mono": 4273317.816372925,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 44.238,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371244.4525113,
+      "mono": 4273318.090848954,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371244.7244132,
+      "mono": 4273318.362750843,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371244.9964068,
+      "mono": 4273318.634744313,
+      "kv_occupancy": 0.33402826036599487,
+      "num_running": 153.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371245.2697785,
+      "mono": 4273318.908116055,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371245.5424225,
+      "mono": 4273319.180760182,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371245.8175132,
+      "mono": 4273319.455850672,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.238,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371246.090058,
+      "mono": 4273319.728395537,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371246.3619137,
+      "mono": 4273320.000251311,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.432,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371246.6335237,
+      "mono": 4273320.271861257,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371246.9048314,
+      "mono": 4273320.543169148,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371247.1774588,
+      "mono": 4273320.815796383,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371247.4524503,
+      "mono": 4273321.090787924,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 44.432,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371247.7257555,
+      "mono": 4273321.364092978,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371247.998325,
+      "mono": 4273321.636662638,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371248.2709634,
+      "mono": 4273321.909300993,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.683,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371248.5424712,
+      "mono": 4273322.180808795,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.529,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371248.815734,
+      "mono": 4273322.454071574,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371249.0878918,
+      "mono": 4273322.726229181,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 45.693,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371249.3596249,
+      "mono": 4273322.997962792,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371249.6322613,
+      "mono": 4273323.270599009,
+      "kv_occupancy": 0.36298355339356037,
+      "num_running": 163.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.25,
+      "mem_free_gib": 1.75,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.796875
+        }
+      ]
+    },
+    {
+      "t": 1786371249.905833,
+      "mono": 4273323.544170422,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 94.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371250.1827047,
+      "mono": 4273323.82104218,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371250.4572623,
+      "mono": 4273324.095599998,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371250.729434,
+      "mono": 4273324.367771768,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371251.0021443,
+      "mono": 4273324.640481732,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371251.2742405,
+      "mono": 4273324.912578058,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.111,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371251.551264,
+      "mono": 4273325.189601676,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371251.8234901,
+      "mono": 4273325.461827752,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371252.0971413,
+      "mono": 4273325.735478929,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.948,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371252.3739457,
+      "mono": 4273326.012283229,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.141,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371252.646499,
+      "mono": 4273326.284836486,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371252.9192555,
+      "mono": 4273326.557593247,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371253.1909137,
+      "mono": 4273326.829251364,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371253.4628274,
+      "mono": 4273327.101165017,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371253.7358987,
+      "mono": 4273327.374236291,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371254.0099797,
+      "mono": 4273327.648317306,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371254.2860377,
+      "mono": 4273327.924375335,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 42.616,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371254.5604343,
+      "mono": 4273328.198772004,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371254.8324482,
+      "mono": 4273328.470785831,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371255.1091437,
+      "mono": 4273328.747481486,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.56,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371255.3823373,
+      "mono": 4273329.020674949,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.79,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371255.6571996,
+      "mono": 4273329.29553726,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371255.9337523,
+      "mono": 4273329.572090033,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.859,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371256.2059696,
+      "mono": 4273329.844307184,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.859,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371256.4780939,
+      "mono": 4273330.116431496,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 41.16,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371256.7580292,
+      "mono": 4273330.396366855,
+      "kv_occupancy": 0.39112809821635397,
+      "num_running": 178.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.509765625,
+      "mem_free_gib": 1.490234375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.056640625
+        }
+      ]
+    },
+    {
+      "t": 1786371257.029783,
+      "mono": 4273330.668120568,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 89.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371257.3025331,
+      "mono": 4273330.94087072,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371257.5755339,
+      "mono": 4273331.213871499,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 43.657,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371257.8509212,
+      "mono": 4273331.489258695,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 43.851,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371258.125897,
+      "mono": 4273331.764234502,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 43.295,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371258.407582,
+      "mono": 4273332.045919675,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371258.679595,
+      "mono": 4273332.317932625,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.247,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371258.9515939,
+      "mono": 4273332.589931513,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 48.736,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371259.224537,
+      "mono": 4273332.86287437,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.859,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371259.4966114,
+      "mono": 4273333.134949094,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 45.596,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371259.7688308,
+      "mono": 4273333.407168205,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371260.0414724,
+      "mono": 4273333.679810138,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 44.626,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371260.3162885,
+      "mono": 4273333.954626079,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 49.027,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371260.58794,
+      "mono": 4273334.226277611,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 48.155,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371260.8632388,
+      "mono": 4273334.501576388,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 47.768,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371261.1354232,
+      "mono": 4273334.7737608,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.111,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371261.4070458,
+      "mono": 4273335.045383733,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.471,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371261.6837282,
+      "mono": 4273335.322065761,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371261.9572768,
+      "mono": 4273335.595614623,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371262.2287977,
+      "mono": 4273335.867135237,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 40.893,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371262.5002472,
+      "mono": 4273336.13858482,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 42.422,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371262.7724566,
+      "mono": 4273336.410794258,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371263.0448453,
+      "mono": 4273336.683182982,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 46.828,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371263.3171117,
+      "mono": 4273336.955449424,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.596,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371263.5886528,
+      "mono": 4273337.226990349,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.859,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371263.8623877,
+      "mono": 4273337.500725228,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 85.0,
+      "power_w": 45.596,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371264.1364424,
+      "mono": 4273337.774779957,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 85.0,
+      "power_w": 43.754,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371264.407896,
+      "mono": 4273338.046233612,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371264.6796968,
+      "mono": 4273338.318034464,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 14.0,
+      "temp_c": 86.0,
+      "power_w": 43.463,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371264.9517047,
+      "mono": 4273338.590042501,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 46.15,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371265.223544,
+      "mono": 4273338.861881374,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 86.0,
+      "power_w": 46.15,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371265.4962173,
+      "mono": 4273339.134554922,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.305,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371265.769607,
+      "mono": 4273339.407944768,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 86.0,
+      "power_w": 45.693,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371266.0415933,
+      "mono": 4273339.679930917,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.956,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371266.3132703,
+      "mono": 4273339.95160796,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 86.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371266.5913281,
+      "mono": 4273340.229665892,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.859,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371266.8650732,
+      "mono": 4273340.503410687,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 86.0,
+      "power_w": 45.111,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371267.137783,
+      "mono": 4273340.776120516,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 86.0,
+      "power_w": 46.634,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371267.413651,
+      "mono": 4273341.051988531,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 86.0,
+      "power_w": 48.736,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371267.687384,
+      "mono": 4273341.325721574,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 48.833,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371267.9627118,
+      "mono": 4273341.601049453,
+      "kv_occupancy": 0.43548760713458423,
+      "num_running": 193.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371268.2385302,
+      "mono": 4273341.876867564,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 90.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371268.5130358,
+      "mono": 4273342.151373376,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371268.7884111,
+      "mono": 4273342.42674863,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 42.13,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371269.0654411,
+      "mono": 4273342.703778664,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371269.3382342,
+      "mono": 4273342.976571602,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371269.6103537,
+      "mono": 4273343.248691244,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 46.053,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371269.8820338,
+      "mono": 4273343.520371505,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.141,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371270.1537642,
+      "mono": 4273343.792101852,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 85.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371270.4254258,
+      "mono": 4273344.063763275,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.723,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371270.7011495,
+      "mono": 4273344.339487027,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.146,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371270.976255,
+      "mono": 4273344.614592596,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.141,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371271.248085,
+      "mono": 4273344.886422634,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371271.5214608,
+      "mono": 4273345.159798376,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.762,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371271.7940626,
+      "mono": 4273345.432400461,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371272.0691915,
+      "mono": 4273345.707528853,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.014,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371272.3427284,
+      "mono": 4273345.981066025,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.82,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371272.6148021,
+      "mono": 4273346.253139646,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371272.8882012,
+      "mono": 4273346.526538888,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.463,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371273.1621368,
+      "mono": 4273346.800474339,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.948,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371273.4344304,
+      "mono": 4273347.072767912,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.499,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371273.7128062,
+      "mono": 4273347.351143711,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371273.9869616,
+      "mono": 4273347.625299234,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.665,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371274.260136,
+      "mono": 4273347.898473385,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.208,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371274.5345337,
+      "mono": 4273348.17287122,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371274.807174,
+      "mono": 4273348.44551138,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371275.079766,
+      "mono": 4273348.718103576,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.432,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371275.3520617,
+      "mono": 4273348.990399129,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 45.111,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371275.6250308,
+      "mono": 4273349.263368315,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371275.9019742,
+      "mono": 4273349.540311758,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 48.059,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371276.1773238,
+      "mono": 4273349.815661305,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.168,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371276.4493613,
+      "mono": 4273350.087698926,
+      "kv_occupancy": 0.5063701644660644,
+      "num_running": 216.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371276.7268012,
+      "mono": 4273350.365138685,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 13.0,
+      "temp_c": 86.0,
+      "power_w": 43.78,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371277.0003448,
+      "mono": 4273350.638682546,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.657,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371277.2752497,
+      "mono": 4273350.913587342,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.463,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371277.5516155,
+      "mono": 4273351.189953121,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371277.824631,
+      "mono": 4273351.462968714,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.56,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371278.097521,
+      "mono": 4273351.735858769,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.586,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371278.3738368,
+      "mono": 4273352.012174297,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.917,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371278.6464918,
+      "mono": 4273352.284829192,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.851,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371278.9209461,
+      "mono": 4273352.559283719,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371279.1951814,
+      "mono": 4273352.833519005,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 45.596,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371279.4677324,
+      "mono": 4273353.106070042,
+      "kv_occupancy": 0.5597637248088951,
+      "num_running": 242.0,
+      "num_waiting": 0.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 13.923828125,
+      "mem_free_gib": 1.076171875,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.489,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.470703125
+        }
+      ]
+    },
+    {
+      "t": 1786371279.743599,
+      "mono": 4273353.381936492,
+      "kv_occupancy": 0.578758397034978,
+      "num_running": 256.0,
+      "num_waiting": 19.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.880859375,
+      "mem_free_gib": 0.119140625,
+      "util_gpu_pct": 66.0,
+      "util_mem_pct": 10.0,
+      "temp_c": 86.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.427734375
+        }
+      ]
+    },
+    {
+      "t": 1786371280.0174398,
+      "mono": 4273353.655777248,
+      "kv_occupancy": 0.578758397034978,
+      "num_running": 256.0,
+      "num_waiting": 19.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.880859375,
+      "mem_free_gib": 0.119140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.392,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.427734375
+        }
+      ]
+    },
+    {
+      "t": 1786371280.2894745,
+      "mono": 4273353.927812107,
+      "kv_occupancy": 0.578758397034978,
+      "num_running": 256.0,
+      "num_waiting": 19.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.880859375,
+      "mem_free_gib": 0.119140625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.335,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.427734375
+        }
+      ]
+    },
+    {
+      "t": 1786371280.5622964,
+      "mono": 4273354.200633842,
+      "kv_occupancy": 0.578758397034978,
+      "num_running": 256.0,
+      "num_waiting": 19.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 12.615234375,
+      "mem_free_gib": 2.384765625,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 21.0,
+      "temp_c": 86.0,
+      "power_w": 37.151,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 12.142578125
+        }
+      ]
+    },
+    {
+      "t": 1786371280.8343618,
+      "mono": 4273354.472699388,
+      "kv_occupancy": 0.5851285615010424,
+      "num_running": 255.0,
+      "num_waiting": 36.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 98.0,
+      "util_mem_pct": 21.0,
+      "temp_c": 86.0,
+      "power_w": 44.044,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371281.1116428,
+      "mono": 4273354.749980547,
+      "kv_occupancy": 0.5851285615010424,
+      "num_running": 255.0,
+      "num_waiting": 36.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.141,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371281.3867176,
+      "mono": 4273355.025054973,
+      "kv_occupancy": 0.5851285615010424,
+      "num_running": 255.0,
+      "num_waiting": 36.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 43.948,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371281.6601326,
+      "mono": 4273355.298470231,
+      "kv_occupancy": 0.5851285615010424,
+      "num_running": 255.0,
+      "num_waiting": 36.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 11.0,
+      "temp_c": 86.0,
+      "power_w": 44.141,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371281.9353013,
+      "mono": 4273355.573638978,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 92.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 46.634,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371282.2091992,
+      "mono": 4273355.847536692,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 71.0,
+      "util_mem_pct": 12.0,
+      "temp_c": 85.0,
+      "power_w": 43.198,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371282.4900575,
+      "mono": 4273356.128395093,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 42.324,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371282.7648485,
+      "mono": 4273356.403186106,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 41.767,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371283.036512,
+      "mono": 4273356.674849672,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.625,
+      "mem_free_gib": 0.375,
+      "util_gpu_pct": 100.0,
+      "util_mem_pct": 9.0,
+      "temp_c": 86.0,
+      "power_w": 43.974,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 14.171875
+        }
+      ]
+    },
+    {
+      "t": 1786371283.309411,
+      "mono": 4273356.947748708,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.384765625,
+      "mem_free_gib": 0.615234375,
+      "util_gpu_pct": 99.0,
+      "util_mem_pct": 21.0,
+      "temp_c": 86.0,
+      "power_w": 41.476,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.931640625
+        }
+      ]
+    },
+    {
+      "t": 1786371283.586267,
+      "mono": 4273357.224604394,
+      "kv_occupancy": NaN,
+      "num_running": NaN,
+      "num_waiting": NaN,
+      "metrics_error": "ReadTimeout",
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 14.41326904296875,
+      "mem_free_gib": 0.58673095703125,
+      "util_gpu_pct": 0.0,
+      "util_mem_pct": 0.0,
+      "temp_c": 85.0,
+      "power_w": 32.911,
+      "thermal_throttled": true,
+      "procs": [
+        {
+          "pid": 2219746,
+          "used_gib": 13.970703125
+        }
+      ]
+    },
+    {
+      "t": 1786371285.8481195,
+      "mono": 4273359.48645721,
+      "kv_occupancy": NaN,
+      "num_running": NaN,
+      "num_waiting": NaN,
+      "metrics_error": "ReadTimeout",
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 0.44256591796875,
+      "mem_free_gib": 14.55743408203125,
+      "util_gpu_pct": 0.0,
+      "util_mem_pct": 0.0,
+      "temp_c": 84.0,
+      "power_w": 32.814,
+      "thermal_throttled": true,
+      "procs": []
+    },
+    {
+      "t": 1786371288.1102889,
+      "mono": 4273361.748626633,
+      "kv_occupancy": 0.5909196201065554,
+      "num_running": 256.0,
+      "num_waiting": 37.0,
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 0.44256591796875,
+      "mem_free_gib": 14.55743408203125,
+      "util_gpu_pct": 0.0,
+      "util_mem_pct": 0.0,
+      "temp_c": 84.0,
+      "power_w": 32.814,
+      "thermal_throttled": true,
+      "procs": []
+    },
+    {
+      "t": 1786371289.6272924,
+      "mono": 4273363.265630017,
+      "kv_occupancy": NaN,
+      "num_running": NaN,
+      "num_waiting": NaN,
+      "metrics_error": "ConnectError",
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 0.44256591796875,
+      "mem_free_gib": 14.55743408203125,
+      "util_gpu_pct": 0.0,
+      "util_mem_pct": 0.0,
+      "temp_c": 84.0,
+      "power_w": 32.814,
+      "thermal_throttled": true,
+      "procs": []
+    },
+    {
+      "t": 1786371289.888628,
+      "mono": 4273363.526965861,
+      "kv_occupancy": NaN,
+      "num_running": NaN,
+      "num_waiting": NaN,
+      "metrics_error": "ConnectError",
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 0.44256591796875,
+      "mem_free_gib": 14.55743408203125,
+      "util_gpu_pct": 0.0,
+      "util_mem_pct": 0.0,
+      "temp_c": 84.0,
+      "power_w": 32.814,
+      "thermal_throttled": true,
+      "procs": []
+    },
+    {
+      "t": 1786371290.148856,
+      "mono": 4273363.787193506,
+      "kv_occupancy": NaN,
+      "num_running": NaN,
+      "num_waiting": NaN,
+      "metrics_error": "ConnectError",
+      "mem_total_gib": 15.0,
+      "mem_used_gib": 0.44256591796875,
+      "mem_free_gib": 14.55743408203125,
+      "util_gpu_pct": 0.0,
+      "util_mem_pct": 0.0,
+      "temp_c": 84.0,
+      "power_w": 32.833,
+      "thermal_throttled": true,
+      "procs": []
+    }
+  ],
+  "peaks": {
+    "num_running": 256.0,
+    "kv_occupancy": 0.5909196201065554,
+    "mem_used_gib": 14.880859375
+  },
+  "oom": {
+    "first_oom_line_no": 1818,
+    "traceback_scope": "engine",
+    "timestamp": "08-10 19:44:43",
+    "failed_alloc_mib": 742.0,
+    "total_capacity_gib": 14.56,
+    "free_at_failure_mib": 590.0,
+    "process_in_use_gib": 13.97,
+    "allocated_by_torch_gib": 12.49,
+    "reserved_unallocated_mib": 1218.56,
+    "traceback_frames": [
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/engine/multiprocessing/engine.py",
+        "line": 221,
+        "func": "run_engine_loop"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/engine/multiprocessing/engine.py",
+        "line": 247,
+        "func": "engine_step"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/engine/multiprocessing/engine.py",
+        "line": 230,
+        "func": "engine_step"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/engine/llm_engine.py",
+        "line": 1412,
+        "func": "step"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/executor/executor_base.py",
+        "line": 140,
+        "func": "execute_model"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/executor/uniproc_executor.py",
+        "line": 56,
+        "func": "collective_rpc"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/utils.py",
+        "line": 2456,
+        "func": "run_method"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/torch/utils/_contextlib.py",
+        "line": 116,
+        "func": "decorate_context"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/spec_decode/spec_decode_worker.py",
+        "line": 542,
+        "func": "execute_model"
+      },
+      {
+        "file": "/home/abburigireesh/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/contextlib.py",
+        "line": 81,
+        "func": "inner"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/spec_decode/spec_decode_worker.py",
+        "line": 794,
+        "func": "_run_speculative_decoding_step"
+      },
+      {
+        "file": "/home/abburigireesh/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/contextlib.py",
+        "line": 81,
+        "func": "inner"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/spec_decode/batch_expansion.py",
+        "line": 94,
+        "func": "score_proposals"
+      },
+      {
+        "file": "/home/abburigireesh/vllm_scheduler/.venv/lib/python3.11/site-packages/vllm/spec_decode/batch_expansion.py",
+        "line": 227,
+        "func": "_contract_batch"
+      }
+    ],
+    "alloc_site": "batch_expansion.py:227 in _contract_batch",
+    "alloc_site_module": "spec_decode",
+    "in_spec_decode_path": true,
+    "in_kv_cache_path": false,
+    "total_oom_lines_in_log": 310,
+    "engine_dead_errors": 308
+  },
+  "server_log": "oom3b_more/logs/20260810T141045Z_trial3_server.log",
+  "at_failure": {
+    "num_running": 256.0,
+    "num_waiting": 37.0,
+    "kv_occupancy": 0.5909196201065554,
+    "mem_total_gib": 15.0,
+    "mem_used_gib": 0.44256591796875,
+    "mem_free_gib": 14.55743408203125,
+    "util_gpu_pct": 0.0,
+    "util_mem_pct": 0.0,
+    "temp_c": 84.0,
+    "power_w": 32.814,
+    "thermal_throttled": true,
+    "peak_num_running": 256.0,
+    "peak_kv_occupancy": 0.5909196201065554
+  }
+}

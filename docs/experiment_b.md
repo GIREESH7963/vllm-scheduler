@@ -107,7 +107,7 @@ rather than the 1.29× the architecture alone would suggest.
 
 ## 5. The allocation that kills the engine does not move at all
 
-Every OOM in this campaign — 7 independent engine deaths across two model sizes and two experiments — failed at the same source line, `batch_expansion.py:227` in `_contract_batch`, reached via `spec_decode_worker.py:794` `score_proposals`.
+Every OOM in this campaign — 10 independent engine deaths across two model sizes and two experiments — failed at the same source line, `batch_expansion.py:227` in `_contract_batch`, reached via `spec_decode_worker.py:794` `score_proposals`.
 
 `queueing_model.md` §5.3 proposed that the binding term is a dense scorer tensor of shape
 `[N, k+1=5, V=151936] fp32`, growing linearly in N and invisible to the service-rate model.
@@ -122,8 +122,11 @@ independent because both checkpoints share a vocabulary of 151,936 and the same 
 | `1.5b` | probe trial 1 | 256 | 742 MiB | 742 MiB | -0.0% |
 | `1.5b` | probe trial 2 | 256 | 742 MiB | 742 MiB | -0.0% |
 | `1.5b` | probe trial 3 | 256 | 742 MiB | 742 MiB | -0.0% |
-| `3b` | probe trial 1 | 256 | 742 MiB | 742 MiB | -0.0% |
-| `3b` | probe trial 2 | 256 | 742 MiB | 742 MiB | -0.0% |
+| `3b` | probea trial 1 | 256 | 742 MiB | 742 MiB | -0.0% |
+| `3b` | probea trial 2 | 256 | 742 MiB | 742 MiB | -0.0% |
+| `3b` | probeb trial 2 | 256 | 742 MiB | 742 MiB | -0.0% |
+| `3b` | probeb trial 3 | 256 | 742 MiB | 742 MiB | -0.0% |
+| `3b` | probeb trial 4 | 256 | 742 MiB | 742 MiB | -0.0% |
 
 The model holds to within a fraction of a percent across two distinct allocation sizes,
 which is the part that makes it a test rather than a fit: the 1.5B sweep died at a lower
@@ -134,7 +137,7 @@ not model size.
 both models, so the wall sits at the same N — but the 3B engine arrives there having
 already spent twice as much of its smaller pool on KV. Across these events the 1.5B engine
 died with KV at 24–29% occupied, the 3B engine at
-51–60%.
+51–61%.
 
 Extrapolating the measured 0.2501% per sequence, the 3B arm would
 exhaust its KV pool at N ≈ 400 — beyond `max_num_seqs` = 256, which is
@@ -161,8 +164,8 @@ to score them.
 Supported:
 
 - The low-KV OOM reproduces across model sizes, experiments and load profiles, always at
-  the same allocation site. Experiment B adds two unplanned reproductions to Experiment A's
-  three and the 3B probe's two.
+  the same allocation site — 10 independent engine deaths in total, including two
+  unplanned ones during the sweeps themselves.
 - The failing allocation is a dense fp32 scorer tensor linear in concurrency, with a
   measured coefficient of 2.898 MiB per sequence,
   confirmed against two different allocation sizes.
@@ -175,7 +178,46 @@ Not supported:
 - Any statement about μ_max or N\* for either arm. Neither sweep saturated.
 - Any absolute throughput or power figure as a hardware ceiling — the device throttled
   through nearly the whole campaign.
-- Determinism of the 3B boundary. The 3B probe reproduced the OOM in 2 of 3 trials; trial 3
-  survived to λ=8 at 80.7% KV with 256 sequences running. The 1.5B boundary reproduced
-  3 of 3. Either run more trials or report the boundary as stochastic.
+- **Determinism of the 3B boundary.** It is stochastic: 5 of
+  10 probe trials died, a reproduction rate of 50% with a
+  Wilson 95% interval of [24%, 76%].
+  The 1.5B boundary reproduced 3 of 3. Survivors ride the
+  ramp to λ=8 at high occupancy without failing, so the boundary must be reported as a
+  rate rather than a threshold — see §8.
+
+## 8. Is the boundary deterministic?
+
+| Arm | Probe trials | Engine died | Rate | Wilson 95% CI |
+|---|---|---|---|---|
+| `1.5b` | 3 | 3 | 100% | [44%, 100%] |
+| `3b` | 10 | 5 | 50% | [24%, 76%] |
+
+Each trial is an independent run: a fresh server, a fresh engine, and a load ramp that
+escalates until the engine dies or the ramp is exhausted. A trial that survives is not a
+trial that failed to reach the boundary — it reaches the same concurrency ceiling and
+keeps serving.
+
+### The survivors settle the KV question on their own
+
+If KV occupancy were the binding constraint, no trial could survive at an occupancy
+above the lowest occupancy at which another trial died. That ordering is violated:
+
+| Arm | Peak KV when the engine died | Peak KV when it survived |
+|---|---|---|
+| `1.5b` | 28.2%, 28.5%, 28.7% | — |
+| `3b` | 57.4%, 59.1%, 59.5%, 59.6%, 60.9% | 80.7%, 80.8%, 80.9%, 81.3%, 82.6% |
+
+For `3b` the engine **survived a full ramp at 82.6% occupancy** having **died at 57.4%** in another trial under the identical
+configuration. Occupancy is therefore not merely a poor predictor of failure here —
+it is not even monotonically related to it. This is the cleanest available refutation
+of the assumption that KV capacity is serving capacity, and it needs no model: two
+runs of the same configuration, one dead at low occupancy and one alive at high.
+
+The 3B interval is the honest statement of what is known. The failure is common but
+not certain, which is consistent with the mechanism: the scorer tensor is requested
+once per engine step, and whether a request of that size succeeds depends on the state
+of the caching allocator — how fragmented the reserved-but-unallocated pool is at that
+instant. That is why the reported free memory at failure sits close to, but not below,
+the size of the allocation. Nothing about the boundary requires it to be crossed
+deterministically.
 
