@@ -1,0 +1,1098 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>KV-cache capacity is not serving capacity</title><style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Liberation Serif", Georgia, serif; font-size: 10.5pt; line-height: 1.45;
+       color: #111; }
+h1 { font-size: 19pt; line-height: 1.2; margin: 0 0 4pt 0; }
+h2 { font-size: 13.5pt; margin: 20pt 0 6pt 0; border-bottom: 1px solid #bbb;
+     padding-bottom: 3pt; page-break-after: avoid; }
+h3 { font-size: 11.5pt; margin: 14pt 0 4pt 0; page-break-after: avoid; }
+p { margin: 0 0 7pt 0; text-align: justify; }
+code, pre { font-family: "Liberation Mono", monospace; font-size: 9pt; }
+pre { background: #f4f4f4; padding: 7pt; border: 1px solid #ddd; white-space: pre-wrap; }
+blockquote { margin: 7pt 0 7pt 12pt; padding-left: 10pt; border-left: 3px solid #bbb;
+             color: #333; }
+table { border-collapse: collapse; margin: 8pt 0; font-size: 9pt; width: 100%; }
+th, td { border: 1px solid #bbb; padding: 3pt 5pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+.eq { text-align: center; font-family: "Liberation Serif", serif; font-style: italic;
+      margin: 9pt 0; }
+p.figimg { text-align: center; margin: 12pt 0 3pt 0; page-break-inside: avoid; }
+p.cap { font-size: 9pt; color: #333; text-align: left; margin: 0 0 12pt 0; }
+</style></head><body>
+<h1>KV-cache capacity is not serving capacity</h1>
+<p><em>Working title. In a continuously-batched LLM server, the signal used to govern capacity is
+non-monotonically related to the failure it is used to prevent, and which resource binds is
+itself a scheduler setting.</em></p><hr />
+<h2>Status of this draft</h2>
+<p>This is a <strong>manuscript draft assembled from the analysis documents in this repository</strong>, not a
+new analysis. Every number below is transcribed from a generated artefact and cited to it:</p><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>What it supplies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs/queueing_model.md</code></td>
+<td>The service-rate model, its fitted parameters, and §5's limitations</td>
+</tr>
+<tr>
+<td><code>docs/experiment_b.md</code></td>
+<td>Experiments A, B and F — the memory boundary and the scorer law</td>
+</tr>
+<tr>
+<td><code>results/stats/STATISTICS.md</code></td>
+<td>Phase-2 policy comparison and Experiment D</td>
+</tr>
+<tr>
+<td><code>results/expF/expF_analysis.json</code></td>
+<td>Experiment F's per-arm agreement</td>
+</tr>
+<tr>
+<td><code>snapshots/paper-v2/ENVIRONMENT.json</code></td>
+<td>Environment capture at freeze time</td>
+</tr>
+</tbody>
+</table><p>Two conventions, because they are the difference between a defensible paper and a retracted one:</p><ul>
+<li><strong>Measured, asserted, and derived are labelled separately.</strong> §10 lists every claim by status.</li>
+<li><strong>Numbers are not restated from memory.</strong> Where a figure appears here it exists in a generated
+  file; where a figure does <em>not</em> exist, this draft says so rather than estimating it.</li>
+</ul>
+<p><strong>Citation status</strong> (applies to §2 and §15). No reference is written from memory, and every
+quotation was transcribed from the paper itself rather than from a search result or a fetch
+summary — a summariser misreported one of these papers' central numbers during drafting, which is
+why the rule exists. Eight of the ten references were obtained in full and the cited passages
+read directly (<strong>[R]</strong> in §15); the three not obtained (<strong>[M]</strong> — the two paywalled LPS papers and
+FastServe) are cited only for claims an [R] source corroborates or for a mechanism named in the
+title. <strong>No <code>[CITE]</code> gaps remain</strong>; §14 records how the last five were closed, including two that
+were closed by labelling a claim honestly rather than by finding a source for it.</p><p><strong>Format.</strong> Markdown, because this machine has no LaTeX or pandoc toolchain (<code>pdflatex</code>,
+<code>xelatex</code>, <code>latexmk</code>, <code>tectonic</code>, <code>pandoc</code> all absent) and the rest of <code>docs/</code> is Markdown.
+Converting to a venue template is mechanical once a venue is chosen; no venue or format was
+specified, so this draft is venue-neutral. See §14 for the open items that block submission.</p><hr />
+<h2>Abstract</h2>
+<p><em>Submission length, ~215 words. The extended version below carries the same claims with the
+evidence attached; keep the two in step.</em></p><p>On a single Tesla T4 running vLLM 0.8.5.post1 with Qwen2.5-1.5B and 3B under n-gram speculative
+decoding, KV-cache occupancy — the signal serving systems use to govern admission and capacity —
+is <strong>non-monotonically related to failure</strong>. Across ten trials of one configuration, every
+survivor peaked at a higher occupancy than every death (survived at 82.6%, died at 57.4%, no
+overlap), so no threshold on the signal separates them. The binding resource lies outside the
+paged pool: in 16 engine deaths, every failure was a dense <code>[N, k+1, V]</code> fp32 tensor in the
+speculative-decoding scorer, invisible to every admission signal the engine exposes. Its size
+follows <code>M = N·(k+1)·V·4</code> bytes, predicting the failing allocation to within 0.1% at k = 4 and
+k = 7 and 0.5% at N ≈ 410; the <code>V</code> term is read from the source rather than measured. Disabling
+speculative decoding removes the failure (0/3 versus 3/3) at a higher occupancy than killed the
+speculative arm. Which resource binds is itself a scheduler setting: raising <code>max_num_seqs</code> from
+256 to 1024 shifts it to the KV pool and halves sustainable concurrency, because the cap sizes an
+activation reserve taken from that pool. The failing path is absent from vLLM's V1 engine, and we
+claim no generality beyond this system.</p><hr />
+<h2>Extended summary</h2>
+<p>Continuously-batched LLM serving systems are provisioned as though the paged KV cache were the
+binding resource: admission control, capacity planning and autoscaling all key on KV occupancy.
+We test that assumption on one deployment — a single Tesla T4 running vLLM 0.8.5.post1 with
+Qwen2.5-1.5B and 3B under n-gram speculative decoding — and find the signal not merely imprecise
+but <strong>non-monotonically related to failure</strong>. Across ten repeated trials of one configuration,
+every survivor peaked at a <em>higher</em> KV occupancy than every death: the engine survived a full
+load ramp at 82.6% having died at 57.4%, with a 20-point gap and no overlap between the two
+groups. No threshold on occupancy separates them, because the resource that binds is not in the
+pool the signal measures.</p><p><em>Which</em> resource binds turns out to be a scheduler setting. Raising <code>max_num_seqs</code> from 256 to
+1024 — nominally an admission limit — moves the binding constraint from an unmonitored
+allocation to the KV pool on the same model, GPU and workload, because the raised cap enlarges
+vLLM's activation reservation and shrinks the pool the same setting is presumed to govern,
+halving the concurrency the engine can sustain.</p><p>We then identify what binds. In 16 engine deaths across two model sizes, three experiments and
+two speculative depths, every failure occurred in one allocation: a dense <code>[N, k+1, V]</code> fp32
+tensor in the speculative-decoding scorer, outside the paged allocator and invisible to every
+admission signal the engine exposes. That speculative decoding costs memory at high concurrency
+is known; what we add is an exact form and a test of it. <code>M = N·(k+1)·V·4</code> bytes predicts the
+failing allocation to within 0.1% at k = 4 and k = 7 and to within 0.5% at N ≈ 410, and correctly
+predicts that k = 2 does not fail at all at the default sequence cap. <strong>The <code>V</code> term is read from
+the allocation site rather than measured</strong> — every death in the campaign ran a checkpoint with
+V = 151,936 — so the law is tested on two of its three axes. A matched control closes the causal
+argument: disabling speculative decoding removes the failure entirely (0/3 versus 3/3) at a
+<em>higher</em> occupancy than the one that killed the speculative arm.</p><p>Finally, in one workload cell at n = 10, admission control governs <strong>aggregate throughput as
+well as service differentiation</strong> (+178 tok/s and +0.888 SLO attainment for an uncapped queue
+over FCFS, both surviving Holm correction across a 207-comparison family), where the common
+framing has admission policy trading latency for fairness at fixed capacity.</p><p><strong>Scope.</strong> These are measurements of one machine, one engine version and one model family, on a
+passively cooled device that thermally throttled through nearly the whole campaign — so absolute
+rates are depressed and only paired comparisons should be read as hardware-independent. The
+specific failing code path does not exist in vLLM's V1 engine, which scores on a flattened
+tensor instead. We therefore do not claim that these constants generalise, nor that this
+particular allocation binds elsewhere. The claim is narrower: in this system the signal used to
+govern capacity was non-monotonically related to the failure it is used to prevent, and the
+regime boundary was movable by a parameter that does not announce itself as a memory parameter.
+Whether other engines also admit against resources they cannot see is an open empirical question
+that this paper motivates rather than settles.</p><hr />
+<h2>1. Introduction</h2>
+<p>A continuously-batched LLM server admits requests into a running batch, advances every resident
+sequence by one token per engine step, and evicts sequences as they finish. The dominant memory
+consumer in this design is the paged KV cache, and the dominant operational assumption is that
+KV capacity <em>is</em> serving capacity: if the pool has room, the system can take the work.</p><p>That assumption is load-bearing. It is why vLLM exposes KV occupancy as a first-class gauge, why
+admission controllers throttle on it, and why capacity planning reduces to "how many sequences
+fit in the pool". The finding that organises this paper is a pair of runs that breaks it without
+needing any model at all:</p><blockquote>
+<p>Two trials of one configuration — same engine, same workload, same seed, same machine, eight
+minutes apart. The first <strong>died with the KV pool 57.4% full</strong>. The third <strong>survived the entire
+ramp at 80.7%</strong> and kept serving. Across the full set of ten trials the widest such pair is a
+death at 57.4% against a survival at <strong>82.6%</strong>.</p></blockquote><p>Occupancy is therefore not merely a weak predictor of failure in this system. It is not
+monotonically related to it, so no threshold on the signal can separate the two runs. Something
+outside the pool is binding, and the gauge that operators watch cannot see it.</p><p>The rest of the paper answers two questions that follow. <strong>What is binding?</strong> (§7) — an
+allocation in the speculative-decoding scorer, outside the paged allocator, whose size we give in
+closed form and test. <strong>When does it bind?</strong> (§8) — a question with an uncomfortable answer,
+since the regime boundary turns out to be movable by a scheduler parameter that does not look
+like a memory parameter.</p><h3>1.1 Contributions</h3>
+<ol>
+<li><strong>Occupancy is non-monotonically related to failure</strong> (§7.1). Deaths occurred with 37–56% of
+   the KV pool free, and matched trials survived at 82.6% having died at 57.4%. This is the
+   paper's central result and it requires no model: two runs of one configuration, one dead at
+   low occupancy and one alive at high.</li>
+<li><strong>The binding resource is selectable by a scheduler parameter</strong> (§8). Changing <code>max_num_seqs</code>
+   from 256 to 1024 moves the binding constraint from the scorer to the KV pool on the same
+   model, GPU and workload, because the raised cap costs 3.1 GiB of activation reservation taken
+   out of the KV pool. Raising the admission limit <strong>halves</strong> the concurrency the engine can
+   sustain.</li>
+<li><strong>A matched mechanism control</strong> (§7.5). With speculative decoding disabled the same ramp
+   survives 3/3 at 99.91–99.96% occupancy, higher than the 98.66–98.96% at which the speculative
+   arm died 3/3. Removing the allocation removes the failure, at an occupancy that would have
+   triggered it were occupancy the constraint.</li>
+<li><strong>A closed-form law for the allocation, tested on two axes</strong> (§7.2–7.4). <code>N·(k+1)·V·4</code> bytes
+   predicts the failing allocation to within 0.1% across N from 220 to 410 and k ∈ {2, 4, 7}. The
+   V term is read from the source, not measured, and we say so.</li>
+<li><strong>Admission control governs aggregate capacity</strong> (§9). At n = 10, an uncapped queue beats FCFS
+   by +178 tok/s <em>and</em> +0.888 SLO attainment, both surviving Holm correction over 207
+   comparisons — where the n = 3 campaign had yielded a single surviving contrast in 171, and not
+   a capacity one.</li>
+<li><strong>A service-rate model and an honest account of where it fails</strong> (§5, §6). μ(N) = min(N·r₀,
+   μ_max) fits one workload at R² = 0.983 and the pooled data at R² ≈ 0.22. We report the second
+   number as prominently as the first, because the model's failure to generalise is itself the
+   finding that motivates §7.</li>
+</ol>
+<h3>1.2 Relation to what is already known</h3>
+<p>Two of the ingredients here are not new, and the paper is weaker if it pretends otherwise.</p><p><strong>That speculative decoding costs memory at high concurrency is known</strong>, as is the fact that it
+degrades at large batch sizes, where the target model is already compute-efficient and the extra
+<code>k</code> verification positions are overhead. The existing treatment of this is a <em>speedup</em> question,
+measured in throughput. Our contributions on this axis are narrower and different in kind: an
+exact closed form rather than a scaling statement, a test of that form on the <code>k</code> axis, and the
+observation that the allocation is not a tax on throughput but the thing that <strong>ends the
+engine's life</strong> — a survival question, which is what makes it a capacity-planning problem rather
+than a tuning one.</p><p><strong>Limited processor sharing is established queueing theory</strong> (§4). We adopt it as the correct
+description of a batch-parallel server; we do not claim it. What is not in that literature is the
+coupling in §8, where the multiprogramming limit and the memory constraint are entangled by the
+implementation, so that raising the limit shrinks the resource the limit governs.</p><p>The novel core is §7.1 and §8: a capacity signal that is non-monotonically related to the failure
+it is used to prevent, and a regime boundary movable by a parameter that does not announce itself
+as a memory parameter.</p><h3>1.3 What this paper does not claim</h3>
+<p>The failure we characterise is specific to vLLM's V0 engine (§10.2), to a single T4 (§10.1) and
+to a model family with one vocabulary size (§10.3). We do not claim speculative decoding is a bad
+design — it is a net win in the regime it was built for — nor that we have found a defect: the
+allocation does exactly what it was written to do. The finding is that its size is unbounded in a
+dimension nothing admits against. The <em>mechanism</em> — an allocation scaling with <code>N × (k+1) × V</code>,
+outside the paged allocator and invisible to admission control — is a design property whose
+persistence in other engines is an open empirical question that nothing here settles.</p><hr />
+<h2>2. Background and related work</h2>
+<h3>2.1 Continuous batching and paged memory</h3>
+<p>Orca [1] introduced <strong>iteration-level scheduling</strong>, in which the scheduler "invokes the execution
+engine to run only a single iteration of the model on the batch" [1, §1], so requests join and
+leave between iterations. <code>N</code>, the number of resident sequences — vLLM's <code>num_requests_running</code>
+gauge — therefore varies continuously within a run, bounded by <code>max_num_seqs</code> (default 256).</p><p>Orca also introduced the admission-time memory discipline that this paper's failures evade, and
+it is worth stating precisely because it is sound. Its scheduler takes two operator knobs:
+<code>max_bs</code>, the largest number of requests in a batch, and <code>n_slots</code>, "the size of memory region
+(in terms of slots) allocated to the Attention K/V manager" [1, §4.2]. Since KV buffers cannot be
+reclaimed until a request finishes, a naive scheduler can deadlock; Orca reserves <code>max_tokens</code>
+slots at admission and admits only if they fit, giving a guarantee:</p><blockquote>
+<p>"if the reservation is possible, it is guaranteed that the manager can allocate buffers for the
+newly generated keys and values until the request finishes." [1, §4.2]</p></blockquote><p>That guarantee is exactly as wide as the allocator it ranges over. An allocation made elsewhere
+is neither reserved against at admission nor visible to the accounting that makes it true — and
+§7 reports failures of that kind, with the reservation discipline intact throughout.</p><p>vLLM [2] added <strong>PagedAttention</strong>, storing the KV cache in non-contiguous fixed-size blocks
+"inspired by the operating system's solution to memory fragmentation and sharing: virtual memory
+with paging" [2, §1], and with it the occupancy gauge operators watch. The premise that makes
+occupancy a capacity signal is stated explicitly there. Kwon et al. give the layout for a 13B
+model on a 40 GB A100 as 65% parameters, close to 30% KV cache, and a small remainder for
+activations, and conclude:</p><blockquote>
+<p>"Since the model weights are constant and the activations only occupy a small fraction of the
+GPU memory, the way the KV cache is managed is critical in determining the maximum batch
+size." [2, §1]</p></blockquote><p>Both halves of that reasoning fail on the system we measure. The activation reservation is not a
+fixed small fraction: it scales with <code>max_num_seqs</code>, from 2.52 GiB at a cap of 256 to 5.64 GiB at
+1024, taken out of the KV pool (§8). And what determines the maximum batch size is neither the
+weights nor the KV cache but a third allocation, in the speculative-decoding scorer, that the
+block manager does not account for and no gauge reports (§7).</p><h3>2.2 Speculative decoding and its costs</h3>
+<p>Speculative decoding was introduced concurrently and independently by Leviathan et al. [3] and
+Chen et al. [4]: a cheap draft proposes γ tokens, the target scores them in parallel, and modified
+rejection sampling accepts a prefix while leaving the target's output distribution unchanged. Our
+runs use vLLM's prompt-lookup n-gram drafter, so no draft model's weights enter the memory budget
+— which matters because the allocation in §7 cannot be attributed to one.</p><p><strong>What both papers account for is bandwidth and arithmetic, not memory capacity, and that is the
+gap this paper falls into.</strong> The method's stated justification is that decoding is bandwidth-bound
+and therefore has compute to spare:</p><blockquote>
+<p>"inference from large models is often not bottlenecked on arithmetic operations, but rather on
+memory bandwidth and communication, so additional computation resources might be available."
+[3, §1]</p></blockquote><p>Chen et al. reason identically, and where they discuss the KV cache growing with batch size it is
+again a <em>bandwidth</em> concern [4, Related Work]. Neither analyses the memory <em>capacity</em> consumed by
+materialising scores for <code>k+1</code> positions across a batch. The trade is compute-for-latency and on
+that accounting it is favourable; the resource we find binding does not appear in it. Where the
+scaling is stated elsewhere it is qualitative — the scorer is "K× more expensive" — whereas
+§7.3–7.4 give an exact expression and test it on two of its three axes.</p><p>The batch-size regime matters for the same reason: the premise is that spare compute exists, and
+at high concurrency it may not. Sadhukhan et al. [11] record the resulting consensus — "the
+conventional wisdom suggests that [speculative decoding's] efficacy is limited to small batch
+sizes" [11, abstract] — and attribute it to verification cost, since "with large batches, LLMs
+become compute bound, making verification significantly costly", so that "the usage of SD in high
+batch size regime is discouraged by existing works" [11, §1]. They then qualify it: past a
+critical sequence length KV loading dominates again and speculation recovers, which is the regime
+their own method targets. Our runs sit below that length, where the discouragement applies — but
+the cost we measure is not the verification <em>compute</em> that this literature weighs. It is the
+memory the verification step allocates, which neither the original papers nor their large-batch
+critics account for. Implementation is not incidental either: we measure an engine that expands
+the batch into a padded <code>[N, k+1, V]</code> tensor, while vLLM's V1 engine scores a flattened one
+(§10.2).</p><h3>2.3 Admission control and SLO-aware scheduling</h3>
+<p>A substantial line of work schedules LLM requests against latency and SLO targets: Sarathi-Serve
+[5] overlaps chunked prefills with ongoing decodes; Llumnix [6] live-migrates requests with their
+GPU memory state across instances; QLM [7] reorders a queue against estimated waiting times;
+FastServe [12] preempts at the granularity of a single output token, using a skip-join
+multi-level feedback queue to attack head-of-line blocking.</p><p><strong>These systems do change aggregate throughput</strong> — QLM reports 20–400%, Sarathi-Serve 2.6–3.7×
+serving capacity — <strong>so §9's result is not novel in that respect. What differs is the mechanism.</strong>
+Their instruments are utilisation and multiplexing, and memory enters each design as KV space:
+Llumnix's motivating problem is that "varying request lengths and memory demands inevitably result
+in memory fragmentation across instances" [6, §1], and Agrawal et al. describe Orca and vLLM as
+eagerly scheduling prefills "whenever GPU memory becomes available" [5, §1] — admission keyed on
+exactly the resource §7 shows is not binding, inheriting Orca's guarantee along with its scope.</p><p>We read §9's gain — an uncapped queue adding +178 tok/s over FCFS in the cell where it adds +0.888
+SLO attainment — as a consequence of §7 rather than a scheduling insight: a policy holding
+concurrency below the unmonitored boundary keeps the engine alive, and a live engine outproduces a
+dead one. The contribution is not that admission affects throughput, but that near such a boundary
+it does so through a channel none of these signals expose.</p><h3>2.4 Queueing models for batch-parallel servers</h3>
+<p>§4 argues that a continuously-batched engine is a <strong>limited processor sharing</strong> (LPS) server
+rather than a processor-sharing one. In LPS "the server can serve up to K ≥ 1 jobs
+simultaneously, equally distributing its attention to each of them", and "letting K = ∞ makes the
+system a standard processor sharing (PS) queue" [10, §1]. This is established theory and we claim
+no part of it: Zhang and Zwart [8] give steady-state heavy-traffic approximations; Zhang, Dai and
+Zwart a fluid approximation [9] and a diffusion limit [10]. Our use is descriptive, and matters
+because the wrong label (M/G/1-PS) implies a fixed aggregate capacity this system lacks at low
+concurrency.</p><p><strong>Where our system departs is in what setting the limit costs.</strong> That limit is ordinarily
+independent of the memory constraint: Orca exposes <code>max_bs</code> and <code>n_slots</code> as separate operator
+knobs [1, §4.2], and the LPS literature justifies K by scheduling overhead — "allowing too many
+jobs to time-share at once can lead to significant overhead due to switching" [10, §1] — so K is
+exogenous, entering the analyses only through the scaling.</p><p>In the engine we measure, <code>max_num_seqs</code> plays K's role and is <em>not</em> free in this sense: it both
+bounds concurrency and sizes the activation reservation deducted from the KV pool, so raising it
+lowers the residency it is meant to raise (§8). At K = 1024 the pool falls to 1.63 GiB and the
+engine sustains N ≈ 125, against N = 256 at K = 256. Orca's two knobs have been collapsed into
+one, and the sign of the effect inverts over part of the range. We have not found this coupling
+treated in the LPS literature, though our reading is limited to the three papers cited.</p><hr />
+<h2>3. Experimental setup</h2>
+<p>Single-node, single-GPU. <strong>Figure 1</strong> shows the harness: an admission layer in front of an
+unmodified vLLM engine, which is what lets §9 vary admission policy without touching the engine
+whose failure §7 characterises. Full capture in <code>snapshots/paper-v2/ENVIRONMENT.json</code>.</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig01_architecture.png" alt="Figure 1" width="658" height="354"></p>
+<p class="cap"><b>Figure 1.</b> The harness: an admission layer in front of an unmodified vLLM engine. This is what lets §9 vary admission policy without touching the engine whose failure §7 characterises.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPU</td>
+<td>Tesla T4, 14.56 GiB usable, CC 7.5, 40 SMs, 70 W cap</td>
+</tr>
+<tr>
+<td>Host</td>
+<td>Intel Xeon E5-2696 v4, 88 threads, Linux 6.8.0-124-generic</td>
+</tr>
+<tr>
+<td>Driver</td>
+<td>580.173.02 (kernel module and userspace NVML agree)</td>
+</tr>
+<tr>
+<td>Stack</td>
+<td>vLLM 0.8.5.post1, PyTorch 2.6.0+cu124, CUDA 12.4, Python 3.11.15</td>
+</tr>
+<tr>
+<td>Models</td>
+<td>Qwen2.5-1.5B-Instruct, Qwen2.5-3B-Instruct, float16</td>
+</tr>
+<tr>
+<td>Speculation</td>
+<td>n-gram prompt-lookup, <code>k</code> = 2/4/7, <code>prompt_lookup</code> 2–5</td>
+</tr>
+</tbody>
+</table><p>Arrivals are Poisson with a fixed seed, open-loop (<code>common/loadgen.py</code>); service requirement is
+the output length, drawn per workload class. Telemetry is sampled per stage: <code>num_running</code>,
+<code>num_waiting</code>, KV occupancy, memory, temperature, power and the NVML throttle flag.</p><p><strong>The device throttles.</strong> Nearly every run in the campaign sat at 85–89 °C with the NVML
+thermal-throttle flag set. This is a passively cooled T4 in a dense chassis. Every absolute rate
+in this paper is therefore depressed relative to an unthrottled device, and <strong>only paired and
+ratio comparisons should be read as hardware-independent</strong>. This is stated once here and again
+in §10.4 because it conditions every throughput number in §5.</p><hr />
+<h2>4. Why "M/G/1-PS" is the wrong label</h2>
+<p>Three of the four Kendall symbols hold: arrivals are Poisson by construction, service
+requirements are generally distributed by construction, and there is one server. <strong>Processor
+sharing does not hold.</strong> Classical M/G/1-PS assumes a fixed capacity μ shared among N jobs, each
+receiving μ/N. A continuously-batched engine does not behave that way at low concurrency: every
+step advances all N sequences, and at small N the step time is dominated by streaming weights, a
+cost paid once per step regardless of N. Adding a sequence therefore costs almost nothing and
+the <strong>aggregate rate grows with N</strong>.</p><p>The correct description is an M/G/1 queue with a concurrency-dependent service rate, batch-
+parallel below a knee and processor-sharing above it, subject to a hard multiprogramming limit —
+<strong>limited processor sharing</strong>, not PS.</p><p><strong>We adopt LPS; we do not claim it.</strong> It is established queueing theory with a substantial
+literature on fluid and diffusion limits and heavy-traffic approximations, and the contribution
+here is only the observation that a continuously-batched LLM engine is an instance of it. What is
+<em>not</em> in that literature is the coupling §8 reports: the multiprogramming limit is not a
+modelling convenience but <code>max_num_seqs</code>, and raising it <strong>shrinks the memory the limit is
+supposed to govern</strong>. In LPS theory the multiprogramming limit is a free parameter; here it is
+entangled with the resource constraint by the implementation, and the two cannot be set
+independently.</p><hr />
+<h2>5. A concurrency-dependent service-rate model</h2>
+<p class="eq">μ(N) = min(N·r₀, μ_max)&nbsp;&nbsp;&nbsp;&nbsp;N* = μ_max / r₀&nbsp;&nbsp;&nbsp;&nbsp;0 ≤ N ≤ N_max</p>
+<p><code>r₀</code> is the per-sequence generation rate in the uncontended regime; <code>μ_max</code> is the saturated
+aggregate rate. Both are <strong>empirically fitted</strong>, neither derived from hardware specifications.
+Fitting is non-linear least squares over run-level <code>(N, X)</code> pairs, with 95% CIs from a
+non-parametric bootstrap <strong>over runs</strong> (2000 resamples), so the run-to-run variance structure —
+the dominant noise source — is preserved.</p><p>From <code>docs/queueing_model.md</code> §4:</p><table>
+<thead>
+<tr>
+<th>Workload</th>
+<th>n</th>
+<th>N range</th>
+<th>r₀ (tok/s/seq)</th>
+<th>μ_max (tok/s)</th>
+<th>N*</th>
+<th>R²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phase1_mixed</code></td>
+<td>9</td>
+<td>1.4 – 60.6</td>
+<td><strong>12.60</strong> [11.93, 14.86]</td>
+<td><strong>247.5</strong> [240.3, 253.0]</td>
+<td><strong>19.7</strong> [16.7, 20.8]</td>
+<td><strong>0.983</strong></td>
+</tr>
+<tr>
+<td><code>expB_qwen3b</code></td>
+<td>18</td>
+<td>0.9 – 129.2</td>
+<td>4.06 [3.85, 4.59]</td>
+<td><em>470.8</em></td>
+<td><em>116.1</em></td>
+<td>0.950</td>
+</tr>
+<tr>
+<td><code>phase2_mixed</code></td>
+<td>19</td>
+<td>3.6 – 18.2</td>
+<td>50.57 [45.46, 54.35]</td>
+<td><em>451.9</em></td>
+<td><em>8.9</em></td>
+<td>0.862</td>
+</tr>
+<tr>
+<td><code>modelval_mixed</code></td>
+<td>17</td>
+<td>0.4 – 116.8</td>
+<td>8.65 [6.61, 12.31]</td>
+<td><em>355.7</em></td>
+<td><em>41.1</em></td>
+<td>0.825</td>
+</tr>
+<tr>
+<td><code>expB_qwen1.5b</code></td>
+<td>17</td>
+<td>0.4 – 117.0</td>
+<td>8.52 [6.36, 12.21]</td>
+<td><em>355.2</em></td>
+<td><em>41.7</em></td>
+<td>0.813</td>
+</tr>
+<tr>
+<td><code>phase2_chat</code></td>
+<td>23</td>
+<td>3.6 – 11.8</td>
+<td>58.23 [56.05, 61.01]</td>
+<td><em>349.2</em></td>
+<td><em>6.0</em></td>
+<td>0.479</td>
+</tr>
+<tr>
+<td><code>phase1_validation</code></td>
+<td>6</td>
+<td>1.2 – 32.6</td>
+<td>63.27</td>
+<td><em>141.2</em></td>
+<td><em>2.2</em></td>
+<td>0.372</td>
+</tr>
+<tr>
+<td><em>pooled</em></td>
+<td>109</td>
+<td>0.4 – 129.2</td>
+<td>—</td>
+<td>—</td>
+<td>6.9</td>
+<td><strong>0.229</strong></td>
+</tr>
+</tbody>
+</table><p><em>Italicised μ_max and N* are extrapolations, not measurements (§6.1).</em> Only <code>phase1_mixed</code>
+both spans the knee generously and has a flat plateau (slope −0.61 tok/s/seq, indistinguishable
+from zero at this noise level; MAPE 12.7%). It is the reference fit, and <strong>Figure 8</strong> shows it
+against its measurements; <strong>Figure 2</strong> shows the throughput curves for all workloads, where the
+workload-specificity of the knee is visible directly.</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig02_throughput_vs_concurrency.png" alt="Figure 2" width="658" height="441"></p>
+<p class="cap"><b>Figure 2.</b> Throughput against concurrency for every workload. The knee is workload-specific, which is why §6.2 reports that a pooled fit is meaningless.</p>
+<p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig08_model_vs_measured.png" alt="Figure 8" width="658" height="394"></p>
+<p class="cap"><b>Figure 8.</b> The fitted service law against its measurements for `phase1_mixed`, the only workload that both spans the knee and has a flat plateau.</p>
+<hr />
+<h2>6. Where the rate model breaks</h2>
+<p>This section is the point of the exercise, and it motivates §7.</p><p><strong>6.1 μ_max is unidentified wherever the sweep did not saturate.</strong> <code>phase2_mixed</code> and
+<code>phase2_chat</code> have plateau slopes of +16.7 and +30.5 tok/s/seq — their "saturated" regions are
+still climbing steeply, because those sweeps reached only N ≈ 12–18. Their fitted μ_max and N*
+are artefacts of the N range. Experiment B was designed to fix this by sweeping to failure at
+N ≈ 117 and 129, and <strong>it does not</strong>: high-third slopes are 3.06 and 3.99 tok/s/seq, still
+rising. The reason is §7 — <em>the engine runs out of memory before it runs out of throughput.</em> On
+this device, under speculative decoding, μ_max is not merely unmeasured but unreachable.</p><p><strong>6.2 r₀ is not workload-invariant, so the pooled fit is meaningless.</strong> Fitted r₀ spans
+8.65–63.27 tok/s/seq — a factor of 7 — across workloads differing only in prompt/output length
+mix. Pooling gives R² ≈ 0.22. The model is a <em>per-workload</em> law; any claim that pools workloads
+averages incompatible regimes.</p><p><strong>6.3 The model has no memory dimension, so it cannot predict failure.</strong> μ(N) describes rate and
+says nothing about survival. It sees N = 256, predicts μ = μ_max, and has no term that fails.
+The remainder of this paper is about the term it is missing.</p><p>Additional limitations — Jensen bias from fitting on run-averaged N, non-stationarity from
+thermal throttling, the ambiguity of "service rate" under speculation, and the endogeneity of N
+under open-loop arrivals — are carried in <code>docs/queueing_model.md</code> §5.4–5.7 and summarised in
+§10.</p><hr />
+<h2>7. The memory boundary</h2>
+<p>This section is ordered as the investigation ran: first the observation that the capacity signal
+does not work (§7.1), then the identification of what actually binds (§7.2), the closed form and
+its tests (§7.3–7.4), and a matched control that removes the mechanism and with it the failure
+(§7.5).</p><h3>7.1 Occupancy does not explain the failures</h3>
+<p>The engine's reproduction behaviour is stochastic, and that turns out to be the most informative
+thing about it. Repeating one configuration as independent trials — fresh server, fresh engine, a
+load ramp escalating until the engine dies or the ramp is exhausted — the 3B boundary reproduced
+in <strong>5 of 10</strong> trials, a 50% rate with a Wilson 95% interval of [24%, 76%]
+(<code>docs/experiment_b.md</code> §8). A trial that survives is not one that failed to reach the boundary:
+it reaches the same concurrency ceiling and keeps serving.</p><p>The survivors invert the ordering that any occupancy-based account requires:</p><table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>Peak KV when it died</th>
+<th>Peak KV when it survived</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1.5b</code></td>
+<td>28.2%, 28.5%, 28.7%</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>3b</code></td>
+<td>57.4%, 59.1%, 59.5%, 59.6%, 60.9%</td>
+<td>80.7%, 80.8%, 80.9%, 81.3%, 82.6%</td>
+</tr>
+</tbody>
+</table><p>If occupancy were the binding constraint, no trial could survive at an occupancy above the
+lowest at which another trial died. That ordering is violated across the whole 3B set: <strong>every</strong>
+survivor peaked higher than <strong>every</strong> death, with a gap of nearly 20 percentage points between
+the highest death (60.9%) and the lowest survival (80.7%). The separation is not marginal and
+the two groups do not overlap.</p><p>The inversion is not an artefact of drift between batches. The first three trials ran back to
+back within nine minutes on one engine at one seed, and contain the inversion on their own: a
+death at 57.4%, a death at 59.6%, then a survival at 80.7%. The remaining seven trials, run
+about nine hours later, reproduce the same pattern and extend the survivor range to 82.6%.</p><p>Occupancy is therefore not merely a poor predictor of failure here; it is not monotonically
+related to it. <strong>No threshold on this signal separates the runs that died from the runs that
+lived</strong> — which is precisely what an admission controller keyed on occupancy would need. The
+argument requires no model and no theory of the mechanism: two runs of one configuration, one
+dead at low occupancy and one alive at high.</p><p><strong>Figure 9</strong> puts the same point geometrically, for the Experiment A campaign. A KV-bound system
+fails along the horizontal axis, occupancy rising to 100%; this one fails along the vertical
+axis, N reaching <code>max_num_seqs</code>, with occupancy at 28.4% ± 0.3%. The dashed line traces where
+occupancy would have to go for KV to be the binding resource, and the trials never approach it.
+The figure also marks the band that vLLM's KV-based admission control does guard — occupancy
+approaching exhaustion, where preemption and recompute engage — and the failures fall well
+outside it. <strong>Figure 3</strong> shows the same three trials against concurrency, dying with 71.6% of
+the cache unused.</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig03_kv_vs_concurrency.png" alt="Figure 3" width="658" height="442"></p>
+<p class="cap"><b>Figure 3.</b> KV occupancy against concurrency for the Experiment A trials. All three die with 71.6% of the cache unused.</p>
+<p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig09_regime_diagram.png" alt="Figure 9" width="658" height="451"></p>
+<p class="cap"><b>Figure 9.</b> A KV-bound system fails along the horizontal axis, occupancy reaching 100%. This one fails along the vertical axis, N reaching `max_num_seqs`, at 28.4% ± 0.3% occupancy. The shaded band is the region KV-based admission control guards; the failures fall outside it.</p>
+<p>A second, independent line of evidence comes from an experiment that varied speculative depth
+(§7.4). Its k = 7 arm died in 3/3 trials at N = 186, 187 and 256 against a sequence cap of 256,
+with occupancy at the failing step of <strong>43.6%, 43.6% and 63.3%</strong> against an estimated KV ceiling
+of N ≈ 363. Up to 37% of the pool was free at the moment of death, so neither the cap nor
+exhaustion of the pool accounts for it.</p><p>We state that arm on occupancy rather than concurrency deliberately: one of its three deaths
+lands on the cap itself, so a concurrency-only argument would not carry. The occupancy argument
+covers all three.</p><h3>7.2 The allocation that does</h3>
+<p>Every OOM in this campaign — <strong>16 independent engine deaths across two model sizes and three
+experiments</strong> — failed at the same source line: <code>batch_expansion.py:227</code> in <code>_contract_batch</code>,
+reached via <code>spec_decode_worker.py:794</code> <code>score_proposals</code>. At that site the scorer materialises</p><pre><code class="language-python">226:  all_probs    = target_probs.new_zeros(*all_tokens.shape, self._vocab_size)
+227:  all_logprobs = target_logprobs.new_full(size=all_probs.shape, ...)
+</code></pre><p>two dense <code>[N, k+1, V]</code> fp32 tensors back to back, where <code>all_tokens.shape</code> is
+<code>(contracted_bs, k+1)</code>. This yields the law</p><p class="eq">M_scorer = N · (k+1) · V · 4 bytes</p>
+<p><strong>Every observed OOM reports line 227</strong>, so line 226 had already succeeded and the <em>second</em>
+allocation failed. Transient peak demand at this site is therefore <strong>twice</strong> the reported failed
+allocation. This does not affect the law as tested — <code>M_scorer</code> predicts the size of the tensor
+that failed, and our test statistic is MiB per sequence computed from that — but it does affect
+any prediction of the <em>concurrency</em> at which death occurs, which depends on total headroom. This
+is a source reading, not an experiment, and is reported as such.</p><p><strong>Figure 5</strong> is the accounting gap in one picture. On the left, what vLLM reserves at startup for
+the 1.5B configuration: 2.89 GiB of weights, 2.02 GiB of activation headroom, 8.15 GiB of KV
+cache. On the right, what the device actually holds at the moment of failure: the weights
+unchanged, 2.31 GiB of KV in use, <strong>5.84 GiB of KV reserved and never touched</strong>, and 1.86 GiB of
+activations and scorer. Into that state the scorer requests 742 MiB with 736 MiB free, and the
+engine dies — six megabytes short, beside six gigabytes of reserved cache it is not permitted to
+use. The reservation discipline of §2.1 is working exactly as designed throughout.</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig05_bottleneck.png" alt="Figure 5" width="658" height="324"></p>
+<p class="cap"><b>Figure 5.</b> The accounting gap. Left: what vLLM reserves at startup. Right: what the device actually holds when it dies — 5.84 GiB of KV reserved and never touched, while a 742 MiB scorer request fails with 736 MiB free.</p>
+<p>This allocation also explains §7.1's stochasticity, which an occupancy account cannot. The tensor
+is requested once per engine step as a single contiguous block; whether a request of that size
+succeeds depends on the state of the caching allocator at that instant — how fragmented the
+reserved-but-unallocated pool happens to be. Reported free memory at failure sits close to, but
+not below, the size of the allocation. Nothing about the boundary requires it to be crossed
+deterministically, which is why it must be reported as a rate rather than a threshold.</p><p><strong>This last paragraph is a conjecture and we label it as one.</strong> The stochasticity is measured —
+5 of 10 trials, with the Wilson interval above — but the allocator-state explanation for it is
+inferred from the shape of the data rather than instrumented. We did not record allocator
+fragmentation at the failing step, and a competing account (variation in the batch's context
+lengths, and so in free memory, at the moment the request is made) would fit the same
+observations. Distinguishing them needs allocator telemetry we do not collect. <strong>The empirical
+claim stands without the explanation</strong>: the boundary is crossed stochastically and must be
+reported as a rate.</p><h3>7.3 The law on the N axis</h3>
+<p>With k+1 = 5 and V = 151,936, the law gives <strong>2.898 MiB per sequence</strong>. Against the ten deaths
+of Experiments A and B (<code>docs/experiment_b.md</code> §5):</p><table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>N at failure</th>
+<th>Predicted</th>
+<th>Reported</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1.5b</code> sweep</td>
+<td>220</td>
+<td>638 MiB</td>
+<td>638 MiB</td>
+<td>−0.1%</td>
+</tr>
+<tr>
+<td><code>3b</code> sweep</td>
+<td>256</td>
+<td>742 MiB</td>
+<td>742 MiB</td>
+<td>−0.0%</td>
+</tr>
+<tr>
+<td>8 further probe trials</td>
+<td>256</td>
+<td>742 MiB</td>
+<td>742 MiB</td>
+<td>−0.0%</td>
+</tr>
+</tbody>
+</table><p>The 1.5B sweep died at lower concurrency and asked for correspondingly <em>less</em> memory, which is
+what makes this a test rather than a fit: the failing allocation tracks N, not model size.
+<strong>Figure 4</strong> shows the underlying trajectory — device memory climbing with concurrency until the
+allocator has no room left for the next request.</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig04_memory_vs_concurrency.png" alt="Figure 4" width="658" height="441"></p>
+<p class="cap"><b>Figure 4.</b> Device memory against concurrency, climbing until the allocator has no room for the next request.</p>
+<h3>7.4 The law on the k axis (Experiment F)</h3>
+<p>The N-axis test cannot identify the scorer specifically — any per-sequence allocation would look
+linear in N. The <code>(k+1)</code> factor is the discriminating term, and the one most likely to have
+taken another form, since how many speculative tokens are actually scored per step is a
+scheduler decision rather than simply the configured <code>k</code>. Experiment F varies it at fixed model,
+GPU, ramp and seed (<code>results/expF/expF_analysis.json</code>, <strong>Figure 11</strong>):</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig11_scorer_law_k.png" alt="Figure 11" width="658" height="436"></p>
+<p class="cap"><b>Figure 11.</b> The failing allocation against speculative depth. k = 2 is drawn open because it survived: there is no failing allocation to measure.</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>k</th>
+<th>Trials</th>
+<th>Died</th>
+<th>MiB/seq measured</th>
+<th>Predicted</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Experiment B anchor</td>
+<td>4</td>
+<td>—</td>
+<td>—</td>
+<td>2.898</td>
+<td>2.898</td>
+<td>(anchor)</td>
+</tr>
+<tr>
+<td><code>k2_cap256</code></td>
+<td>2</td>
+<td>3</td>
+<td>0</td>
+<td>— (no death to measure)</td>
+<td>1.739</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>k7_cap256</code></td>
+<td>7</td>
+<td>3</td>
+<td>3</td>
+<td>4.642 (range 4.640–4.645)</td>
+<td>4.637</td>
+<td><strong>+0.1%</strong></td>
+</tr>
+</tbody>
+</table><p>The ratio to the k = 4 anchor is <strong>1.602 observed against 1.600 predicted</strong> — 8/5, fixed by the
+tensor's shape before the arm ran. The k = 2 arm is the cheap falsification the law had to
+survive: at 1.739 MiB/seq its boundary lies past the sequence cap, so the engine cannot reach it,
+and it did not — surviving 3/3 while reaching N = 256 and 83.1% occupancy. A law that
+over-predicted would have killed k = 2; one that under-predicted would have spared k = 7.</p><h3>7.5 The mechanism control</h3>
+<p>Experiment F's fourth step re-ran the speculative-decoding contrast at <code>max_num_seqs</code> = 512, a
+cap chosen from a calibration sweep rather than guessed. Both arms share model, cap, ramp and
+seed; only <code>--speculative-config</code> differs.</p><table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>Speculative decoding</th>
+<th>Trials</th>
+<th>Died</th>
+<th>Peak N</th>
+<th>Peak KV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spec on</td>
+<td>on</td>
+<td>3</td>
+<td>3</td>
+<td>410</td>
+<td>98.96%</td>
+</tr>
+<tr>
+<td>spec off</td>
+<td>off</td>
+<td>3</td>
+<td><strong>0</strong></td>
+<td>402</td>
+<td>99.96%</td>
+</tr>
+</tbody>
+</table><p>The spec-on arm died 3/3 at <strong>2.884 MiB/seq against 2.898 predicted (−0.5%)</strong>, at allocations of
+1167–1188 MiB — larger than anything in §7.3's table — and at N ≈ 410, extending the law's
+tested range from 220–256 out to 410.</p><p>The spec-off arm <strong>died 0/3</strong>, riding the ramp to λ = 8 at 99.91–99.96% occupancy — <em>higher</em> than
+the 98.66–98.96% at which the spec-on arm died — and kept serving. Remove the allocation the law
+names and the failure disappears, under a load that drives the same engine to a fuller KV pool
+than the one that killed it. The mechanism is not merely consistent with the deaths; it is
+necessary for them.</p><blockquote>
+<p><strong>These particular deaths are not low-occupancy ones.</strong> At cap 512 the spec-on arm reaches
+N ≈ 410 and a nearly full pool before the scorer allocation fails, so this pair does not
+demonstrate the low-KV OOM of §7.1 and §7.3. It demonstrates the <em>mechanism</em>, against a matched
+control. The two arms do different jobs: k = 7 shows the failure arriving with a third of the
+pool free; this pair shows it not arriving at all once the scorer is gone.</p></blockquote><h3>7.6 What moves with model size, and what does not</h3>
+<p>Fitting occupancy = a·N through the origin (bootstrap over runs, 2000 resamples): KV cost per
+sequence is 0.1103% for the 1.5B and 0.2501% for the 3B, a <strong>ratio of 2.27× [2.17, 2.34]</strong>. That
+ratio is predicted rather than merely observed, from two numbers neither of which came from the
+sweep: per-token KV cost rises 1.29× (36 layers against 28) and the pool it lands in shrinks
+1.72× (fp16 weights of 5.79 GiB against 2.89 GiB leave 4.74 GiB against 8.15 GiB of KV). Together
+they predict <strong>2.21×</strong>, inside the measured interval; vLLM's own reported maximum-concurrency
+ratio (2.21×) agrees independently.</p><p>The scorer allocation, meanwhile, does not move with model size at all. <strong>Figure 10</strong> places the
+two panels side by side at the same scale, which is the whole result: KV cost per sequence moves
+with model size, and the allocation that kills the engine does not. <strong>This is the bottleneck
+moving</strong>: the wall sits at the same N for both models, but the 3B engine arrives there having
+spent twice as much of a smaller pool on KV. Extrapolating, the 3B arm would exhaust its pool at
+N ≈ 400, beyond the cap of 256 — which is why the scorer wall still arrives first. The margin is
+about 1.6× and closes from both ends at once. A modestly larger model on this device crosses
+over, at which point the failure changes identity and becomes a genuine KV exhaustion. <strong>The
+claim is specific to a regime, and Experiment B locates its edge.</strong></p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig10_model_size_comparison.png" alt="Figure 10" width="658" height="278"></p>
+<p class="cap"><b>Figure 10.</b> What moves with model size (KV cost per sequence, left) beside what does not (the allocation that kills the engine, right), drawn at the same scale.</p>
+<p>Separately, speculative-decoding acceptance falls from 0.723 (1.5B, n = 17) to 0.589 (3B,
+n = 18), Hedges' g = −5.66, Welch p = 1.33e-17. The draft is prompt-lookup n-gram in both arms,
+so the proposal distribution is identical; the larger target model simply agrees less often. The
+cost is paid twice — fewer accepted tokens per step, and the same scorer tensor allocated to
+score them.</p><hr />
+<h2>8. The regime flip: <code>max_num_seqs</code> is a memory parameter</h2>
+<p>The binding resource can be moved between the scorer and the KV pool by changing one scheduler
+parameter, on the same model, GPU and workload. vLLM sizes its memory-profiling pass at
+<code>max_num_seqs</code> and reserves the resulting activation peak, leaving the KV pool the remainder
+(<code>results/expF/calibration.json</code>):</p><table>
+<thead>
+<tr>
+<th><code>max_num_seqs</code></th>
+<th>Activation reserve</th>
+<th>KV pool</th>
+<th>Estimated KV-bound N</th>
+<th>Regime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>256</td>
+<td>2.52 GiB</td>
+<td>4.74 GiB</td>
+<td>≈ 363</td>
+<td><strong>scorer-bound</strong> — dies at N = 256, KV 57–60%</td>
+</tr>
+<tr>
+<td>512</td>
+<td>2.89 GiB</td>
+<td>4.38 GiB</td>
+<td>≈ 336</td>
+<td>scorer-bound</td>
+</tr>
+<tr>
+<td>768</td>
+<td>4.26 GiB</td>
+<td>3.00 GiB</td>
+<td>≈ 230</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1024</td>
+<td>5.64 GiB</td>
+<td>1.63 GiB</td>
+<td>≈ 125</td>
+<td><strong>KV-bound</strong> — survives, KV ≈ 99%, N ≈ 125</td>
+</tr>
+</tbody>
+</table><p>Raising the cap by 4× costs 3.1 GiB of activation reservation, taken directly out of the pool the
+same setting is presumed to govern. <strong>Raising the admission limit therefore halves the
+concurrency the engine can actually sustain</strong>, and flips which resource binds.</p><p>This has a methodological consequence we report because it cost us two experiments: an earlier
+attempt at the speculative-decoding contrast used <code>max_num_seqs</code> = 1024 and measured the
+KV-bound row rather than the intended question. The cap in §7.5 was chosen from the calibration
+sweep above rather than guessed, for exactly this reason.</p><hr />
+<h2>9. Admission control governs aggregate capacity, not only differentiation</h2>
+<p>Phase 2 compares five admission policies (<code>nocap</code>, <code>fcfs</code>, <code>srpt</code>, <code>edf</code>, <code>adaptive</code>) across
+workloads and arrival rates. Intervals are two-sided 95% t-intervals; effect sizes are Hedges' g
+[14] with the small-sample correction; contrasts use Welch's unequal-variance t [15], Holm-
+adjusted [13] across the <strong>whole family of 207 comparisons</strong> (<code>results/stats/STATISTICS.md</code>).
+Proportions carry Wilson score intervals [16], which do not degenerate at attainment near 0 or 1
+as the normal approximation does — and several cells here sit at both extremes.</p><p><strong>At n = 3 the comparison had almost no resolving power.</strong> Before Experiment D, with every cell
+at n = 3, exactly <strong>1 of 171</strong> contrasts survived Holm — and it was a queue-wait result, not a
+capacity one (<code>results/stats/STATISTICS.md</code> at commit <code>d9602c6</code>). Repeating the decisive cell at
+n = 10 (<code>phase2_mixed_n10</code>, λ = 4) changed that: of 207 comparisons, 32 are significant before
+correction and <strong>9 survive Holm</strong>. The surviving contrasts include:</p><table>
+<thead>
+<tr>
+<th>Contrast</th>
+<th>Metric</th>
+<th>Effect</th>
+<th>g</th>
+<th>p_holm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nocap</code> vs <code>fcfs</code></td>
+<td>SLO attainment</td>
+<td>+0.888</td>
+<td>+9.24</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<td><code>nocap</code> vs <code>fcfs</code></td>
+<td>Queue wait p99</td>
+<td>−5.78e3 ms</td>
+<td>−15.52</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<td><code>nocap</code> vs <code>fcfs</code></td>
+<td><strong>Throughput</strong></td>
+<td><strong>+178 tok/s</strong></td>
+<td>+2.67</td>
+<td>0.0088</td>
+</tr>
+<tr>
+<td><code>edf</code> vs <code>fcfs</code></td>
+<td>SLO attainment</td>
+<td>+0.412</td>
+<td>+3.69</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<td><code>srpt</code> vs <code>fcfs</code></td>
+<td>SLO attainment</td>
+<td>+0.397</td>
+<td>+3.78</td>
+<td>0.0000</td>
+</tr>
+</tbody>
+</table><p><strong>Figure 6</strong> shows aggregate SLO attainment by policy and arrival rate across the Phase-2 grid,
+and <strong>Figure 7</strong> breaks the same attainment down by workload class, where the differentiation
+these policies are designed for is visible: <code>nocap</code> holds every class above 0.9 in the n = 10
+cell while <code>fcfs</code> collapses on all four.</p><p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig06_aggregate_slo.png" alt="Figure 6" width="658" height="256"></p>
+<p class="cap"><b>Figure 6.</b> Aggregate SLO attainment by policy and arrival rate across the Phase-2 grid.</p>
+<p class="figimg"><img src="file:///home/abburigireesh/vllm_scheduler/results/figures/paper/fig07_perclass_slo_heatmap.png" alt="Figure 7" width="658" height="191"></p>
+<p class="cap"><b>Figure 7.</b> Per-class SLO attainment. In the n = 10 cell `nocap` holds every class above 0.9 while `fcfs` collapses on all four.</p>
+<p>The throughput row is the one that matters for framing. Admission policy is commonly described
+as trading latency or fairness <em>at fixed capacity</em>. Here an uncapped queue gains <strong>both</strong> +0.888
+SLO attainment <strong>and</strong> +178 tok/s (287 → 464) over FCFS, with both effects surviving the
+conservative correction. <strong>Admission control governs aggregate capacity and differentiation
+together</strong>, and the two would decouple only above the saturation knee — which §6.1 shows this
+hardware cannot reach before failing.</p><hr />
+<h2>10. Threats to validity</h2>
+<p><strong>10.1 Single device, single version, single model family.</strong> One passively cooled T4, vLLM
+0.8.5.post1, and two Qwen2.5 checkpoints. This is the weakest axis of the paper and the first
+thing a referee will raise. Nothing here establishes that the constants generalise; the
+<em>mechanism</em> is a design property, but its magnitude on other hardware is unmeasured.</p><p><strong>10.2 The failing code path does not exist in vLLM V1.</strong> Read from the installed source:
+<code>vllm/v1/spec_decode/</code> contains <code>eagle.py</code>, <code>ngram_proposer.py</code>, <code>metadata.py</code>, <code>metrics.py</code> and
+<code>utils.py</code> — and no <code>batch_expansion.py</code>. V1's equivalent, <code>vllm/v1/sample/rejection_sampler.py</code>,
+operates on a flattened 2-D <code>(num_tokens, vocab_size)</code> tensor rather than a padded 3-D
+<code>[N, k+1, V]</code> expansion, and shows no sign of the doubled probs/logprobs pair. The honest framing
+is that <strong>the specific failure is V0-specific, while the mechanism is a design property whose
+persistence in V1 is an open empirical question</strong>: <code>num_tokens</code> in V1 is still ≈ N·(k+1) in the
+worst case, so the magnitude may well survive the refactor. Nothing here settles that, and only
+a V1 run would. This was a source read, not an experiment.</p><p><strong>10.3 The V term of the law is asserted, not measured.</strong> Every death in the campaign ran a
+Qwen2.5 checkpoint at V = 151,936. The vocabulary dimension is read off the allocation site —
+<code>new_zeros(*all_tokens.shape, self._vocab_size)</code> — which is a direct reading of the code that
+fails, not an inference from the failure, but it is <strong>not an independent measurement and must
+not be reported as one</strong>. Consequently "the allocation is model-size independent" is
+demonstrated on two models that agree on precisely the parameter which would have made it
+size-<em>dependent</em>. Measuring V requires a model from a different family, which changes layer
+count, KV cost per token and activation profile simultaneously — so a disagreement could not be
+attributed to V. §14 gives the concrete blocked experiment.</p><p><strong>10.4 Thermal throttling.</strong> This is a measurement of ours, not an appeal to a general
+phenomenon: NVML reported the throttle flag set, at 85–89 °C, through nearly the whole campaign
+(<code>thermal_throttled</code> is recorded per stage in every run record). The consequence is that absolute
+rates are depressed by an unknown factor and only paired and ratio comparisons are safe. Repeats
+within a cell ran back to back, so a thermal excursion is shared within a cell rather than
+averaged across it, which narrows intervals that should be wide.</p><p><strong>10.5 Statistical scope.</strong> Holm correction assumes the family is the one reported. Adding
+metrics later without re-running the correction reintroduces the multiplicity it removes. Phase 2
+outside the n = 10 cell remains at n = 3, where intervals are wide and effect sizes imprecise.</p><p><strong>10.6 Model-fitting caveats.</strong> Jensen bias from fitting on run-averaged N systematically
+overestimates the service rate near the knee (μ is concave); N is endogenous under open-loop
+arrivals, so regressing X on N fits an equilibrium relation rather than a causal response; and
+"service rate" is ambiguous under speculation, where emitted tokens/s, steps/s and accepted
+tokens/s are three different quantities with three different ceilings.</p><p><strong>10.7 A silent data-corruption artefact, and a corrected published number.</strong> When the engine
+dies mid-window, requests already streaming receive a <strong>cleanly terminated</strong> response —
+<code>success=True</code>, HTTP 200, no error — carrying roughly 5 tokens instead of the ~134 requested.
+Such runs report a plausible concurrency with a throughput an order of magnitude too low and are
+silently admitted by any filter that checks only the failed-request count. The output-length
+histogram spikes at multiples of <code>k+1</code>, because the stream ends on a speculative chunk boundary.
+Runs are now excluded on <code>actual_over_requested &lt; 0.4</code>; the separation is bimodal rather than
+tuned, with every healthy run in the campaign in [0.75, 1.00] and every affected one in
+[0.02, 0.06]. <strong>This affected a previously published number</strong>: the same artefact is present in
+the frozen <code>paper-v1</code> campaign, in <code>modelval_mixed</code> λ=4 rep2, and was included in that fit. With
+it removed, that workload's fit improves from R² = 0.558 to 0.825 and its MAPE from 77.3% to
+29.1%. Any reader comparing against <code>paper-v1</code> should use the corrected figure.</p><hr />
+<h2>11. Claim status table</h2>
+<p>Because the distinction is easy to lose in prose, every substantive claim is labelled:</p><table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KV occupancy is non-monotonically related to failure</td>
+<td><strong>Empirical</strong> — every 3B survivor peaked above every 3B death (§7.1)</td>
+</tr>
+<tr>
+<td>Arrivals Poisson; service requirement generally distributed</td>
+<td><strong>By construction</strong></td>
+</tr>
+<tr>
+<td>N ≤ <code>max_num_seqs</code></td>
+<td><strong>Architectural</strong></td>
+</tr>
+<tr>
+<td>μ(N) non-decreasing and concave</td>
+<td><strong>Theoretical</strong> — batching amortises a fixed per-step cost</td>
+</tr>
+<tr>
+<td>μ(N) = min(N·r₀, μ_max)</td>
+<td><strong>Modelling assumption</strong> — R² = 0.983 on <code>phase1_mixed</code>, ≈ 0.22 pooled</td>
+</tr>
+<tr>
+<td>r₀ = 12.60, μ_max = 247.5, N* = 19.7</td>
+<td><strong>Empirically fitted</strong> (<code>phase1_mixed</code>)</td>
+</tr>
+<tr>
+<td>~104 decode steps/s bandwidth ceiling</td>
+<td><strong>Derived from specs, and not attained</strong></td>
+</tr>
+<tr>
+<td>The engine OOMs in the scorer at low KV occupancy</td>
+<td><strong>Empirical</strong> — 16 deaths, and outside the rate model</td>
+</tr>
+<tr>
+<td><code>M = N·(k+1)·V·4</code> predicts the failing allocation</td>
+<td><strong>Empirical on N and (k+1)</strong>; V asserted (§10.3)</td>
+</tr>
+<tr>
+<td>Peak demand at the site is 2× the reported allocation</td>
+<td><strong>Source reading</strong>, not measured</td>
+</tr>
+<tr>
+<td>Removing speculation removes the failure</td>
+<td><strong>Empirical</strong> — 0/3 vs 3/3 at matched cap and higher occupancy</td>
+</tr>
+<tr>
+<td>Raising <code>max_num_seqs</code> flips the binding resource</td>
+<td><strong>Empirical</strong> — calibration sweep + both regimes observed</td>
+</tr>
+<tr>
+<td>Admission control governs aggregate capacity</td>
+<td><strong>Empirical</strong> — n = 10, survives Holm over 207 comparisons</td>
+</tr>
+<tr>
+<td>The mechanism persists in vLLM V1</td>
+<td><strong>Open</strong> — source suggests the path is gone; unmeasured</td>
+</tr>
+</tbody>
+</table><hr />
+<h2>12. Reproducibility</h2>
+<p>Two frozen snapshots (<code>snapshots/paper-v1</code>, <code>snapshots/paper-v2</code>) are physical copies, not git
+tags, because later sweeps regenerate summaries and figures in place. Each carries code,
+results, figures, gzipped driver logs, a full <code>ENVIRONMENT.json</code> and a <code>MANIFEST.sha256</code> over
+every file. Where the two disagree, <code>paper-v2</code> is the corrected one (§10.7).</p><pre><code class="language-bash">python tools/fit_queueing_model.py --results-dir results   # service-rate fits
+python tools/analyze_expB.py                               # experiments A, B and F -&gt; docs/experiment_b.md
+python tools/analyze_expF.py                               # experiment F arms
+python tools/analyze_stats.py                              # phase-2 policy statistics
+python tools/make_paper_figures.py                         # figure set, including Figure 11
+</code></pre><p><code>docs/experiment_b.md</code> is generated, not hand-edited: it regenerates byte-identically from the
+committed results, and degrades cleanly to its pre-F content if <code>results/expF</code> is absent.</p><hr />
+<h2>13. Conclusion</h2>
+<p>We set out to fit a service-rate model to a continuously-batched LLM server and found that the
+model could not be identified, because the engine died before it saturated. That failure turned
+out to be the result. On the system we measured, the engine never once ran out of the resource
+its capacity signal reports.</p><p>The evidence for that is a pair of runs rather than an argument. Under one configuration, at one
+seed, minutes apart, the engine died with the KV pool 57.4% full and then survived a full load
+ramp at 80.7%; across ten trials every survivor peaked higher than every death, with no overlap
+between the groups. Nothing in an occupancy threshold can separate those runs, which is what an
+admission controller keyed on occupancy is asked to do. What binds instead is an allocation in
+the speculative-decoding scorer, <code>N·(k+1)·V·4</code> bytes, sitting outside the paged allocator and
+absent from every gauge the engine exposes; it predicts the failing allocation to within 0.1% at
+two speculative depths and to within 0.5% at a concurrency 60% beyond anything else we measured,
+and removing it removes the failure at a <em>higher</em> occupancy than the one that killed the
+speculative arm.</p><p>Two consequences seem to us more durable than the constants.</p><p><strong>The reservation is only as wide as the allocator it names.</strong> Orca's admission-time guarantee is
+sound, and our engine dies with it fully intact — six megabytes short of a scorer allocation
+while six gigabytes of reserved KV sit untouched (Figure 5). A memory-safety argument that ranges
+over one allocator is not a memory-safety argument for the system, and continuous batching has
+accumulated allocators faster than it has accumulated accounting for them.</p><p><strong>A capacity limit that is also a memory parameter can invert.</strong> <code>max_num_seqs</code> bounds
+concurrency and sizes the activation reserve deducted from the KV pool, so raising it from 256 to
+1024 does not raise the sustainable concurrency but roughly halves it, and moves the binding
+resource from the scorer to the pool. Orca kept these as two knobs; collapsing them into one
+gives the operator a control whose sign changes partway along its range. That is a property of an
+implementation, not of a queueing discipline, and it is invisible to the theory that would
+otherwise describe the system.</p><p>None of this says speculative decoding is a poor design, or that we have found a defect. The
+allocation does exactly what it was written to do. The finding is that its size is unbounded in a
+dimension nothing admits against — and that the discipline which makes serving systems safe, the
+reserve-before-admit rule, is stated over an allocator rather than over a device.</p><p>We measured one GPU, one engine version and one model family, and §10 is explicit that the
+constants should not be carried elsewhere. The question we think worth carrying is smaller and
+harder to dismiss: for any serving system, what does its capacity signal <em>not</em> cover, and has
+anyone checked whether the uncovered part is the part that binds?</p><hr />
+<h2>14. Open items before submission</h2>
+<p><strong>Blocking:</strong></p><ol>
+<li>~~<strong>Related work and bibliography do not exist</strong> (§2).~~ <strong>Done.</strong> §2 is written and §15 lists
+   16 references, all cited and none orphaned. Eight were read in full and their cited passages
+   transcribed from the papers; three are metadata-only (<strong>[M]</strong>) and cited only where an [R]
+   source corroborates the claim. The remaining risk is not missing citations but <em>unread</em> ones:
+   [8], [9] and [12] should be obtained before submission, and any reviewer-facing claim about
+   [11] should be checked against its qualification, since that paper exists to complicate the
+   consensus it records.</li>
+<li>~~<strong>Narrow the abstract</strong> to the scope §10 supports.~~ <strong>Done.</strong> The abstract now names the
+   machine, engine version and model family in its first sentence, states that the <code>V</code> term is
+   read rather than measured, notes that the failing path is absent from vLLM V1, flags the
+   thermal caveat on absolute rates, and closes on a scope paragraph that declines the general
+   claim. It should be re-checked against §10 after any further result lands — the failure mode
+   to watch for is the scope paragraph drifting out of step with §10.1–10.4.</li>
+<li><strong>Choose a venue and format.</strong> No LaTeX toolchain is installed on this machine. Prior
+   assessment of realistic venues: MLSys (competitive), IEEE TPDS, ACM TOMPECS, Performance
+   Evaluation, JPDC, FGCS, Cluster Computing, IEEE Access; a workshop such as EuroMLSys or
+   HotInfra first is reasonable. Not OSDI/SOSP/NSDI/ASPLOS — single GPU, no system built, narrow
+   mechanism.</li>
+</ol>
+<p><strong>Would most raise the ceiling, cheapest first:</strong></p><ol start="4">
+<li><strong>A different-vocabulary model</strong> closes §10.3, the last untested term of the law. The intended
+   arm is <code>meta-llama/Llama-3.2-1B-Instruct</code> (V = 128,256, predicting 2.446 MiB/seq and 656.7 MiB
+   at N = 256 against Qwen's 741.9). <strong>Currently blocked</strong>: the repo is gated, <code>hf_hub_download</code>
+   returns <code>GatedRepoError</code> 401, and there is no HF token on the machine. Accepting the licence
+   and exporting <code>HF_TOKEN</code> unblocks it. Llama-3.2-1B is the right choice because the V test needs
+   a model that <em>reaches</em> high concurrency — a cached alternative with a larger vocabulary
+   (Phi-4-mini, V = 200,064) costs 128 KiB/token, plateaus near N ≈ 61, goes KV-bound and never
+   reaches the scorer at all.</li>
+<li><strong>A second GPU class</strong> kills the T4-specific objection (§10.1).</li>
+<li><strong>A current vLLM version</strong> kills the stale-bug objection and answers §10.2 directly.</li>
+</ol>
+<p><strong>Non-blocking discrepancy noted while assembling this draft:</strong> <code>docs/queueing_model.md</code> reports
+the pooled R² as <strong>0.229</strong> in its §4 table and <strong>0.216</strong> in its §5.2 text. Both round to ≈ 0.22
+and neither changes any conclusion, but one of them is stale and they should be reconciled before
+either is quoted.</p><hr />
+<h2>15. References</h2>
+<p><em>Read status is recorded per entry, because the two are not the same thing and the distinction
+governs what each may be cited for.</em> <strong>[R]</strong> = full text obtained and the passages cited here
+read directly; every quotation and section pointer in §2 attributed to an [R] entry was taken
+from the paper itself. <strong>[M]</strong> = metadata and headline contribution verified against a
+primary or near-primary source, full text not obtained; an [M] entry must not be cited for a
+quotation or a fine-grained claim. All author lists were taken from the papers themselves, except
+[8] and [9], whose metadata comes from the publishers' records. Checked August 2026; sources
+listed in <code>docs/related_work.md</code> §6.*</p><ol>
+<li>
+<p><strong>[R]</strong> Yu, G.-I., Jeong, J. S., Kim, G.-W., Kim, S., Chun, B.-G. "Orca: A Distributed Serving
+   System for Transformer-Based Generative Models." <em>OSDI 2022</em>, 16th USENIX Symposium on
+   Operating Systems Design and Implementation, Carlsbad CA, 11–13 July 2022, pp. 521–538.
+   ISBN 978-1-939133-28-1.</p></li>
+<li>
+<p><strong>[R]</strong> Kwon, W., Li, Z., Zhuang, S., Sheng, Y., Zheng, L., Yu, C. H., Gonzalez, J. E.,
+   Zhang, H., Stoica, I. "Efficient Memory Management for Large Language Model Serving with
+   PagedAttention." <em>SOSP 2023</em>, ACM SIGOPS 29th Symposium on Operating Systems Principles.
+   DOI 10.1145/3600006.3613165. arXiv:2309.06180.</p></li>
+<li>
+<p><strong>[R]</strong> Leviathan, Y., Kalman, M., Matias, Y. "Fast Inference from Transformers via
+   Speculative Decoding." <em>ICML 2023</em>, PMLR 202:19274–19286. arXiv:2211.17192.</p></li>
+<li>
+<p><strong>[R]</strong> Chen, C., Borgeaud, S., Irving, G., Lespiau, J.-B., Sifre, L., Jumper, J.
+   "Accelerating Large Language Model Decoding with Speculative Sampling." arXiv:2302.01318,</p></li>
+<li>
+<p><em>Preprint — check for a peer-reviewed version before submission.</em></p></li>
+<li>
+<p><strong>[R]</strong> Agrawal, A., Kedia, N., Panwar, A., Mohan, J., Kwatra, N., Gulavani, B. S.,
+   Tumanov, A., Ramjee, R. "Taming Throughput-Latency Tradeoff in LLM Inference with
+   Sarathi-Serve." <em>OSDI 2024</em>. arXiv:2403.02310.</p></li>
+<li>
+<p><strong>[R]</strong> Sun, B., Huang, Z., Zhao, H., Xiao, W., Zhang, X., Li, Y., Lin, W. "Llumnix: Dynamic
+   Scheduling for Large Language Model Serving." <em>OSDI 2024</em>. arXiv:2406.03243.</p></li>
+<li>
+<p><strong>[R]</strong> Patke, A., Reddy, D., Jha, S., Qiu, H., Pinto, C., Narayanaswami, C., Kalbarczyk, Z.,
+   Iyer, R. "Queue Management for SLO-Oriented Large Language Model Serving." <em>SoCC 2024</em>, ACM
+   Symposium on Cloud Computing, Redmond WA, 20–22 Nov 2024. DOI 10.1145/3698038.3698523.
+   arXiv:2407.00047.</p></li>
+<li>
+<p><strong>[M]</strong> Zhang, J., Zwart, B. "Steady State Approximations of Limited Processor Sharing Queues
+   in Heavy Traffic." <em>Queueing Systems</em> 60:227–246, 2008. <em>Paywalled; not obtained. Cited only
+   for the existence of the heavy-traffic steady-state result, which [10, §1] corroborates.</em></p></li>
+<li>
+<p><strong>[M]</strong> Zhang, J., Dai, J. G., Zwart, B. "Law of Large Number Limits of Limited
+   Processor-Sharing Queues." <em>Mathematics of Operations Research</em>, 2009.
+   DOI 10.1287/moor.1090.0412. <em>Paywalled; not obtained. [10, §1] describes it as the fluid
+   approximation this line of work builds on, and it is cited on that basis.</em></p></li>
+<li>
+<p><strong>[R]</strong> Zhang, J., Dai, J. G., Zwart, B. "Diffusion Limits of Limited Processor Sharing
+    Queues." <em>Annals of Applied Probability</em> 21(2):745–799, 2011. DOI 10.1214/10-AAP709.
+    <em>Open access; §1 read directly. All LPS quotations in §2.4 are from this paper.</em></p></li>
+<li>
+<p><strong>[R]</strong> Sadhukhan, R., Chen, J., Chen, Z., Tiwari, V., Lai, R., Shi, J., Yen, I. E.-H.,
+    May, A., Chen, T., Chen, B. "MagicDec: Breaking the Latency-Throughput Tradeoff for Long
+    Context Generation with Speculative Decoding." <em>ICLR 2025</em>. OpenReview <code>CS2JWaziYr</code>.
+    <em>Cited in §2.2 for the conventional wisdom it records and for the qualification it adds; note
+    that the paper's purpose is to show the conventional wisdom does not hold in the long-context
+    regime, so it must not be cited as endorsing the reversal unconditionally.</em></p></li>
+<li>
+<p><strong>[M]</strong> Wu, B., Zhong, Y., Zhang, Z., Liu, S., Liu, F., Sun, Y., Huang, G., Liu, X., Jin, X.
+    "FastServe: Iteration-Level Preemptive Scheduling for Large Language Model Inference."
+    <em>NSDI 2026</em>, 23rd USENIX Symposium on Networked Systems Design and Implementation. Earlier
+    preprint: "Fast Distributed Inference Serving for Large Language Models", arXiv:2305.05920.
+    <em>Metadata verified from the USENIX programme and arXiv; full text not obtained. Cited only
+    for the mechanism named in its title.</em></p></li>
+</ol>
+<p><strong>Statistical methods.</strong> Standard references, cited for the procedures used in §7.1, §9 and §10.5.</p><ol start="13">
+<li>
+<p>Holm, S. "A Simple Sequentially Rejective Multiple Test Procedure." <em>Scandinavian Journal of
+    Statistics</em> 6(2):65–70, 1979.</p></li>
+<li>
+<p>Hedges, L. V. "Distribution Theory for Glass's Estimator of Effect Size and Related
+    Estimators." <em>Journal of Educational Statistics</em> 6(2):107–128, 1981.
+    DOI 10.3102/10769986006002107.</p></li>
+<li>
+<p>Welch, B. L. "The Generalization of 'Student's' Problem when Several Different Population
+    Variances are Involved." <em>Biometrika</em> 34(1–2):28–35, 1947.</p></li>
+<li>
+<p>Wilson, E. B. "Probable Inference, the Law of Succession, and Statistical Inference."
+    <em>Journal of the American Statistical Association</em> 22(158):209–212, 1927.</p></li>
+</ol>
+<p><strong>No <code>[CITE]</code> gaps remain.</strong> Of the five originally open: the batch-size reversal is now [11],
+FastServe is [12], and the statistical procedures are [13]–[16]. Two were closed without a
+citation, deliberately. §10.4's thermal claim is a measurement of ours, recorded per stage in the
+run records, and is stated as such rather than leaning on a general result. §7.2's
+allocator-fragmentation account could not be supported and is now <strong>labelled a conjecture in
+place</strong>, with the competing explanation named and the empirical claim separated from it.</p>
+</body></html>
