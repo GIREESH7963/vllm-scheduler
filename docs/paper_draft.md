@@ -859,9 +859,9 @@ governs what each may be cited for.* **[R]** = full text obtained and the passag
 read directly; every quotation and section pointer in §2 attributed to an [R] entry was taken
 from the paper itself. **[M]** = metadata and headline contribution verified against a
 primary or near-primary source, full text not obtained; an [M] entry must not be cited for a
-quotation or a fine-grained claim. Entries marked † still need their full author list from the
-proceedings rather than an aggregator. Checked August 2026; sources listed in
-`docs/related_work.md` §6.*
+quotation or a fine-grained claim. All author lists were taken from the papers themselves, except
+[8] and [9], whose metadata comes from the publishers' records. Checked August 2026; sources
+listed in `docs/related_work.md` §6.*
 
 1. **[R]** Yu, G.-I., Jeong, J. S., Kim, G.-W., Kim, S., Chun, B.-G. "Orca: A Distributed Serving
    System for Transformer-Based Generative Models." *OSDI 2022*, 16th USENIX Symposium on
